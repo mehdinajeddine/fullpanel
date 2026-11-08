@@ -8,6 +8,8 @@ import { parse, stringify } from 'yaml';
 import type { Service, Metrics, ServiceStatus, Backup, BackupMetadata } from '../shared/types.js';
 import type { ProxyAuthMap } from '../shared/proxy.js';
 import type { ServiceMetrics } from '../shared/metrics.js';
+import type { ServicePorts } from '../shared/ports.js';
+import { collectDockerServicePorts } from './docker-ports.js';
 import { collectDockerServiceMetrics, emptyMetricValues } from './docker-metrics.js';
 import { proxyLabels } from './proxy-routing.js';
 import { resolveSourceCredentials, withGitSourceCredentials, withDockerSourceCredentials, normalizeGitRepository, type DeploymentSourceCredentials } from './source-credentials.js';
@@ -30,6 +32,7 @@ export interface RuntimeDriver {
   logs(service: Service, tail: number): Promise<string>;
   metrics(): Promise<Metrics>;
   serviceMetrics?(service: Service): Promise<ServiceMetrics>;
+  servicePorts?(service: Service): Promise<ServicePorts>;
   statuses(): Promise<Record<string, ServiceStatus>>;
   backup(service: Service, filename: string): Promise<BackupMetadata | void>;
   validateRestore?(service: Service, backup: Backup, filename: string, options?: RestoreOptions): Promise<void>;
@@ -321,6 +324,7 @@ export class DockerDriver implements RuntimeDriver {
     return { ...compose, ...canonical };
   }
   async serviceMetrics(service: Service): Promise<ServiceMetrics> { return collectDockerServiceMetrics(service, command); }
+  async servicePorts(service: Service): Promise<ServicePorts> { return collectDockerServicePorts(service, command); }
   async metrics(): Promise<Metrics> {
     const base: Metrics = { mode: 'docker', cpuPercent: null, memoryUsedBytes: totalmem() - freemem(), memoryTotalBytes: totalmem(), diskUsedBytes: null, diskTotalBytes: null, uptime: uptime(), dockerVersion: null, containersRunning: 0 };
     try {
@@ -577,6 +581,7 @@ export class DemoDriver implements RuntimeDriver {
   async remove(service: Service) { delete this.states[service.id]; }
   async logs(service: Service) { return `DEMO — illustrative log output; no container is running.\n${service.createdAt} [info] ${service.name}: configuration loaded\n${service.updatedAt} [info] Ready to receive requests\n`; }
   async statuses() { return { ...this.states }; }
+  async servicePorts(service: Service): Promise<ServicePorts> { return { mode: 'demo', serviceId: service.id, state: 'unavailable', sampledAt: null, checkedAt: new Date().toISOString(), listeners: [], exposed: [], message: 'Demo mode has no real container socket inspection.' }; }
   async serviceMetrics(service: Service): Promise<ServiceMetrics> { return { mode: 'demo', serviceId: service.id, state: service.status === 'stopped' ? 'stopped' : service.status === 'not-deployed' ? 'not-deployed' : 'unavailable', sampledAt: null, checkedAt: new Date().toISOString(), containers: [], totals: emptyMetricValues(), message: 'Demo mode has no real container measurements.' }; }
   async metrics(): Promise<Metrics> { return { mode: 'demo', cpuPercent: 12.8, memoryUsedBytes: 3.2 * 1024 ** 3, memoryTotalBytes: 8 * 1024 ** 3, diskUsedBytes: 21.4 * 1024 ** 3, diskTotalBytes: 80 * 1024 ** 3, uptime: 259200, dockerVersion: 'Demo', containersRunning: 3 }; }
   async backup(service: Service, destination: string): Promise<BackupMetadata | void> {

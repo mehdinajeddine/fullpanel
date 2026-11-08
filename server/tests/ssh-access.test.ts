@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { milestoneFixture } from './milestone-fixture.js';
+import { GITHUB_HOST_FINGERPRINT, GITHUB_KNOWN_HOSTS } from '../git-ssh.js';
 
 test('SSH keys enforce project authorization, survive encrypted restart and are revoked on source changes', async t => {
   const f = await milestoneFixture(); t.after(f.close);
@@ -25,5 +26,35 @@ test('SSH keys enforce project authorization, survive encrypted restart and are 
   assert.equal((await f.request('PATCH', `/services/${service.id}`, { source: { type: 'git', repository: 'git@localhost:private/repo.git', branch: 'release' } }, operator.cookie)).statusCode, 200);
   assert.equal((await f.request('GET', base, undefined, operator.cookie)).json().ssh.publicKey, publicKey);
   assert.equal((await f.request('PATCH', `/services/${service.id}`, { source: { type: 'git', repository: 'git@localhost:private/changed.git', branch: 'release' } }, operator.cookie)).statusCode, 200);
+  assert.equal((await f.request('GET', base, undefined, operator.cookie)).json().ssh.configured, false);
+});
+
+test('GitHub SSH status immediately exposes published trust for existing keys without a write or migration', async t => {
+  const f = await milestoneFixture(); t.after(f.close);
+  const service = await f.create({ source: { type: 'git', repository: 'git@GitHub.COM:private/repo.git', branch: 'main' } });
+  const operator = await f.user('githuboperator', 'operator'), viewer = await f.user('githubviewer', 'viewer');
+  const base = `/services/${service.id}/source-credentials`;
+  const generated = await f.request('POST', `${base}/ssh/rotate`, {}, operator.cookie);
+  assert.equal(generated.statusCode, 200, generated.body);
+  assert.equal(generated.json().ssh.hostKeySource, 'github-published');
+  const publicKey = generated.json().ssh.publicKey;
+  await f.reopen();
+  const before = await readFile(join(f.directory, 'state.enc'));
+  assert.equal((await f.request('GET', base, undefined, viewer.cookie)).statusCode, 403);
+  const response = await f.request('GET', base, undefined, operator.cookie);
+  assert.equal(response.statusCode, 200, response.body);
+  assert.equal(response.json().ssh.publicKey, publicKey);
+  assert.equal(response.json().ssh.knownHosts, GITHUB_KNOWN_HOSTS);
+  assert.equal(response.json().ssh.hostKeyConfigured, true);
+  assert.equal(response.json().ssh.hostKeySource, 'github-published');
+  assert.deepEqual(response.json().ssh.hostFingerprints, [GITHUB_HOST_FINGERPRINT]);
+  assert.equal(response.json().ssh.hostKeyUpdatedAt, undefined);
+  assert.deepEqual(await readFile(join(f.directory, 'state.enc')), before, 'Reading effective trust must not rewrite encrypted state.');
+  const manual = await f.request('PUT', `${base}/ssh/host-key`, { knownHosts: `github.com ${publicKey.split(' ').slice(0, 2).join(' ')}` }, operator.cookie);
+  assert.equal(manual.statusCode, 200, manual.body); assert.equal(manual.json().ssh.hostKeySource, 'manual');
+  const rotated = await f.request('POST', `${base}/ssh/rotate`, {}, operator.cookie);
+  assert.equal(rotated.statusCode, 200, rotated.body); assert.equal(rotated.json().ssh.hostKeySource, 'manual');
+  assert.equal(rotated.json().ssh.knownHosts, manual.json().ssh.knownHosts);
+  assert.equal((await f.request('DELETE', `${base}/ssh`, undefined, operator.cookie)).statusCode, 200);
   assert.equal((await f.request('GET', base, undefined, operator.cookie)).json().ssh.configured, false);
 });

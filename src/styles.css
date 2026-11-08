@@ -102,7 +102,7 @@ strong {
   font-weight: 600;
 }
 small {
-  font-size: 12px;
+  font-size: 13px;
 }
 button:focus-visible,
 a:focus-visible {
@@ -174,7 +174,7 @@ kbd {
   border-radius: 7px;
   padding: 9px 15px;
   border: 1px solid transparent;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
   line-height: 1.4;
@@ -236,7 +236,7 @@ kbd {
   color: var(--text);
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 13px;
   letter-spacing: 1.65px;
   font-weight: 600;
   color: #7b8498;
@@ -284,7 +284,7 @@ kbd {
 }
 .server-selector strong {
   color: #e4e6ea;
-  font-size: 12px;
+  font-size: 13px;
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -292,7 +292,7 @@ kbd {
   max-width: 132px;
 }
 .server-selector small {
-  font-size: 10px;
+  font-size: 13px;
   color: #8991a3;
   display: flex;
   align-items: center;
@@ -306,7 +306,7 @@ kbd {
   background: #98a7cb;
 }
 .sidebar-label {
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 1.7px;
   color: #656d80;
   font-weight: 600;
@@ -321,7 +321,7 @@ kbd {
   border-radius: 7px;
   margin: 3px 0;
   padding: 12px 14px;
-  font-size: 12px;
+  font-size: 13px;
   color: #979eae;
   transition:
     background 0.15s,
@@ -362,13 +362,13 @@ kbd {
   color: #909bb3;
 }
 .open-source-note p {
-  font-size: 11px;
+  font-size: 13px;
   color: #c4c7d0;
   line-height: 1.5;
 }
 .open-source-note small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: #6b7489;
   margin-top: 2px;
 }
@@ -392,7 +392,7 @@ kbd {
   width: 33px;
   height: 33px;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
 }
 .sidebar-user > div {
   min-width: 0;
@@ -401,7 +401,7 @@ kbd {
 .sidebar-user strong {
   display: block;
   color: #d7dae0;
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -410,7 +410,7 @@ kbd {
 .sidebar-user small {
   display: block;
   color: #6d768b;
-  font-size: 9px;
+  font-size: 13px;
   margin-top: 3px;
 }
 .sidebar-user .icon-button {
@@ -437,7 +437,7 @@ kbd {
   display: flex;
   align-items: center;
   gap: 13px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .topbar-workspace {
   color: var(--muted);
@@ -453,14 +453,14 @@ kbd {
   gap: 10px;
   color: #939aab;
   padding: 7px 2px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .topbar-search kbd {
   margin-left: 25px;
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 2px 5px;
-  font-size: 9px;
+  font-size: 13px;
   color: #828a9d;
   box-shadow: 0 1px 0 var(--border);
 }
@@ -471,7 +471,7 @@ kbd {
   margin: 0 6px;
 }
 .version-pill {
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: 1px;
   color: #858da0;
   background: var(--surface-alt);
@@ -488,7 +488,7 @@ kbd {
   background: #e9ebef;
   border: 1px solid #dde0e6;
   color: #61697c;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 .page-content {
@@ -506,7 +506,7 @@ kbd {
 }
 .page-heading p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 10px;
   line-height: 1.8;
 }
@@ -523,7 +523,7 @@ kbd {
   padding: 8px 38px;
   background: #e4e8f0;
   border-bottom: 1px solid #d5dae6;
-  font-size: 10px;
+  font-size: 13px;
   color: #5f687d;
   display: flex;
   align-items: center;
@@ -544,7 +544,7 @@ kbd {
   flex-shrink: 0;
 }
 .demo-banner strong {
-  font-size: 10px;
+  font-size: 13px;
 }
 .overview-status {
   display: flex;
@@ -564,7 +564,7 @@ kbd {
   flex-wrap: wrap;
 }
 .overview-status strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 .status-orb {
   width: 7px;
@@ -579,7 +579,7 @@ kbd {
   box-shadow: 0 0 0 4px #c2945414;
 }
 .status-secondary {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-left: 4px;
 }
@@ -587,7 +587,7 @@ kbd {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 13px;
   color: #727b91;
   white-space: nowrap;
 }
@@ -620,7 +620,7 @@ kbd {
   justify-content: space-between;
   align-items: center;
   color: #767f93;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
   gap: 8px;
 }
@@ -662,7 +662,7 @@ kbd {
   background: #697389;
 }
 .metric-detail {
-  font-size: 9px;
+  font-size: 13px;
   color: #8c93a4;
 }
 .dashboard-grid {
@@ -702,13 +702,13 @@ kbd {
   font-weight: 600;
 }
 .panel-heading p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
 }
 .text-link {
   color: #727b90;
-  font-size: 10px;
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -751,14 +751,14 @@ kbd {
   min-width: 0;
 }
 .dashboard-project strong {
-  font-size: 12px;
+  font-size: 13px;
   display: block;
   font-weight: 500;
 }
 .dashboard-project small {
   display: block;
   color: #858d9f;
-  font-size: 9px;
+  font-size: 13px;
   margin-top: 5px;
   max-width: 270px;
   overflow: hidden;
@@ -766,7 +766,7 @@ kbd {
   white-space: nowrap;
 }
 .project-service-count {
-  font-size: 9px;
+  font-size: 13px;
   color: #858d9f;
   white-space: nowrap;
 }
@@ -811,7 +811,7 @@ kbd {
   min-width: 0;
 }
 .deployment-name strong {
-  font-size: 11px;
+  font-size: 13px;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -819,12 +819,12 @@ kbd {
 }
 .deployment-name small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 4px;
 }
 .deployment-row time {
-  font-size: 9px;
+  font-size: 13px;
   color: #8c93a4;
   min-width: 43px;
   text-align: right;
@@ -833,7 +833,7 @@ kbd {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.5;
   padding: 4px 7px;
@@ -889,7 +889,7 @@ kbd {
   align-items: flex-start;
 }
 .launch-card-top .eyebrow {
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: 1.2px;
   color: #7d8599;
   max-width: 150px;
@@ -908,7 +908,7 @@ kbd {
   margin: 8px 0 11px;
 }
 .launch-card p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.9;
   color: #7b8498;
   max-width: 195px;
@@ -919,7 +919,7 @@ kbd {
   border-bottom: 1px solid #969fb3;
   padding: 0 0 5px;
   color: #555f77;
-  font-size: 10px;
+  font-size: 13px;
   margin-top: 17px;
   display: flex;
   align-items: center;
@@ -995,7 +995,7 @@ kbd {
   z-index: 1;
 }
 .activity-item p {
-  font-size: 10px;
+  font-size: 13px;
   color: #747d91;
   line-height: 1.6;
   word-break: break-word;
@@ -1005,7 +1005,7 @@ kbd {
   font-weight: 500;
 }
 .activity-item time {
-  font-size: 9px;
+  font-size: 13px;
   color: #9ea4b2;
   display: block;
   margin-top: 5px;
@@ -1018,7 +1018,7 @@ kbd {
   color: #979ead;
 }
 .quiet-state p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -1026,7 +1026,7 @@ kbd {
   display: flex;
   justify-content: space-between;
   color: #969dad;
-  font-size: 9px;
+  font-size: 13px;
   margin-top: 30px;
   padding: 0 1px;
 }
@@ -1066,7 +1066,7 @@ kbd {
 }
 .count-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .project-grid {
@@ -1106,7 +1106,7 @@ kbd {
 }
 .project-card > p {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   min-height: 36px;
   margin-top: 8px;
   overflow: hidden;
@@ -1117,7 +1117,7 @@ kbd {
   align-items: center;
   height: 39px;
   margin: 17px 0 22px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .project-services .service-icon {
@@ -1130,7 +1130,7 @@ kbd {
   justify-content: space-between;
   border-top: 1px solid var(--border);
   padding-top: 16px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .online-label {
@@ -1173,7 +1173,7 @@ kbd {
   letter-spacing: -0.1px;
 }
 .new-project-card p {
-  font-size: 10px;
+  font-size: 13px;
   min-height: 0;
   color: #989fae;
 }
@@ -1182,7 +1182,7 @@ kbd {
   align-items: center;
   gap: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   margin-bottom: 24px;
 }
 .back-link:hover {
@@ -1249,14 +1249,14 @@ kbd {
 }
 .service-row-name strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 .service-row-name small {
   display: block;
   margin-top: 5px;
   font-family: "SFMono-Regular", monospace;
-  font-size: 9px;
+  font-size: 13px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1288,14 +1288,14 @@ kbd {
   font-weight: 600;
 }
 .empty-state p {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   max-width: 310px;
   margin: 9px 0 21px;
   line-height: 1.9;
 }
 .empty-state .btn {
-  font-size: 11px;
+  font-size: 13px;
 }
 .loading-state {
   display: flex;
@@ -1304,7 +1304,7 @@ kbd {
   gap: 11px;
   padding: 60px 25px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 .error-box {
   display: flex;
@@ -1316,7 +1316,7 @@ kbd {
   color: #ae6254;
   border-radius: 8px;
   padding: 12px 15px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
@@ -1351,7 +1351,7 @@ kbd {
   margin-top: 1px;
 }
 .notice p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.75;
 }
 .field {
@@ -1362,7 +1362,7 @@ kbd {
   min-width: 0;
 }
 .field-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
 }
@@ -1373,7 +1373,7 @@ select {
   border: 1px solid #dcdee4;
   border-radius: 6px;
   padding: 10px 12px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--text);
   width: 100%;
@@ -1399,11 +1399,11 @@ input[type="checkbox"] {
 }
 .field-hint {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .form-note {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -1441,7 +1441,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   cursor: pointer;
 }
@@ -1484,7 +1484,7 @@ input[type="checkbox"] {
   font-weight: 600;
 }
 .modal-heading p {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 8px;
   line-height: 1.8;
@@ -1508,7 +1508,7 @@ input[type="checkbox"] {
   gap: 9px;
 }
 .color-field legend {
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 12px;
   font-weight: 500;
 }
@@ -1548,11 +1548,11 @@ input[type="checkbox"] {
 }
 .kind-card strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
 }
 .kind-card small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
   line-height: 1.5;
@@ -1592,7 +1592,7 @@ input[type="checkbox"] {
   align-items: center;
   gap: 11px;
   padding: 12px 12px 12px 16px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text);
   animation: toast-in 0.2s ease-out;
 }
@@ -1647,13 +1647,13 @@ input[type="checkbox"] {
   color: #535c70;
 }
 .template-banner p {
-  font-size: 11px;
+  font-size: 13px;
   color: #7c8498;
   margin-top: 7px;
 }
 .tag {
   margin-left: auto;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: 1.4px;
   color: #888fa1;
   white-space: nowrap;
@@ -1669,7 +1669,7 @@ input[type="checkbox"] {
   background: transparent;
   border-radius: 6px;
   padding: 8px 10px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -1713,7 +1713,7 @@ input[type="checkbox"] {
   border-style: solid;
 }
 .category-tag {
-  font-size: 8px;
+  font-size: 13px;
   background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: 5px;
@@ -1728,7 +1728,7 @@ input[type="checkbox"] {
 }
 .template-card > p {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.85;
   margin-top: 10px;
   min-height: 60px;
@@ -1744,7 +1744,7 @@ input[type="checkbox"] {
   margin-top: 20px;
 }
 .template-card-footer .btn {
-  font-size: 10px;
+  font-size: 13px;
   min-height: 32px;
   padding: 7px 10px;
 }
@@ -1760,18 +1760,18 @@ input[type="checkbox"] {
 }
 .template-summary strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
 }
 .template-summary code {
   display: block;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   margin-top: 5px;
   word-break: break-all;
 }
 .filter-select {
   width: 160px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .table-scroll {
   position: relative;
@@ -1787,14 +1787,14 @@ input[type="checkbox"] {
   background: var(--surface-alt);
 }
 .data-table th {
-  font-size: 9px;
+  font-size: 13px;
   color: #7e8699;
   font-weight: 500;
   padding: 15px 20px;
   border-bottom: 1px solid var(--border);
 }
 .data-table td {
-  font-size: 11px;
+  font-size: 13px;
   color: #717a8f;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
@@ -1809,7 +1809,7 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
   border: 0;
@@ -1833,12 +1833,12 @@ input[type="checkbox"] {
   display: block;
   white-space: normal;
   max-width: 300px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--red);
   margin-top: 7px;
 }
 .download-link {
-  font-size: 10px;
+  font-size: 13px;
   color: #57637d;
   display: inline-flex;
   align-items: center;
@@ -1852,14 +1852,14 @@ input[type="checkbox"] {
   align-items: center;
   gap: 18px;
   margin-bottom: 22px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   flex-wrap: wrap;
 }
 .terminal-output {
   background: #181a20;
   color: #a8aebb;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.95;
   padding: 25px;
   margin: 0;
@@ -1899,7 +1899,7 @@ input[type="checkbox"] {
   letter-spacing: -0.15px;
 }
 .backup-action p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 7px;
 }
@@ -1924,17 +1924,17 @@ input[type="checkbox"] {
   flex: 1;
 }
 .activity-full strong {
-  font-size: 12px;
+  font-size: 13px;
   text-transform: capitalize;
 }
 .activity-full p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 4px;
   word-break: break-word;
 }
 .activity-full time {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -1958,7 +1958,7 @@ input[type="checkbox"] {
   font-weight: 600;
 }
 .settings-intro p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.9;
   color: var(--muted);
   margin-top: 11px;
@@ -1977,14 +1977,14 @@ input[type="checkbox"] {
   letter-spacing: -0.2px;
 }
 .version-label {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 400;
   letter-spacing: 0;
   color: var(--muted);
   margin-left: 5px;
 }
 .about-panel p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 7px;
 }
@@ -1992,7 +1992,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-bottom: 25px;
 }
@@ -2031,7 +2031,7 @@ input[type="checkbox"] {
   overflow-wrap: anywhere;
 }
 .service-heading-main p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 8px;
   display: flex;
@@ -2039,7 +2039,7 @@ input[type="checkbox"] {
   gap: 9px;
 }
 .service-heading-main code {
-  font-size: 9px;
+  font-size: 13px;
 }
 .service-actions {
   display: flex;
@@ -2056,7 +2056,7 @@ input[type="checkbox"] {
   scrollbar-width: thin;
 }
 .service-tabs a {
-  font-size: 11px;
+  font-size: 13px;
   padding: 0 0 15px;
   white-space: nowrap;
   color: #7f879a;
@@ -2096,7 +2096,7 @@ input[type="checkbox"] {
   gap: 20px;
   padding: 17px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 10px;
+  font-size: 13px;
   align-items: center;
 }
 .property-list > div:last-child {
@@ -2113,7 +2113,7 @@ input[type="checkbox"] {
   word-break: break-word;
 }
 .property-list code {
-  font-size: 10px;
+  font-size: 13px;
 }
 .domain-links {
   padding: 5px 22px;
@@ -2124,7 +2124,7 @@ input[type="checkbox"] {
   gap: 11px;
   padding: 18px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 11px;
+  font-size: 13px;
   color: #66728e;
 }
 .domain-links a:last-child {
@@ -2137,12 +2137,12 @@ input[type="checkbox"] {
 .domain-links small {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 13px;
   margin-top: 5px;
 }
 .service-notes {
   padding: 23px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.9;
   white-space: pre-wrap;
@@ -2172,12 +2172,12 @@ input[type="checkbox"] {
   box-shadow: 0 0 0 1px #94a0ba1a;
 }
 .source-types strong {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
 }
 .source-types small {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.6;
 }
@@ -2186,7 +2186,7 @@ input[type="checkbox"] {
   background: #1a1c22;
   color: #acb3c4;
   border-color: #2c313b;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.9;
   tab-size: 2;
   padding: 18px;
@@ -2210,7 +2210,7 @@ input[type="checkbox"] {
 }
 .env-table-head {
   color: #8a91a3;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.9px;
   margin-bottom: 10px;
 }
@@ -2218,7 +2218,7 @@ input[type="checkbox"] {
   height: 39px;
 }
 .inline-empty {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   border: 1px dashed var(--border);
   padding: 24px;
@@ -2243,7 +2243,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: #727b90;
 }
 .config-card .field:last-child {
@@ -2282,7 +2282,7 @@ input[type="checkbox"] {
 }
 .logs-toolbar select {
   width: 112px;
-  font-size: 10px;
+  font-size: 13px;
 }
 .runtime-logs {
   min-height: 450px;
@@ -2303,7 +2303,7 @@ input[type="checkbox"] {
   letter-spacing: -0.1px;
 }
 .danger-zone p {
-  font-size: 10px;
+  font-size: 13px;
   color: #bd9286;
   margin-top: 8px;
 }
@@ -2320,7 +2320,7 @@ input[type="checkbox"] {
   padding-left: 0;
   box-shadow: none;
   outline: none;
-  font-size: 12px;
+  font-size: 13px;
 }
 .command-results {
   margin-top: 16px;
@@ -2331,7 +2331,7 @@ input[type="checkbox"] {
   margin-bottom: 20px;
 }
 .command-group h3 {
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 1.2px;
   color: var(--muted);
   margin-bottom: 8px;
@@ -2347,7 +2347,7 @@ input[type="checkbox"] {
   text-align: left;
   padding: 10px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   color: #727b91;
 }
 .command-group button:hover {
@@ -2358,7 +2358,7 @@ input[type="checkbox"] {
   color: var(--text);
 }
 .command-group button small {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
 }
 .command-group .service-icon {
@@ -2405,7 +2405,7 @@ input[type="checkbox"] {
 }
 .auth-story .eyebrow {
   color: #6a7388;
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 1.8px;
   margin-bottom: 20px;
   display: block;
@@ -2420,7 +2420,7 @@ input[type="checkbox"] {
   z-index: 1;
 }
 .auth-story p {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 2;
   color: #848c9e;
   margin-top: 23px;
@@ -2493,7 +2493,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 13px;
   color: #6a7286;
   gap: 15px;
 }
@@ -2503,7 +2503,7 @@ input[type="checkbox"] {
   gap: 7px;
 }
 .auth-story-footer > span:last-child {
-  font-size: 7px;
+  font-size: 13px;
   letter-spacing: 1.3px;
 }
 .auth-main {
@@ -2532,7 +2532,7 @@ input[type="checkbox"] {
   margin-bottom: 24px;
 }
 .auth-form-wrap > .eyebrow {
-  font-size: 9px;
+  font-size: 13px;
   margin-bottom: 12px;
   display: block;
   color: #888fa1;
@@ -2544,7 +2544,7 @@ input[type="checkbox"] {
   line-height: 1.5;
 }
 .auth-form-wrap > p {
-  font-size: 11px;
+  font-size: 13px;
   color: #838b9d;
   line-height: 1.8;
   margin-top: 11px;
@@ -2554,14 +2554,14 @@ input[type="checkbox"] {
   margin-bottom: 20px;
 }
 .auth-form-wrap .field-label {
-  font-size: 11px;
+  font-size: 13px;
   color: #586071;
 }
 .auth-form-wrap input {
   height: 43px;
   background: #fff;
   border-color: #d9dde6;
-  font-size: 12px;
+  font-size: 13px;
 }
 .auth-submit {
   width: 100%;
@@ -2577,12 +2577,12 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 13px;
   color: #959cac;
   margin-top: 27px;
 }
 .auth-version {
-  font-size: 7px;
+  font-size: 13px;
   letter-spacing: 2px;
   color: #979eae;
   position: absolute;
@@ -2592,7 +2592,7 @@ input[type="checkbox"] {
   background: #e6e9f1;
   border: 1px solid #d4d9e6;
   color: #70798f;
-  font-size: 10px;
+  font-size: 13px;
   border-radius: 6px;
   padding: 10px 12px;
   margin-bottom: 22px;
@@ -3020,7 +3020,7 @@ input[type="checkbox"] {
   }
   .topbar > div {
     gap: 8px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .topbar-workspace {
     display: none;
@@ -3041,7 +3041,7 @@ input[type="checkbox"] {
     display: none;
   }
   .version-pill {
-    font-size: 7px;
+    font-size: 13px;
     padding: 4px 6px;
   }
   .page-content {
@@ -3055,18 +3055,18 @@ input[type="checkbox"] {
     font-size: 25px;
   }
   .page-heading p {
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.8;
     margin-top: 8px;
   }
   .eyebrow {
-    font-size: 8px;
+    font-size: 13px;
   }
   .heading-actions {
     margin-top: 19px;
   }
   .heading-actions .btn {
-    font-size: 10px;
+    font-size: 13px;
     padding: 8px 10px;
     min-height: 35px;
     gap: 5px;
@@ -3075,10 +3075,10 @@ input[type="checkbox"] {
     padding: 12px 14px;
   }
   .overview-status strong {
-    font-size: 10px;
+    font-size: 13px;
   }
   .live-indicator {
-    font-size: 8px;
+    font-size: 13px;
   }
   .metrics-grid {
     gap: 12px;
@@ -3092,10 +3092,10 @@ input[type="checkbox"] {
     margin: 13px 0;
   }
   .metric-label {
-    font-size: 9px;
+    font-size: 13px;
   }
   .metric-detail {
-    font-size: 8px;
+    font-size: 13px;
   }
   .dashboard-grid {
     gap: 22px;
@@ -3118,34 +3118,34 @@ input[type="checkbox"] {
     width: 20px;
   }
   .launch-card-top .eyebrow {
-    font-size: 7px;
+    font-size: 13px;
   }
   .launch-card p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .activity-preview {
     padding: 18px 15px 0;
   }
   .activity-item p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .panel-heading {
     padding: 18px 17px;
   }
   .panel-heading h2 {
-    font-size: 12px;
+    font-size: 13px;
   }
   .panel-heading p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .panel-heading .text-link {
-    font-size: 9px;
+    font-size: 13px;
   }
   .dashboard-project {
     padding: 18px 17px;
   }
   .dashboard-project strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .dashboard-project small {
     max-width: 300px;
@@ -3155,10 +3155,10 @@ input[type="checkbox"] {
     gap: 10px;
   }
   .deployment-row time {
-    font-size: 8px;
+    font-size: 13px;
   }
   .badge {
-    font-size: 8px;
+    font-size: 13px;
     padding: 3px 6px;
   }
   .project-grid,
@@ -3175,7 +3175,7 @@ input[type="checkbox"] {
   }
   .project-card p,
   .template-card > p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .template-card-footer {
     gap: 7px;
@@ -3185,7 +3185,7 @@ input[type="checkbox"] {
     padding: 6px 8px;
   }
   .template-card .category-tag {
-    font-size: 7px;
+    font-size: 13px;
   }
   .toolbar {
     gap: 12px;
@@ -3209,7 +3209,7 @@ input[type="checkbox"] {
     font-size: 14px;
   }
   .template-banner p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .template-banner-icon svg {
     width: 24px;
@@ -3226,7 +3226,7 @@ input[type="checkbox"] {
     font-size: 24px;
   }
   .service-heading-main p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .service-actions {
     margin-left: 58px;
@@ -3236,7 +3236,7 @@ input[type="checkbox"] {
     margin-bottom: 25px;
   }
   .service-actions .btn {
-    font-size: 11px;
+    font-size: 13px;
   }
   .service-tabs {
     gap: 23px;
@@ -3245,10 +3245,10 @@ input[type="checkbox"] {
     margin-bottom: 22px;
   }
   .service-tabs a {
-    font-size: 10px;
+    font-size: 13px;
   }
   .service-breadcrumb {
-    font-size: 9px;
+    font-size: 13px;
     margin-bottom: 21px;
   }
   .form-panel {
@@ -3268,7 +3268,7 @@ input[type="checkbox"] {
     grid-row: 1/3;
   }
   .source-types small {
-    font-size: 9px;
+    font-size: 13px;
   }
   .form-grid {
     gap: 15px;
@@ -3278,13 +3278,13 @@ input[type="checkbox"] {
   }
   .form-actions .form-note {
     max-width: 180px;
-    font-size: 9px;
+    font-size: 13px;
   }
   .field-label {
-    font-size: 11px;
+    font-size: 13px;
   }
   .field-hint {
-    font-size: 9px;
+    font-size: 13px;
   }
   .env-row,
   .env-table-head {
@@ -3292,7 +3292,7 @@ input[type="checkbox"] {
     grid-template-columns: 1fr 1.15fr 29px;
   }
   .env-row input {
-    font-size: 10px;
+    font-size: 13px;
     padding: 10px 8px;
   }
   .port-row {
@@ -3300,18 +3300,18 @@ input[type="checkbox"] {
     grid-template-columns: 1fr 1fr 70px 27px;
   }
   .port-row .field-label {
-    font-size: 9px;
+    font-size: 13px;
   }
   .port-row input,
   .port-row select {
     padding: 9px 7px;
-    font-size: 11px;
+    font-size: 13px;
   }
   .notice {
     padding: 12px 14px;
   }
   .notice p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .danger-zone {
     padding: 19px;
@@ -3330,7 +3330,7 @@ input[type="checkbox"] {
     flex-basis: 100%;
   }
   .terminal-output {
-    font-size: 10px;
+    font-size: 13px;
     padding: 18px;
     min-height: 300px;
   }
@@ -3339,10 +3339,10 @@ input[type="checkbox"] {
     padding: 13px 15px;
   }
   .table-title {
-    font-size: 10px;
+    font-size: 13px;
   }
   .data-table td {
-    font-size: 10px;
+    font-size: 13px;
   }
   .backup-action {
     padding: 20px;
@@ -3352,13 +3352,13 @@ input[type="checkbox"] {
     gap: 11px;
   }
   .activity-full strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .activity-full time {
-    font-size: 9px;
+    font-size: 13px;
   }
   .activity-full p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .modal {
     padding: 23px;
@@ -3371,10 +3371,10 @@ input[type="checkbox"] {
     padding: 10px;
   }
   .kind-card strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .kind-card small {
-    font-size: 8px;
+    font-size: 13px;
   }
   .kind-card .service-icon {
     width: 28px;
@@ -3423,20 +3423,20 @@ input[type="checkbox"] {
     font-size: 26px;
   }
   .auth-form-wrap > p {
-    font-size: 12px;
+    font-size: 13px;
   }
   .demo-banner {
     padding: 8px 20px;
-    font-size: 9px;
+    font-size: 13px;
   }
   .demo-banner strong {
-    font-size: 9px;
+    font-size: 13px;
   }
   .skip-link {
     left: 20px;
   }
   .workspace-footer {
-    font-size: 8px;
+    font-size: 13px;
     gap: 15px;
   }
   .workspace-footer > span:last-child {
@@ -3457,7 +3457,7 @@ input[type="checkbox"] {
     margin-top: 0;
   }
   .heading-actions .btn {
-    font-size: 11px;
+    font-size: 13px;
     min-height: 35px;
   }
   .page-heading p {
@@ -3494,20 +3494,20 @@ input[type="checkbox"] {
   }
   .launch-card p {
     max-width: 225px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .launch-art {
     right: -5px;
     bottom: -28px;
   }
   .launch-card button {
-    font-size: 10px;
+    font-size: 13px;
   }
   .activity-preview {
     padding: 20px 22px 4px;
   }
   .activity-item p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .project-grid,
   .template-grid {
@@ -3527,27 +3527,27 @@ input[type="checkbox"] {
     font-size: 17px;
   }
   .template-card > p {
-    font-size: 11px;
+    font-size: 13px;
     min-height: 0;
   }
   .template-card-footer .btn {
-    font-size: 11px;
+    font-size: 13px;
     padding: 8px 11px;
   }
   .template-card .category-tag {
-    font-size: 8px;
+    font-size: 13px;
   }
   .template-banner {
     align-items: flex-start;
   }
   .template-banner p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .template-banner h2 {
     font-size: 14px;
   }
   .filter-pills button {
-    font-size: 9px;
+    font-size: 13px;
   }
   .project-service-count {
     display: none;
@@ -3556,13 +3556,13 @@ input[type="checkbox"] {
     max-width: 205px;
   }
   .deployment-row .badge {
-    font-size: 7px;
+    font-size: 13px;
   }
   .deployment-row time {
     display: none;
   }
   .deployment-name small {
-    font-size: 8px;
+    font-size: 13px;
   }
   .service-row {
     padding: 18px;
@@ -3570,17 +3570,17 @@ input[type="checkbox"] {
   }
   .service-row-name small {
     max-width: 170px;
-    font-size: 8px;
+    font-size: 13px;
   }
   .service-row-name strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .service-row > .service-icon {
     width: 33px;
     height: 33px;
   }
   .service-row > .badge {
-    font-size: 7px;
+    font-size: 13px;
   }
   .service-row > svg {
     display: none;
@@ -3593,10 +3593,10 @@ input[type="checkbox"] {
     gap: 13px;
   }
   .kind-card strong {
-    font-size: 12px;
+    font-size: 13px;
   }
   .kind-card small {
-    font-size: 9px;
+    font-size: 13px;
   }
   .kind-card .service-icon {
     width: 33px;
@@ -3624,10 +3624,10 @@ input[type="checkbox"] {
     gap: 7px;
   }
   .env-row input {
-    font-size: 9px;
+    font-size: 13px;
   }
   .env-table-head {
-    font-size: 8px;
+    font-size: 13px;
     grid-template-columns: 1fr 1fr 26px;
     gap: 7px;
   }
@@ -3652,11 +3652,11 @@ input[type="checkbox"] {
     padding: 4px 18px;
   }
   .property-list > div {
-    font-size: 9px;
+    font-size: 13px;
     gap: 15px;
   }
   .property-list code {
-    font-size: 9px;
+    font-size: 13px;
   }
   .service-breadcrumb {
     gap: 6px;
@@ -3667,13 +3667,13 @@ input[type="checkbox"] {
     gap: 10px;
   }
   .logs-toolbar .search-input input {
-    font-size: 11px;
+    font-size: 13px;
   }
   .logs-toolbar select {
     width: 100px;
   }
   .logs-toolbar .btn {
-    font-size: 11px;
+    font-size: 13px;
   }
   .port-row {
     grid-template-columns: 1fr 1fr 28px;
@@ -3687,14 +3687,14 @@ input[type="checkbox"] {
     align-self: center;
   }
   .count-label {
-    font-size: 10px;
+    font-size: 13px;
   }
   .detail-summary {
-    font-size: 9px;
+    font-size: 13px;
     gap: 13px;
   }
   .modal-heading p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .modal {
     padding: 21px;
@@ -3719,7 +3719,7 @@ input[type="checkbox"] {
     max-width: calc(100vw - 30px);
   }
   .toast {
-    font-size: 11px;
+    font-size: 13px;
   }
   .workspace-footer {
     margin-top: 25px;
@@ -3755,18 +3755,18 @@ input[type="checkbox"] {
 .copy-field input {
   flex: 1;
   min-width: 0;
-  font-size: 11px;
+  font-size: 13px;
 }
 .copy-field .btn {
   flex-shrink: 0;
-  font-size: 10px;
+  font-size: 13px;
 }
 .request-example {
   background: var(--surface-alt);
   border: 1px solid var(--border);
   border-radius: 7px;
   padding: 15px;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
   white-space: pre-wrap;
@@ -3803,13 +3803,13 @@ input[type="checkbox"] {
 }
 .connection-properties span {
   display: block;
-  font-size: 8px;
+  font-size: 13px;
   letter-spacing: 1.2px;
   color: var(--muted);
   margin-bottom: 9px;
 }
 .connection-properties code {
-  font-size: 11px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .connection-panel > .field {
@@ -3847,24 +3847,24 @@ input[type="checkbox"] {
   min-width: 0;
 }
 .schedule-info h3 {
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: -0.15px;
   font-weight: 500;
 }
 .schedule-info h3 > span {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   font-weight: 400;
   margin-left: 4px;
 }
 .schedule-info p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 6px;
 }
 .schedule-info small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: #8b93a4;
   margin-top: 5px;
 }
@@ -3875,7 +3875,7 @@ input[type="checkbox"] {
   gap: 7px;
 }
 .schedule-meta > span:last-child:not(.badge) {
-  font-size: 8px;
+  font-size: 13px;
   color: var(--muted);
 }
 .schedule-actions {
@@ -3893,7 +3893,7 @@ input[type="checkbox"] {
   align-items: flex-start;
   gap: 7px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.7;
   margin-top: 20px;
 }
@@ -3902,7 +3902,7 @@ input[type="checkbox"] {
 }
 .schedule-info .schedule-error {
   color: var(--red);
-  font-size: 10px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 @media (max-width: 1000px) {
@@ -3926,10 +3926,10 @@ input[type="checkbox"] {
     margin-left: 0;
   }
   .schedule-info h3 {
-    font-size: 11px;
+    font-size: 13px;
   }
   .schedule-info small {
-    font-size: 8px;
+    font-size: 13px;
   }
   .schedule-actions .icon-button {
     min-width: 25px;
@@ -3964,12 +3964,12 @@ input[type="checkbox"] {
   min-width: 0;
 }
 .membership-picker legend {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   padding: 0 6px;
 }
 .membership-picker > p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin: 0 0 12px;
   line-height: 1.7;
@@ -3988,19 +3988,19 @@ input[type="checkbox"] {
 }
 .membership-row select {
   width: 115px;
-  font-size: 11px;
+  font-size: 13px;
   padding: 7px 10px;
 }
 .membership-row .checkbox-field {
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
   min-width: 0;
 }
 .membership-row .checkbox-field span {
   overflow-wrap: anywhere;
 }
 .membership-row .scope-label {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -4038,7 +4038,7 @@ input[type="checkbox"] {
   letter-spacing: -0.2px;
 }
 .account-identity h3 span {
-  font-size: 8px;
+  font-size: 13px;
   color: var(--muted);
   font-weight: 400;
   letter-spacing: 0;
@@ -4049,13 +4049,13 @@ input[type="checkbox"] {
   border-radius: 3px;
 }
 .account-identity p {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 4px;
   overflow-wrap: anywhere;
 }
 .account-identity small {
-  font-size: 9px;
+  font-size: 13px;
   color: #8e95a6;
   display: block;
   margin-top: 5px;
@@ -4071,7 +4071,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
 }
 .api-key-row {
@@ -4097,16 +4097,16 @@ input[type="checkbox"] {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 7px;
   overflow-wrap: anywhere;
 }
 .api-key-info code {
-  font-size: 9px;
+  font-size: 13px;
 }
 .api-key-info small {
-  font-size: 9px;
+  font-size: 13px;
   color: #8c94a5;
   display: block;
   margin-top: 6px;
@@ -4123,21 +4123,21 @@ input[type="checkbox"] {
   color: #727c93;
 }
 .credential-status strong {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
 .credential-status p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
   overflow-wrap: anywhere;
 }
 .credential-status p code {
-  font-size: 10px;
+  font-size: 13px;
 }
 .credential-status p span {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   margin-top: 5px;
 }
 .credential-status svg {
@@ -4158,7 +4158,7 @@ input[type="checkbox"] {
   padding-top: 17px;
 }
 .routing-advanced summary {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   color: #727c92;
@@ -4184,7 +4184,7 @@ input[type="checkbox"] {
   background: var(--green-light);
   padding: 3px 6px;
   border-radius: 5px;
-  font-size: 8px;
+  font-size: 13px;
   font-weight: 500;
 }
 .domain-auth {
@@ -4203,7 +4203,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text);
 }
@@ -4217,7 +4217,7 @@ input[type="checkbox"] {
   gap: 12px;
 }
 .domain-auth-actions .btn {
-  font-size: 10px;
+  font-size: 13px;
 }
 .domain-auth .form-grid {
   margin-bottom: 0;
@@ -4228,7 +4228,7 @@ input[type="checkbox"] {
   gap: 11px;
   padding: 18px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 11px;
+  font-size: 13px;
   color: #66728e;
 }
 .domain-links .domain-link-item:last-child {
@@ -4279,13 +4279,13 @@ input[type="checkbox"] {
     min-width: 0;
   }
   .protected-account {
-    font-size: 8px;
+    font-size: 13px;
   }
   .account-identity p {
-    font-size: 10px;
+    font-size: 13px;
   }
   .api-key-info p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .domain-route {
     padding: 18px;
@@ -4298,7 +4298,7 @@ input[type="checkbox"] {
     gap: 14px;
   }
   .membership-row .checkbox-field {
-    font-size: 11px;
+    font-size: 13px;
   }
   .member-metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4307,13 +4307,13 @@ input[type="checkbox"] {
     padding: 13px;
   }
   .member-metrics .metric-label {
-    font-size: 8px;
+    font-size: 13px;
   }
   .member-metrics .metric-detail {
-    font-size: 8px;
+    font-size: 13px;
   }
   .credential-status strong {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 @media (max-width: 480px) {
@@ -4352,10 +4352,10 @@ input[type="checkbox"] {
   }
   .membership-row select {
     width: 105px;
-    font-size: 10px;
+    font-size: 13px;
   }
   .membership-row .scope-label {
-    font-size: 8px;
+    font-size: 13px;
   }
   .domain-auth-actions {
     align-items: stretch;
@@ -4363,7 +4363,7 @@ input[type="checkbox"] {
   }
   .domain-auth-actions .btn {
     width: 100%;
-    font-size: 11px;
+    font-size: 13px;
   }
   .member-metrics {
     grid-template-columns: 1fr 1fr;
@@ -4382,12 +4382,12 @@ input[type="checkbox"] {
     padding: 13px;
   }
   .credential-status p code {
-    font-size: 9px;
+    font-size: 13px;
   }
   .routing-toggles .checkbox-field,
   .routing-advanced-content .checkbox-field {
     align-items: flex-start;
-    font-size: 10px;
+    font-size: 13px;
   }
   .routing-toggles .checkbox-field input,
   .routing-advanced-content .checkbox-field input {
@@ -4429,22 +4429,22 @@ input[type="checkbox"] {
   min-width: 0;
 }
 .inherited-variable-row code {
-  font-size: 11px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .inherited-variable-row input {
-  font-size: 11px;
+  font-size: 13px;
   background: var(--surface-alt);
   color: var(--muted);
 }
 .inherited-variable-row .btn {
   justify-self: end;
-  font-size: 10px;
+  font-size: 13px;
   min-height: 33px;
 }
 .inheritance-label {
   display: inline-flex;
-  font-size: 8px;
+  font-size: 13px;
   border: 1px solid var(--border);
   background: var(--green-light);
   color: #768098;
@@ -4457,7 +4457,7 @@ input[type="checkbox"] {
   color: var(--muted);
 }
 .inheritance-edit-note {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   text-align: right;
   line-height: 1.7;
@@ -4505,7 +4505,7 @@ input[type="checkbox"] {
   gap: 5px 15px;
   border-bottom: 1px solid var(--border);
   padding: 11px 0;
-  font-size: 10px;
+  font-size: 13px;
   min-width: 0;
 }
 .env-preview-list > div:last-child {
@@ -4522,7 +4522,7 @@ input[type="checkbox"] {
 }
 .env-preview-list small {
   grid-column: 1/-1;
-  font-size: 8px;
+  font-size: 13px;
   color: #9a957a;
 }
 .env-preview-list > p {
@@ -4534,12 +4534,12 @@ input[type="checkbox"] {
   color: var(--red);
   padding: 16px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 13px;
   max-height: 240px;
   overflow: auto;
 }
 .import-errors strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 .import-errors ul {
   padding-left: 18px;
@@ -4555,12 +4555,12 @@ input[type="checkbox"] {
   gap: 15px;
 }
 .restore-row-button {
-  font-size: 10px;
+  font-size: 13px;
   padding: 5px 7px;
   min-height: 29px;
 }
 .restore-unavailable {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -4594,14 +4594,14 @@ input[type="checkbox"] {
 .integration-identity strong {
   display: block;
   overflow-wrap: anywhere;
-  font-size: 12px;
+  font-size: 13px;
 }
 .integration-identity > div > span {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   overflow-wrap: anywhere;
 }
@@ -4623,7 +4623,7 @@ input[type="checkbox"] {
   margin: 0;
   padding-left: 19px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.9;
 }
 .webhook-instructions li {
@@ -4635,7 +4635,7 @@ input[type="checkbox"] {
   font-weight: 500;
 }
 .webhook-instructions p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
   padding-top: 6px;
@@ -4650,11 +4650,11 @@ input[type="checkbox"] {
   margin-bottom: 13px;
 }
 .webhook-delivery strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 .webhook-delivery small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
 }
@@ -4695,13 +4695,13 @@ input[type="checkbox"] {
   font-size: 13px;
 }
 .release-card-title strong code {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   margin-left: 5px;
 }
 .release-card-title time {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 6px;
 }
@@ -4710,7 +4710,7 @@ input[type="checkbox"] {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 5px 7px;
-  font-size: 8px;
+  font-size: 13px;
 }
 .release-facts {
   margin: 0;
@@ -4726,7 +4726,7 @@ input[type="checkbox"] {
 }
 .release-facts dt {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
 }
 .release-facts dd {
   margin: 0;
@@ -4734,13 +4734,13 @@ input[type="checkbox"] {
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font-size: 11px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .release-facts dd > code {
   min-width: 0;
   overflow-wrap: anywhere;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.7;
 }
 .release-facts .icon-button {
@@ -4760,7 +4760,7 @@ input[type="checkbox"] {
   max-width: 55%;
   color: var(--muted);
   text-align: right;
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.7;
 }
 .release-selection {
@@ -4781,14 +4781,14 @@ input[type="checkbox"] {
   min-width: 0;
 }
 .release-selection strong {
-  font-size: 12px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .release-selection code,
 .release-selection small {
   display: block;
   margin-top: 7px;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.7;
   overflow-wrap: anywhere;
@@ -4847,7 +4847,7 @@ input[type="checkbox"] {
     gap: 11px;
   }
   .integration-identity strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .webhook-delivery {
     flex-direction: column;
@@ -4871,12 +4871,12 @@ input[type="checkbox"] {
 }
 .restore-source strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   overflow-wrap: anywhere;
 }
 .restore-source p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 7px;
   line-height: 1.7;
@@ -4901,7 +4901,7 @@ input[type="checkbox"] {
   margin-top: 2px;
 }
 .restore-impact ul {
-  font-size: 11px;
+  font-size: 13px;
   color: #9a866a;
   line-height: 1.85;
   padding-left: 18px;
@@ -4921,7 +4921,7 @@ input[type="checkbox"] {
   font-size: 13px;
 }
 .restore-progress-heading code {
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-left: auto;
 }
@@ -4956,13 +4956,13 @@ input[type="checkbox"] {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   position: relative;
   z-index: 1;
 }
 .restore-steps small {
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.65;
   color: var(--muted);
   max-width: 110px;
@@ -4989,17 +4989,17 @@ input[type="checkbox"] {
   margin: 4px 0 8px;
 }
 .restore-output-heading > span {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 }
 .restore-output-heading .btn {
-  font-size: 10px;
+  font-size: 13px;
 }
 .restore-output {
   min-height: 160px;
   max-height: 300px;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 13px;
   padding: 17px;
   line-height: 1.85;
 }
@@ -5011,7 +5011,7 @@ input[type="checkbox"] {
   margin-top: 18px;
 }
 .restore-result-links .download-link {
-  font-size: 9px;
+  font-size: 13px;
 }
 .restore-history-row {
   display: flex;
@@ -5036,13 +5036,13 @@ input[type="checkbox"] {
 }
 .restore-history-info strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   overflow-wrap: anywhere;
 }
 .restore-history-info small {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
 }
@@ -5076,7 +5076,7 @@ input[type="checkbox"] {
     gap: 2px;
   }
   .environment-tools .btn {
-    font-size: 10px;
+    font-size: 13px;
     padding: 7px 8px;
   }
   .backup-row-actions {
@@ -5100,16 +5100,16 @@ input[type="checkbox"] {
     align-self: center;
   }
   .inherited-variable-row input {
-    font-size: 10px;
+    font-size: 13px;
   }
   .inherited-variable-row code {
-    font-size: 10px;
+    font-size: 13px;
   }
   .inherited-footer {
     padding: 16px 18px;
   }
   .environment-tools .btn {
-    font-size: 9px;
+    font-size: 13px;
     gap: 5px;
   }
   .editor-toolbar:has(.environment-tools) {
@@ -5120,38 +5120,38 @@ input[type="checkbox"] {
     gap: 13px;
   }
   .env-import-parse > .form-note {
-    font-size: 9px;
+    font-size: 13px;
   }
   .env-preview-list > div {
-    font-size: 9px;
+    font-size: 13px;
   }
   .restore-source {
     padding: 14px;
   }
   .restore-source strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .restore-impact {
     padding: 16px;
   }
   .restore-impact h3 {
-    font-size: 12px;
+    font-size: 13px;
   }
   .restore-impact ul {
-    font-size: 10px;
+    font-size: 13px;
   }
   .restore-progress-heading {
     gap: 9px;
   }
   .restore-progress-heading strong {
-    font-size: 12px;
+    font-size: 13px;
   }
   .restore-history-row {
     padding: 17px 18px;
     gap: 11px;
   }
   .restore-history-info strong {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 @media (max-width: 480px) {
@@ -5160,7 +5160,7 @@ input[type="checkbox"] {
     justify-content: space-between;
   }
   .environment-tools .btn {
-    font-size: 10px;
+    font-size: 13px;
   }
   .env-import-parse {
     align-items: flex-start;
@@ -5175,7 +5175,7 @@ input[type="checkbox"] {
     gap: 8px;
   }
   .env-import-preview .editor-toolbar .btn {
-    font-size: 10px;
+    font-size: 13px;
   }
   .inherited-variable-row {
     grid-template-columns: 1fr;
@@ -5194,7 +5194,7 @@ input[type="checkbox"] {
     grid-column: 1;
   }
   .inherited-variable-row input {
-    font-size: 11px;
+    font-size: 13px;
   }
   .restore-progress-heading {
     flex-wrap: wrap;
@@ -5203,7 +5203,7 @@ input[type="checkbox"] {
     margin-left: 0;
   }
   .restore-steps small {
-    font-size: 8px;
+    font-size: 13px;
   }
   .restore-steps {
     gap: 5px;
@@ -5217,25 +5217,25 @@ input[type="checkbox"] {
     gap: 13px;
   }
   .restore-source strong {
-    font-size: 10px;
+    font-size: 13px;
   }
   .restore-source p {
-    font-size: 9px;
+    font-size: 13px;
   }
   .restore-impact ul {
-    font-size: 10px;
+    font-size: 13px;
   }
   .restore-history-info small {
-    font-size: 8px;
+    font-size: 13px;
   }
   .backup-row-actions {
     gap: 10px;
   }
   .restore-row-button {
-    font-size: 9px;
+    font-size: 13px;
   }
   .restore-unavailable {
-    font-size: 8px;
+    font-size: 13px;
   }
 }
 
@@ -5257,7 +5257,7 @@ input[type="checkbox"] {
   min-height: 40px;
 }
 .terminal-controls .field-hint {
-  font-size: 9px;
+  font-size: 13px;
 }
 .interactive-terminal {
   margin: 10px 25px 0;
@@ -5278,7 +5278,7 @@ input[type="checkbox"] {
 }
 .terminal-session-bar > span:nth-child(2) {
   color: #8d94a5;
-  font-size: 10px;
+  font-size: 13px;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5287,7 +5287,7 @@ input[type="checkbox"] {
 .terminal-session-bar code {
   margin-left: auto;
   color: #9299a9;
-  font-size: 10px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .terminal-connection {
@@ -5295,7 +5295,7 @@ input[type="checkbox"] {
   align-items: center;
   flex-shrink: 0;
   gap: 8px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
   color: #b5b9c4;
 }
@@ -5366,7 +5366,7 @@ input[type="checkbox"] {
 .terminal-placeholder p {
   color: #9097a7;
   max-width: 320px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.9;
 }
 .terminal-opening {
@@ -5378,7 +5378,7 @@ input[type="checkbox"] {
   gap: 11px;
   color: #abb4c8;
   background: #15181fe6;
-  font-size: 12px;
+  font-size: 13px;
 }
 .terminal-toolbar {
   display: flex;
@@ -5394,7 +5394,7 @@ input[type="checkbox"] {
 }
 .terminal-toolbar .btn {
   color: #b5bac6;
-  font-size: 10px;
+  font-size: 13px;
   padding: 5px 8px;
   gap: 7px;
 }
@@ -5404,7 +5404,7 @@ input[type="checkbox"] {
 }
 .terminal-toolbar > span {
   color: #8b93a4;
-  font-size: 9px;
+  font-size: 13px;
   text-align: right;
 }
 .terminal-footnotes {
@@ -5416,7 +5416,7 @@ input[type="checkbox"] {
   color: var(--muted);
 }
 .terminal-footnotes p {
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.8;
 }
 @media (max-width: 760px) {
@@ -5467,7 +5467,7 @@ input[type="checkbox"] {
     gap: 2px;
   }
   .terminal-toolbar > span {
-    font-size: 8px;
+    font-size: 13px;
   }
 }
 
@@ -5726,7 +5726,7 @@ input[type="radio"] {
   border-radius: 8px;
   background: var(--surface-alt);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
 }
 .ssh-step-heading > div {
@@ -5738,7 +5738,7 @@ input[type="radio"] {
   letter-spacing: -0.3px;
 }
 .ssh-step-heading p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 5px;
@@ -5759,16 +5759,16 @@ input[type="radio"] {
 .ssh-host-fingerprints > span,
 .ssh-host-preview > span {
   display: block;
-  font-size: 9px;
+  font-size: 13px;
   color: var(--muted);
   margin-bottom: 6px;
 }
 .ssh-repository code {
-  font-size: 11px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .ssh-public-key {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
   overflow-wrap: anywhere;
   resize: vertical;
@@ -5786,11 +5786,11 @@ input[type="radio"] {
 }
 .ssh-copy-actions > span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 13px;
 }
 .ssh-copy-actions .btn,
 .ssh-fingerprint .btn {
-  font-size: 10px;
+  font-size: 13px;
 }
 .ssh-fingerprint {
   display: flex;
@@ -5806,7 +5806,7 @@ input[type="radio"] {
 .ssh-fingerprint code {
   display: block;
   overflow-wrap: anywhere;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
 }
 .ssh-fingerprint .btn {
@@ -5820,11 +5820,11 @@ input[type="radio"] {
   background: var(--surface-alt);
 }
 .ssh-instructions h4 {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 .ssh-instructions ol {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.9;
   margin: 10px 0 13px;
@@ -5839,7 +5839,7 @@ input[type="radio"] {
   align-items: center;
   gap: 5px;
   color: var(--green);
-  font-size: 10px;
+  font-size: 13px;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -5850,7 +5850,7 @@ input[type="radio"] {
   gap: 22px;
 }
 .ssh-key-empty p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.9;
   color: var(--muted);
   max-width: 520px;
@@ -5863,7 +5863,7 @@ input[type="radio"] {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--green);
   margin-bottom: 16px;
 }
@@ -5872,7 +5872,7 @@ input[type="radio"] {
 }
 .ssh-host-status > span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 13px;
   margin-left: auto;
 }
 .ssh-host-fingerprints {
@@ -5884,12 +5884,12 @@ input[type="radio"] {
 }
 .ssh-known-hosts {
   min-height: 105px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
 }
 .ssh-verification {
   align-items: flex-start;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   margin: 16px 0;
 }
@@ -5907,7 +5907,7 @@ input[type="radio"] {
   margin-top: 24px;
 }
 .ssh-trust-guidance p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.9;
   color: var(--muted);
 }
@@ -5927,7 +5927,7 @@ input[type="radio"] {
   border-radius: 8px;
 }
 .ssh-host-preview pre {
-  font-size: 10px;
+  font-size: 13px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   max-height: 200px;
@@ -5983,23 +5983,23 @@ input[type="radio"] {
   font-optical-sizing: auto;
 }
 .field-label {
-  font-size: 12px;
+  font-size: 13px;
 }
 .field-hint,
 .form-note {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
 }
 .panel-heading h2 {
   font-size: 14px;
 }
 .panel-heading p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .badge {
   gap: 6px;
   padding: 5px 8px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   border: 1px solid transparent;
   white-space: nowrap;
@@ -6034,7 +6034,7 @@ input[type="radio"] {
   border-color: #dce5f3;
 }
 .notice {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
   padding: 14px 16px;
   align-items: flex-start;
@@ -6047,14 +6047,14 @@ input[type="radio"] {
   margin-top: 2px;
 }
 .notice p {
-  font-size: 11px;
+  font-size: 13px;
   color: inherit;
   line-height: 1.8;
 }
 .notice-title {
   display: block;
   color: inherit;
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 3px;
 }
 .notice[data-tone="info"] {
@@ -6079,7 +6079,7 @@ input[type="radio"] {
 }
 .notice .btn {
   margin-top: 7px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .summary-warning {
   color: #a06c20;
@@ -6114,7 +6114,7 @@ input[type="radio"] {
   background: transparent;
   border: 0;
   padding: 0;
-  font-size: 10px;
+  font-size: 13px;
 }
 .service-state-summary > div[data-empty="true"] {
   background: var(--surface-alt);
@@ -6123,14 +6123,14 @@ input[type="radio"] {
   color: var(--muted);
 }
 .metric-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .metric-value {
   font-variant-numeric: tabular-nums;
 }
 .metric-detail {
-  font-size: 10px;
+  font-size: 13px;
 }
 .metric-track + .metric-detail {
   margin-top: 12px;
@@ -6143,7 +6143,7 @@ input[type="radio"] {
 }
 .dashboard-project small,
 .project-service-count {
-  font-size: 10px;
+  font-size: 13px;
 }
 .next-step-list {
   padding: 4px 0;
@@ -6185,12 +6185,12 @@ input[type="radio"] {
 }
 .next-step-item strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .next-step-item small {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.7;
   color: var(--muted);
   margin-top: 4px;
@@ -6209,14 +6209,14 @@ input[type="radio"] {
   font-size: 13px;
 }
 .next-steps-clear > p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .panel-footer-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--green);
   border-top: 1px solid var(--border);
   padding: 14px 20px;
@@ -6249,12 +6249,12 @@ input[type="radio"] {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--muted);
 }
 .service-configuration-detail {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.7;
   margin-left: auto;
@@ -6267,7 +6267,7 @@ input[type="radio"] {
   margin-bottom: 20px;
 }
 .source-state-line > span:last-child {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .setup-progress {
@@ -6300,18 +6300,18 @@ input[type="radio"] {
   border: 1px solid var(--border);
   background: var(--surface);
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
   color: var(--muted);
 }
 .setup-progress strong {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 .setup-progress small {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.6;
   margin-top: 3px;
@@ -6338,12 +6338,12 @@ input[type="radio"] {
 .ssh-step-heading p,
 .ssh-instructions ol,
 .ssh-trust-guidance p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .ssh-public-key,
 .ssh-fingerprint code,
 .ssh-repository code {
-  font-size: 12px;
+  font-size: 13px;
 }
 .ssh-step-heading h3 {
   font-size: 15px;
@@ -6376,20 +6376,20 @@ input[type="radio"] {
 }
 .route-path-diagram strong {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 .route-path-diagram small {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 5px;
   line-height: 1.6;
 }
 .routing-verification-note {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.7;
   margin-bottom: 20px;
 }
@@ -6494,7 +6494,7 @@ input[type="radio"] {
     padding: 11px 9px;
   }
   .service-state-summary .badge {
-    font-size: 9px;
+    font-size: 13px;
     gap: 4px;
     white-space: normal;
   }
@@ -6514,10 +6514,10 @@ input[type="radio"] {
     height: 25px;
   }
   .setup-progress strong {
-    font-size: 10px;
+    font-size: 13px;
   }
   .setup-progress small {
-    font-size: 9px;
+    font-size: 13px;
   }
 }
 @media (max-width: 480px) {
@@ -6545,10 +6545,10 @@ input[type="radio"] {
     padding: 11px 13px;
   }
   .setup-progress strong {
-    font-size: 11px;
+    font-size: 13px;
   }
   .setup-progress small {
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 1px;
   }
   .setup-progress-marker {
@@ -6568,7 +6568,7 @@ input[type="radio"] {
     gap: 10px;
   }
   .domain-route .config-card-heading > .badge {
-    font-size: 9px;
+    font-size: 13px;
   }
   .service-row-states {
     flex-direction: column;
@@ -6577,7 +6577,7 @@ input[type="radio"] {
     max-width: 120px;
   }
   .service-row-states .badge {
-    font-size: 9px;
+    font-size: 13px;
     padding: 4px 5px;
   }
   .service-configuration-strip {
@@ -6608,7 +6608,7 @@ input[type="radio"] {
   align-items: flex-start;
   gap: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
   margin: -7px 0 16px;
 }
@@ -6630,7 +6630,7 @@ input[type="radio"] {
   margin-top: 3px;
 }
 .ssh-demo-note p {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
 }
 
@@ -6661,7 +6661,7 @@ input[type="radio"] {
 }
 .test-domain-description,
 .test-domain-footnote {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -6681,12 +6681,12 @@ input[type="radio"] {
 }
 .test-domain-preview span {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   margin-bottom: 8px;
 }
 .test-domain-preview code {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
@@ -6718,14 +6718,14 @@ input[type="radio"] {
 }
 .metrics-freshness > span,
 .metrics-demo-label {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .metrics-demo-label {
   color: var(--text);
 }
 .metrics-explanation {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.8;
   margin: 12px 0;
@@ -6748,7 +6748,7 @@ input[type="radio"] {
   align-items: center;
   gap: 8px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 .service-metric-label svg {
   flex-shrink: 0;
@@ -6762,7 +6762,7 @@ input[type="radio"] {
   overflow-wrap: anywhere;
 }
 .service-metric-card p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.7;
   margin: 0;
@@ -6778,7 +6778,7 @@ input[type="radio"] {
   flex-direction: column;
   gap: 8px;
   margin-top: 20px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .metrics-timestamps > span {
@@ -6795,7 +6795,7 @@ input[type="radio"] {
 }
 .metrics-footnote {
   margin: 15px 0 0;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -6806,13 +6806,13 @@ input[type="radio"] {
 }
 .metrics-breakdown summary {
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 .metrics-breakdown summary span {
   display: inline-block;
   margin-left: 7px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .metrics-breakdown ul {
@@ -6832,7 +6832,7 @@ input[type="radio"] {
   flex-wrap: wrap;
 }
 .metrics-container-heading strong {
-  font-size: 12px;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 .metrics-container dl {
@@ -6843,22 +6843,22 @@ input[type="radio"] {
 }
 .metrics-container dt {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 13px;
   margin-bottom: 6px;
 }
 .metrics-container dd {
-  font-size: 11px;
+  font-size: 13px;
   margin: 0;
   overflow-wrap: anywhere;
 }
 .metrics-container > p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.8;
   margin: 0;
 }
 .dashboard-metrics-source {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.8;
   margin: -8px 0 23px;
@@ -6877,7 +6877,7 @@ input[type="radio"] {
   }
   .service-metric-label {
     gap: 6px;
-    font-size: 10px;
+    font-size: 13px;
     align-items: flex-start;
   }
   .service-metric-value {
@@ -6887,3 +6887,845 @@ input[type="radio"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.port-diagnostics {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 22px 0;
+  background: var(--surface-alt);
+  min-width: 0;
+}
+.port-diagnostics-heading,
+.port-diagnostics-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.port-diagnostics-heading {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.port-diagnostics-heading h3 {
+  font-size: 14px;
+}
+.port-diagnostics-heading > div > svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.port-diagnostics-intro,
+.port-diagnostics-footnote {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 10px 0;
+}
+.port-diagnostics-footnote {
+  margin: 18px 0 0;
+}
+.port-inspection-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 18px 0;
+}
+.port-inspection-meta > span:not(.badge) {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.port-route-picker {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  margin: 18px 0;
+}
+.port-route-picker .field {
+  margin-bottom: 8px;
+}
+.port-route-picker p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.port-section-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  margin: 22px 0 12px;
+}
+.port-listeners {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.port-listeners li {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+.port-listener-content {
+  min-width: 0;
+  flex: 1;
+}
+.port-listener-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.port-listener-title strong {
+  font-size: 13px;
+}
+.port-listener-content code {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.port-listener-scope {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.port-listener-content p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 10px;
+  color: var(--muted);
+}
+.port-listener-content .port-listener-warning {
+  color: var(--text);
+  border-left: 2px solid var(--amber, #e3a33a);
+  padding-left: 10px;
+}
+.port-listeners li > .btn {
+  flex-shrink: 0;
+  font-size: 13px;
+}
+.port-target-check {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 15px 0;
+  color: var(--text);
+}
+.port-exposed {
+  padding-top: 17px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.port-exposed h4 {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.port-exposed > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.port-exposed p {
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+.port-selection-feedback {
+  font-size: 13px;
+  line-height: 1.8;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 16px 0 0;
+}
+@media (max-width: 600px) {
+  .port-diagnostics {
+    padding: 16px;
+  }
+  .port-listeners li {
+    flex-direction: column;
+  }
+  .port-listeners li > .btn {
+    align-self: stretch;
+  }
+  .port-inspection-meta time {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Readability pass: explicit type scale and comfortable controls, preserving FullPanel's layout. */
+:root {
+  font-size: 16px;
+  --muted: #56657d;
+  --subtle: #66758c;
+}
+body {
+  font-size: 15px;
+  line-height: 1.5;
+}
+[data-theme="dark"] {
+  --muted: #b0bdd3;
+  --subtle: #9cacc4;
+}
+.page-heading h1 {
+  font-size: 34px;
+  letter-spacing: -0.035em;
+}
+.page-heading p {
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 760px;
+}
+.panel-heading h2 {
+  font-size: 18px;
+  letter-spacing: -0.025em;
+}
+.panel-heading p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.section-label,
+.settings-intro h2,
+.config-card-heading > strong,
+.domain-auth-heading h4,
+.port-diagnostics-heading h3 {
+  font-size: 16px;
+}
+.field-label,
+.auth-form-wrap .field-label,
+.port-row .field-label {
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+.field-hint,
+.form-note,
+.metric-detail,
+.property-list dt,
+.service-heading-main p,
+.routing-verification-note,
+.port-diagnostics-footnote {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+body input:not([type="checkbox"]):not([type="radio"]),
+body select,
+body textarea {
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 11px 13px;
+  min-height: 46px;
+}
+body input::placeholder,
+body textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+.checkbox-field {
+  min-height: 44px;
+  padding: 5px 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+.checkbox-field input[type="checkbox"],
+.routing-toggles .checkbox-field input,
+.routing-advanced-content .checkbox-field input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.btn,
+.heading-actions .btn,
+.service-actions .btn,
+.port-listeners li > .btn,
+.notice .btn,
+.empty-state .btn,
+.domain-auth-actions .btn {
+  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+.icon-button,
+.toast .icon-button {
+  min-width: 44px;
+  width: 44px;
+  height: 44px;
+  padding: 9px;
+}
+.badge {
+  font-size: 13px;
+  padding: 5px 9px;
+  line-height: 1.45;
+}
+.badge svg {
+  width: 13px;
+  height: 13px;
+}
+.notice,
+.notice p,
+.error-box,
+.port-diagnostics-intro,
+.metrics-explanation {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.notice-title {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.sidebar {
+  width: 248px;
+  padding: 24px 16px 16px;
+  overflow-y: auto;
+}
+.main-shell {
+  margin-left: 248px;
+}
+.sidebar-brand {
+  padding: 0 8px 22px;
+}
+.sidebar-label {
+  font-size: 13px;
+  letter-spacing: 0.09em;
+  color: #b1bfd7;
+  margin-bottom: 10px;
+}
+.sidebar-bottom {
+  padding-top: 24px;
+}
+.nav-item {
+  font-size: 15px;
+  min-height: 44px;
+  padding: 11px 13px;
+  margin: 2px 0;
+  color: #c4cee0;
+  gap: 11px;
+}
+.nav-item.active {
+  color: #f0bb62;
+  background: #ffffff0d;
+}
+.server-selector {
+  margin-bottom: 22px;
+}
+.server-selector strong {
+  font-size: 14px;
+  max-width: none;
+}
+.server-selector small,
+.sidebar-user small,
+.open-source-note small {
+  font-size: 13px;
+  color: #adbad1;
+}
+.sidebar-user strong {
+  font-size: 14px;
+  max-width: none;
+}
+.open-source-note {
+  padding: 15px 3px;
+  margin: 16px 3px;
+}
+.open-source-note p {
+  font-size: 14px;
+}
+.topbar > div,
+.topbar-search,
+.topbar-search span {
+  font-size: 14px;
+}
+.topbar {
+  min-height: 76px;
+}
+.demo-banner,
+.demo-banner strong {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.service-tabs a {
+  font-size: 14px;
+  padding-bottom: 16px;
+  min-height: 44px;
+}
+.service-actions {
+  flex-wrap: wrap;
+}
+.service-heading-main > div {
+  min-width: 0;
+}
+.service-title h1 {
+  font-size: 29px;
+}
+.service-row-name strong,
+.dashboard-project strong,
+.project-card h3 {
+  font-size: 16px;
+}
+.service-row-name small {
+  font-size: 13px;
+}
+.service-row-states {
+  flex-wrap: wrap;
+}
+.service-state-summary .badge {
+  font-size: 13px;
+}
+.service-state-summary > div {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.service-state-summary .badge svg {
+  width: 13px;
+  height: 13px;
+}
+.metric-label,
+.service-metric-label {
+  font-size: 14px;
+}
+.metric-detail {
+  color: var(--muted);
+}
+.metric-value {
+  font-size: 31px;
+}
+.service-metric-card p,
+.metrics-timestamps,
+.metrics-footnote,
+.metrics-freshness > span,
+.metrics-demo-label {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.service-metric-value {
+  font-size: 29px;
+}
+.metrics-breakdown summary,
+.port-section-label,
+.port-exposed h4 {
+  font-size: 14px;
+}
+.metrics-container dl,
+.property-list > div {
+  font-size: 14px;
+}
+.metrics-container dd,
+.property-list code,
+.port-listener-content code {
+  font-size: 13px;
+}
+.service-overview-grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+.service-overview-grid > div {
+  min-width: 0;
+}
+.table-scroll th {
+  font-size: 13px;
+}
+.table-scroll td,
+.table-title {
+  font-size: 14px;
+}
+.data-table th,
+.data-table td {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.filter-pills button,
+.filter-select,
+.text-link {
+  font-size: 14px;
+}
+.filter-pills button {
+  min-height: 40px;
+  padding: 9px 13px;
+}
+.form-actions {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.form-actions .form-note {
+  flex: 1 1 200px;
+}
+.form-actions > .btn {
+  flex-shrink: 0;
+}
+.env-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 44px;
+}
+.port-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 110px 44px;
+}
+.port-diagnostics {
+  padding: 24px;
+}
+.port-listener-title strong {
+  font-size: 16px;
+}
+.port-route-picker p,
+.port-listener-content p,
+.port-target-check,
+.port-exposed p,
+.port-selection-feedback {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.setup-progress strong {
+  font-size: 14px;
+}
+.setup-progress small {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.setup-progress-marker {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+.route-path-diagram strong {
+  font-size: 15px;
+}
+.route-path-diagram small {
+  font-size: 13px;
+}
+.modal {
+  max-width: 590px;
+}
+.modal-header h2 {
+  font-size: 23px;
+}
+.modal-header p {
+  font-size: 14px;
+}
+.auth-form-wrap {
+  max-width: 430px;
+}
+.auth-form-description,
+.auth-bottom-note {
+  font-size: 14px;
+}
+@media (max-width: 1100px) {
+  .service-state-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .service-overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .topbar {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    width: min(300px, calc(100vw - 32px));
+    padding: 24px 18px 18px;
+  }
+  .main-shell {
+    margin-left: 0;
+  }
+  .topbar {
+    min-height: 66px;
+    height: auto;
+    padding: 10px 18px;
+  }
+  .topbar > div {
+    gap: 7px;
+    font-size: 13px;
+  }
+  .version-pill {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  .page-content {
+    padding: 27px 20px;
+  }
+  .page-heading h1 {
+    font-size: 29px;
+    max-width: none;
+  }
+  .page-heading p {
+    font-size: 15px;
+  }
+  .heading-actions .btn {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .panel-heading {
+    padding: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .panel-heading h2 {
+    font-size: 18px;
+  }
+  .panel-heading p {
+    font-size: 14px;
+  }
+  .panel-heading .text-link {
+    font-size: 14px;
+  }
+  .metrics-grid {
+    gap: 12px;
+  }
+  .metric-card {
+    padding: 18px 15px;
+  }
+  .metric-label {
+    font-size: 13px;
+  }
+  .metric-value {
+    font-size: 28px;
+  }
+  .metric-detail {
+    font-size: 13px;
+  }
+  .service-state-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .service-state-summary > div {
+    padding: 14px 12px;
+  }
+  .service-state-summary .badge {
+    font-size: 13px;
+  }
+  .service-state-summary > div > strong {
+    font-size: 24px;
+  }
+  .service-title h1 {
+    font-size: 26px;
+  }
+  .service-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .service-actions .btn {
+    font-size: 14px;
+  }
+  .service-tabs a {
+    font-size: 14px;
+  }
+  .service-row {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px;
+  }
+  .service-row-name {
+    min-width: 170px;
+  }
+  .service-row-states {
+    margin-left: 51px;
+  }
+  .service-row > svg:last-child {
+    margin-left: auto;
+  }
+  .service-metrics-body {
+    padding: 18px;
+  }
+  .service-metric-card {
+    padding: 15px 13px;
+  }
+  .service-metric-value {
+    font-size: 25px;
+  }
+  .service-metric-label {
+    font-size: 13px;
+  }
+  .form-grid {
+    gap: 18px;
+  }
+  .form-panel {
+    padding: 20px;
+  }
+  .env-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+  }
+  .port-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    gap: 12px;
+  }
+  .port-row > .field:nth-child(3) {
+    grid-column: 1 / 3;
+  }
+  .port-row > .icon-button {
+    grid-column: 3;
+    align-self: end;
+  }
+  .port-diagnostics {
+    padding: 18px;
+  }
+  .port-listeners li {
+    padding: 16px;
+  }
+  .port-listeners li > .btn {
+    font-size: 14px;
+  }
+  .setup-progress strong {
+    font-size: 14px;
+  }
+  .setup-progress small {
+    font-size: 13px;
+  }
+}
+@media (max-width: 480px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .domain-route {
+    padding: 18px;
+  }
+  .routing-toggles {
+    gap: 10px;
+  }
+  .domain-auth-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .domain-auth-actions .btn {
+    font-size: 14px;
+    width: 100%;
+  }
+  .property-list > div {
+    gap: 12px;
+    font-size: 14px;
+    align-items: flex-start;
+  }
+  .property-list dd {
+    max-width: 62%;
+  }
+  .property-list code {
+    font-size: 13px;
+  }
+  .service-configuration-detail {
+    font-size: 13px;
+  }
+  .service-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .service-metric-label {
+    flex-wrap: wrap;
+  }
+  .service-metric-value {
+    font-size: 23px;
+  }
+  .metrics-container dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+:is(.page-content, .modal, .auth-main)
+  :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  font-size: 16px;
+  min-height: 46px;
+  line-height: 1.5;
+}
+:is(.page-content, .modal, .auth-main) .btn {
+  font-size: 14px;
+  min-height: 44px;
+}
+.repository-access-guide {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 18px;
+  background: var(--surface-alt);
+  margin-bottom: 22px;
+}
+.repository-access-guide strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.repository-access-guide code {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.repository-access-guide p {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+@media (max-width: 600px) {
+  .repository-access-guide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+:is(.page-content, .modal) .search-input input {
+  padding-left: 40px;
+  height: 46px;
+}
+.env-row .icon-button {
+  height: 44px;
+}
+@media (max-width: 480px) {
+  .service-actions > .btn-primary {
+    flex-basis: 100%;
+  }
+  .domain-route > .config-card-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 12px;
+    align-items: center;
+  }
+  .domain-route > .config-card-heading > strong {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .domain-route > .config-card-heading > .icon-button {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .domain-route > .config-card-heading > .badge {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+}
+.repository-access-guide .btn {
+  display: flex;
+  margin-top: 12px;
+}
+
+.github-host-trust { padding: 22px; margin: 22px 0; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 10px; }
+.github-host-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.github-host-heading h3 { font-size: 17px; }
+.github-host-trust > p { font-size: 14px; line-height: 1.7; margin: 12px 0; }
+.github-host-trust dl { margin: 20px 0; }
+.github-host-trust dl > div + div { margin-top: 16px; }
+.github-host-trust dt { font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+.github-host-trust dd { margin: 0; font-size: 14px; }
+.github-host-trust code { font-size: 13px; overflow-wrap: anywhere; }
+.github-host-trust a { display: inline-flex; align-items: center; gap: 4px; text-decoration: underline; text-underline-offset: 3px; }
+.github-host-details summary { cursor: pointer; font-size: 14px; font-weight: 600; }
+.github-host-details code { display: block; }
+.ssh-manual-trust { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
+.ssh-manual-trust > summary { font-size: 14px; cursor: pointer; margin-bottom: 18px; }
+@media (max-width: 600px) { .github-host-trust { padding: 18px; } }

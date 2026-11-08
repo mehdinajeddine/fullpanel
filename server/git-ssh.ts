@@ -11,6 +11,22 @@ const execute = promisify(execFile);
 const error = (statusCode: number, message: string) => Object.assign(new Error(message), { statusCode });
 export interface SshRepository { repository: string; hostname: string; port: number; username: string; path: string; knownHost: string }
 export interface GitSshCredential { serviceId: string; repository: string; privateKey: string; publicKey: string; fingerprint: string; knownHosts?: string; hostFingerprints?: string[]; updatedAt: string; hostKeyUpdatedAt?: string }
+export type EffectiveGitSshCredential = GitSshCredential & { hostKeySource?: 'github-published' | 'manual' };
+
+// GitHub's published Ed25519 host key, verified 2026-11-08. Deliberately not fetched or learned at runtime.
+// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
+export const GITHUB_KNOWN_HOSTS = 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl\n';
+export const GITHUB_HOST_FINGERPRINT = 'SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU';
+
+/** Resolve trust without mutating stored credentials. Explicit pins always win, including invalid ones. */
+export function effectiveSshCredential(credential: GitSshCredential): EffectiveGitSshCredential {
+  if (credential.knownHosts !== undefined && credential.knownHosts !== '') return { ...credential, hostKeySource: 'manual' };
+  const scope = parseSshRepository(credential.repository);
+  if (scope.hostname === 'github.com' && scope.port === 22) return {
+    ...credential, knownHosts: GITHUB_KNOWN_HOSTS, hostFingerprints: [GITHUB_HOST_FINGERPRINT], hostKeySource: 'github-published'
+  };
+  return { ...credential };
+}
 
 export function isSshRepository(repository: string): boolean { return repository.startsWith('ssh://') || /^[^/]+@[^/]+:/.test(repository); }
 
@@ -211,6 +227,7 @@ for (const signal of ['SIGTERM', 'SIGINT', 'SIGHUP']) process.on(signal, stop);
 export async function withSshSourceCredentials<T>(repository: string, credential: GitSshCredential | undefined, callback: (context: GitCredentialContext) => Promise<T>, baseEnv: NodeJS.ProcessEnv, credentialsDirectory?: string): Promise<T> {
   const scope = parseSshRepository(repository);
   if (!credential || credential.repository !== scope.repository) throw error(409, 'Generate an SSH deploy key for this saved repository before deployment.');
+  credential = effectiveSshCredential(credential);
   if (!credential.knownHosts) throw error(409, 'Verify and save the SSH server public key before deployment.');
   // Revalidate private stored trust; stale or corrupted records cannot expand host scope.
   const trust = await validateSshKnownHosts(scope.repository, credential.knownHosts);

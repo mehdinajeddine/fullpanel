@@ -40,6 +40,7 @@ jobs:
       - run: npm run test:proxy
       - run: npm run test:test-domains
       - run: npm run test:service-metrics
+      - run: npm run test:ports
       - run: npm run test:credentials
       - run: npm run test:git
       - run: npm run test:git-ssh

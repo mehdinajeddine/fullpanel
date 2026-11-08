@@ -4,7 +4,7 @@ import { isAbsolute, join, resolve } from 'node:path';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import type { Service, SourceCredentialStatus } from '../shared/types.js';
-import { generateSshKeyPair, isSshRepository, parseSshRepository, validateSshKnownHosts, withSshSourceCredentials, isolatedGitEnvironment, type GitSshCredential } from './git-ssh.js';
+import { effectiveSshCredential, generateSshKeyPair, isSshRepository, parseSshRepository, validateSshKnownHosts, withSshSourceCredentials, isolatedGitEnvironment, type GitSshCredential } from './git-ssh.js';
 export type { GitSshCredential } from './git-ssh.js';
 
 export interface GitSourceCredential { serviceId: string; repository: string; username: string; token: string; updatedAt: string }
@@ -78,7 +78,7 @@ export function pruneSourceCredentials(service: Service, credentials: ServiceSou
 export function resolveSourceCredentials(service: Service, credentials: ServiceSourceCredentials = {}): DeploymentSourceCredentials {
   const scoped = pruneSourceCredentials(service, credentials);
   if (credentials.git && !scoped.git || credentials.ssh && !scoped.ssh || credentials.registry && !scoped.registry) throw fail(409, 'Source credentials no longer match this service source. Save new credentials before deployment.');
-  return structuredClone(scoped);
+  return structuredClone({ ...scoped, ...(scoped.ssh ? { ssh: effectiveSshCredential(scoped.ssh) } : {}) });
 }
 
 export function sourceCredentialSecrets(credentials: ServiceSourceCredentials = {}): string[] {
@@ -101,9 +101,10 @@ export function redactSourceCredentials(text: string, credentials: ServiceSource
 
 function status(service: Service, stored: ServiceSourceCredentials = {}): SourceCredentialStatus {
   const credentials = pruneSourceCredentials(service, stored);
+  const ssh = credentials.ssh && effectiveSshCredential(credentials.ssh);
   return {
     git: credentials.git ? { configured: true, repository: credentials.git.repository, username: credentials.git.username, updatedAt: credentials.git.updatedAt } : { configured: false },
-    ssh: credentials.ssh ? { configured: true, repository: credentials.ssh.repository, publicKey: credentials.ssh.publicKey, fingerprint: credentials.ssh.fingerprint, knownHosts: credentials.ssh.knownHosts, hostKeyConfigured: !!credentials.ssh.knownHosts, hostFingerprints: credentials.ssh.hostFingerprints || [], updatedAt: credentials.ssh.updatedAt, hostKeyUpdatedAt: credentials.ssh.hostKeyUpdatedAt } : { configured: false },
+    ssh: ssh ? { configured: true, repository: ssh.repository, publicKey: ssh.publicKey, fingerprint: ssh.fingerprint, knownHosts: ssh.knownHosts, hostKeyConfigured: !!ssh.knownHosts, hostFingerprints: ssh.hostFingerprints || [], hostKeySource: ssh.hostKeySource, updatedAt: ssh.updatedAt, hostKeyUpdatedAt: ssh.hostKeyUpdatedAt } : { configured: false },
     registry: credentials.registry ? { configured: true, registry: credentials.registry.registry, imageRepository: credentials.registry.imageRepository, username: credentials.registry.username, updatedAt: credentials.registry.updatedAt } : { configured: false },
     capabilities: { gitHttps: true, gitSsh: true, registryImages: true, registryBuilds: false }
   };

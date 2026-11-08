@@ -11,6 +11,7 @@ import {
 import type { Service, SourceCredentialStatus } from "../shared/types";
 import { api, date, useQuery } from "./api";
 import { useAccess } from "./Access";
+import { githubHostKeyCheckedAt, githubHostKeySource } from "./github-host-key";
 import {
   Badge,
   Button,
@@ -78,6 +79,8 @@ export default function SshCredentials({
   >();
   const toast = useToast();
   const expectedHost = hostEntry(service.source.repository || "");
+  const isGithubHost = expectedHost === "github.com";
+  const automaticGithub = isGithubHost && (!status?.configured || status.hostKeySource === "github-published");
   const canChange = sourceSaved && !busy && !!status;
   const hostChanged = knownHosts.trim() !== (status?.knownHosts || "").trim();
   useEffect(() => {
@@ -95,21 +98,22 @@ export default function SshCredentials({
       return;
     setBusy(action);
     setError("");
-    setErrorLocation(action);
+    const savingHost = action === "host";
+    setErrorLocation(savingHost ? "host" : action);
     try {
       const value = await api<SourceCredentialStatus>(
-        `/services/${service.id}/source-credentials/ssh${action === "host" ? "/host-key" : action === "revoke" ? "" : "/rotate"}`,
+        `/services/${service.id}/source-credentials/ssh${savingHost ? "/host-key" : action === "revoke" ? "" : "/rotate"}`,
         {
           method:
-            action === "revoke" ? "DELETE" : action === "host" ? "PUT" : "POST",
+            action === "revoke" ? "DELETE" : savingHost ? "PUT" : "POST",
           ...(action !== "revoke"
-            ? { body: JSON.stringify(action === "host" ? { knownHosts } : {}) }
+            ? { body: JSON.stringify(savingHost ? { knownHosts } : {}) }
             : {}),
         },
       );
       query.setData(value);
       setDialog(undefined);
-      if (action === "host" || action === "revoke") {
+      if (savingHost || action === "revoke") {
         setKnownHosts(value.ssh.knownHosts || "");
         setVerified(false);
       }
@@ -117,7 +121,7 @@ export default function SshCredentials({
       toast(
         action === "revoke"
           ? "SSH access removed from this service"
-          : action === "host"
+          : savingHost
             ? "Trusted server keys saved. They will be checked on the next deployment."
             : "SSH deploy key generated. Add its public key to your repository.",
       );
@@ -190,7 +194,7 @@ export default function SshCredentials({
                         ? "current"
                         : "pending",
                 },
-                {
+                ...(!automaticGithub ? [{
                   label: "Server trust",
                   detail:
                     sourceSaved && status.hostKeyConfigured
@@ -198,11 +202,11 @@ export default function SshCredentials({
                       : "Verify and pin host keys",
                   state:
                     sourceSaved && status.hostKeyConfigured
-                      ? "complete"
+                      ? "complete" as const
                       : sourceSaved && status.configured
-                        ? "current"
-                        : "pending",
-                },
+                        ? "current" as const
+                        : "pending" as const,
+                }] : []),
               ]}
             />
           )}
@@ -231,7 +235,7 @@ export default function SshCredentials({
                     behavior: "smooth",
                   });
                   section
-                    ?.querySelector("textarea")
+                    ?.querySelector<HTMLElement>("summary, textarea")
                     ?.focus({ preventScroll: true });
                 }}
               >
@@ -338,8 +342,9 @@ export default function SshCredentials({
                             read the repository.
                           </li>
                           <li>
-                            Pin the server’s host key below, then deploy your
-                            service.
+                            {automaticGithub
+                              ? "Deploy your service. GitHub’s server identity is checked automatically."
+                              : "Pin the server’s host key below, then deploy your service."}
                           </li>
                         </ol>
                         <a
@@ -397,57 +402,40 @@ export default function SshCredentials({
                   className="ssh-setup-step"
                   aria-labelledby={`ssh-host-${service.id}`}
                 >
-                  <div className="ssh-step-heading">
-                    <span data-complete={!!status.hostKeyConfigured}>
-                      {status.hostKeyConfigured ? (
-                        <CheckCircle2 size={17} aria-hidden="true" />
-                      ) : (
-                        "02"
-                      )}
-                    </span>
-                    <div>
-                      <h3 id={`ssh-host-${service.id}`}>
-                        Verify the Git server
-                      </h3>
-                      <p>
-                        Trust only host keys checked with the provider or server
-                        administrator.
-                      </p>
+                  {automaticGithub ? (
+                    <div className="github-host-trust" role="region" aria-label="GitHub server identity">
+                      <div className="github-host-heading">
+                        <ShieldCheck size={20} aria-hidden="true" />
+                        <h3 id={`ssh-host-${service.id}`}>GitHub server verification is automatic</h3>
+                        <Badge status="configured" label="Official GitHub key" />
+                      </div>
+                      <p>FullPanel checks <strong>github.com:22</strong> against GitHub’s published server key when cloning. No manual server-key setup is needed. Add your deploy public key to GitHub, then deploy.</p>
+                      <details className="github-host-details">
+                        <summary>View official key details</summary>
+                        <dl>
+                          {!!status.hostFingerprints?.length && <div><dt>Published server fingerprint</dt><dd>{status.hostFingerprints.map(fingerprint => <code key={fingerprint}>{fingerprint}</code>)}</dd></div>}
+                          <div><dt>Source checked</dt><dd><time dateTime={githubHostKeyCheckedAt}>{githubHostKeyCheckedAt}</time> · <a href={githubHostKeySource} target="_blank" rel="noopener noreferrer">Official GitHub documentation <ArrowUpRight size={13} /></a></dd></div>
+                        </dl>
+                        <p className="form-note">The pinned identity is checked on each clone. This does not confirm repository access or a successful network connection.</p>
+                      </details>
                     </div>
-                    <ShieldCheck size={19} />
-                  </div>
-                  <div className="ssh-host-status">
-                    <Badge
-                      status={
-                        status.hostKeyConfigured ? "configured" : "pending"
-                      }
-                      label={
-                        status.hostKeyConfigured
-                          ? "Server keys pinned"
-                          : "Server keys required before cloning"
-                      }
-                    />
-                    {status.hostKeyUpdatedAt && (
-                      <span>Updated {date(status.hostKeyUpdatedAt)}</span>
-                    )}
-                  </div>
-                  {!!status.hostFingerprints?.length && (
-                    <div className="ssh-host-fingerprints">
-                      <span>Trusted server fingerprints</span>
-                      {status.hostFingerprints.map((fingerprint) => (
-                        <div className="ssh-fingerprint" key={fingerprint}>
-                          <code>{fingerprint}</code>
-                          <CopyButton
-                            value={fingerprint}
-                            label="Copy"
-                            ariaLabel={`Copy server fingerprint ${fingerprint}`}
-                          />
-                        </div>
-                      ))}
+                  ) : <>
+                    <div className="ssh-step-heading">
+                      <span data-complete={!!status.hostKeyConfigured}>{status.hostKeyConfigured ? <CheckCircle2 size={17} aria-hidden="true" /> : "02"}</span>
+                      <div><h3 id={`ssh-host-${service.id}`}>Verify the Git server</h3><p>Trust only host keys checked with the provider or server administrator.</p></div>
+                      <ShieldCheck size={19} />
                     </div>
-                  )}
+                    <div className="ssh-host-status">
+                      <Badge status={status.hostKeyConfigured ? "configured" : "pending"} label={status.hostKeyConfigured ? "Server keys pinned" : "Server keys required before cloning"} />
+                      {status.hostKeyUpdatedAt && <span>Updated {date(status.hostKeyUpdatedAt)}</span>}
+                    </div>
+                    {!!status.hostFingerprints?.length && <div className="ssh-host-fingerprints"><span>Trusted server fingerprints</span>{status.hostFingerprints.map(fingerprint => <div className="ssh-fingerprint" key={fingerprint}><code>{fingerprint}</code><CopyButton value={fingerprint} label="Copy" ariaLabel={`Copy server fingerprint ${fingerprint}`} /></div>)}</div>}
+                    {isGithubHost && status.hostKeySource === "manual" && <Notice title="Custom GitHub server keys are pinned">Your explicitly saved server keys take precedence over FullPanel’s published GitHub default. They are preserved until you replace or remove them.</Notice>}
+                  </>}
+                  <ErrorBox message={errorLocation === "host" ? error : ""} />
+                  <details className="ssh-manual-trust" open={!isGithubHost}>
+                    <summary>{isGithubHost ? "Advanced: enter host keys manually" : "Enter verified server keys"}</summary>
                   <form onSubmit={saveHost}>
-                    <ErrorBox message={errorLocation === "host" ? error : ""} />
                     <fieldset
                       className="plain-fieldset"
                       disabled={!canChange || !status.configured}
@@ -500,16 +488,17 @@ export default function SshCredentials({
                       </div>
                     </fieldset>
                   </form>
-                  {!status.configured && (
+                  </details>
+                  {!automaticGithub && !status.configured && (
                     <p className="form-note">
                       Generate a deploy key before saving trusted server keys.
                     </p>
                   )}
-                  <div className="ssh-trust-guidance">
+                  {!automaticGithub && <div className="ssh-trust-guidance">
                     <p>
                       Get the public host keys from the provider’s trusted
                       documentation or your administrator. FullPanel does not
-                      scan for or automatically trust server keys.
+                      scan for or automatically trust custom server keys.
                     </p>
                     <div>
                       <a
@@ -531,7 +520,7 @@ export default function SshCredentials({
                       If a deployment reports a changed host key, verify the
                       change with the provider before replacing the pinned keys.
                     </p>
-                  </div>
+                  </div>}
                 </section>
                 <p className="form-note ssh-scope-note">
                   Changing the saved repository removes its deploy key and
@@ -564,7 +553,7 @@ export default function SshCredentials({
           }}
         >
           <ErrorBox message={error} />
-          {dialog !== "host" ? (
+          {dialog === "rotate" || dialog === "revoke" ? (
             <Notice>
               Remove the old public deploy key from your Git provider
               separately. FullPanel cannot revoke permissions in the provider’s

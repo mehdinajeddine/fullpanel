@@ -6,7 +6,7 @@ Deploy your applications, manage your databases and follow your services from on
 
 **Early development.** Check the [supported workflows and current limitations](docs/VERIFICATION.md) before relying on FullPanel for production workloads.
 
-![FullPanel dashboard with service status and next actions](docs/images/inter-dashboard-desktop.png)
+![FullPanel dashboard with service status and next actions](docs/images/readability-dashboard-desktop.png)
 
 ## What you can do
 
@@ -15,6 +15,7 @@ Deploy your applications, manage your databases and follow your services from on
 - **See what needs attention** with service status, deployment history, logs and visible pending changes.
 - **Follow each service's resource usage** with CPU, memory and network totals, collection times and clear missing-data states.
 - **Give each app an address** with custom domains, HTTPS configuration and optional HTTP test URLs without manual DNS records.
+- **Find the right application port** by inspecting actual listeners before changing a domain’s target port.
 - **Protect your data** with scheduled local backups and restoration to compatible services.
 - **Return to a previous app version** using saved releases while keeping current volume data.
 - **Work with your team** through project permissions, shared environment variables and scoped API keys.
@@ -25,13 +26,13 @@ Explore the dashboard, deployment controls and mobile views below. Screenshots u
 
 | Services at a glance | Private Git over SSH |
 | --- | --- |
-| [![Service CPU, memory and cumulative network metrics with sample times](docs/images/r17-metrics-desktop.png)](docs/images/r17-metrics-desktop.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/inter-git-ssh-desktop.png)](docs/images/inter-git-ssh-desktop.png) |
-| **Follow resource usage** — see CPU, memory and network totals with the collection time. | **Connect private repositories** — set up a deploy key and verify your Git server. |
+| [![Service CPU, memory and cumulative network metrics with sample times](docs/images/readability-service-desktop.png)](docs/images/readability-service-desktop.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/ssh-github-auto-desktop.png)](docs/images/ssh-github-auto-desktop.png) |
+| **Follow resource usage** — see CPU, memory and network totals with the collection time. | **Connect private repositories** — choose SSH, add your deploy key to GitHub, then deploy. GitHub.com server identity is verified using its published key. |
 
 | Domains and routing | Automatic test URLs |
 | --- | --- |
-| [![Domain routing from the public hostname to the application's internal port](docs/images/inter-domain-desktop.png)](docs/images/inter-domain-desktop.png) | [![Opt-in public IPv4 setting with a generated sslip.io HTTP URL preview](docs/images/r08-test-urls-desktop.png)](docs/images/r08-test-urls-desktop.png) |
-| **Connect your domains** — manage each application's address and routing in one place. | **Try a deployed app** — configure your server's public IPv4 once for automatic HTTP test URLs. |
+| [![Domain routing from the public hostname to the application's internal port](docs/images/readability-ports-desktop.png)](docs/images/readability-ports-desktop.png) | [![Opt-in public IPv4 setting with a generated sslip.io HTTP URL preview](docs/images/r08-test-urls-desktop.png)](docs/images/r08-test-urls-desktop.png) |
+| **Connect your domains** — inspect listening ports before choosing where a domain should route. | **Try a deployed app** — configure your server's public IPv4 once for automatic HTTP test URLs. |
 
 <details>
 <summary><strong>Mobile views</strong></summary>
@@ -42,8 +43,8 @@ Explore the dashboard, deployment controls and mobile views below. Screenshots u
     <th>Service metrics</th>
   </tr>
   <tr>
-    <td align="center"><a href="docs/images/inter-dashboard-mobile.png"><img src="docs/images/inter-dashboard-mobile.png" alt="FullPanel dashboard on a mobile screen with service indicators and next actions" width="250"></a></td>
-    <td align="center"><a href="docs/images/r17-metrics-mobile.png"><img src="docs/images/r17-metrics-mobile.png" alt="Service resource metrics on a mobile screen with clear sample times and simulated data" width="250"></a></td>
+    <td align="center"><a href="docs/images/readability-dashboard-mobile.png"><img src="docs/images/readability-dashboard-mobile.png" alt="FullPanel dashboard on a mobile screen with service indicators and next actions" width="250"></a></td>
+    <td align="center"><a href="docs/images/readability-service-mobile.png"><img src="docs/images/readability-service-mobile.png" alt="Service resource metrics on a mobile screen with clear sample times and simulated data" width="250"></a></td>
   </tr>
 </table>
 
@@ -155,7 +156,7 @@ The CLI prints JSON, refuses HTTP redirects, and exits unsuccessfully when a wai
 
 ## Current scope
 
-FullPanel currently manages services on a single Docker host. Interactive terminals, offsite backups and rolling deployments are still in development. Public certificate issuance and renewal remain unverified. An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned.
+FullPanel currently manages services on a single Docker host. Interactive terminals, offsite backups and rolling deployments are still in development. Initial public certificate issuance has been tested; automatic renewal remains unverified. An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned.
 
 Also planned: [FullPanel Mobile](docs/specs/16-mobile-monitoring.md), an iOS and Android app to pair your phone by scanning a QR code and follow your servers and services in read-only mode. It is not available yet.
 

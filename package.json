@@ -22,6 +22,7 @@
     "test:proxy": "tsx scripts/smoke-proxy.ts",
     "test:test-domains": "tsx scripts/smoke-test-domains.ts",
     "test:service-metrics": "tsx scripts/smoke-service-metrics.ts",
+    "test:ports": "tsx scripts/smoke-ports.ts",
     "test:package": "tsx scripts/smoke-package.ts",
     "test:credentials": "tsx scripts/smoke-credentials.ts",
     "test:git": "tsx scripts/smoke-git.ts",

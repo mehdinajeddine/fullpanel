@@ -14,6 +14,7 @@ import {
 import type { Domain, Service } from "../shared/types";
 import { api, newId, patch, useQuery } from "./api";
 import { useAccess } from "./Access";
+import PortDiagnostics from "./PortDiagnostics";
 import {
   Badge,
   Button,
@@ -326,6 +327,16 @@ export default function DomainsEditor({
             protection.
           </Notice>
         )}
+        <PortDiagnostics
+          service={service}
+          targets={domains.map((domain, index) => ({
+            id: domain.id,
+            label: domain.hostname || `Domain ${index + 1}`,
+            port: domain.port,
+          }))}
+          onSelect={canEdit ? (id, port) => update(id, { port }) : undefined}
+          disabled={busy}
+        />
         <form id={`domain-routes-${service.id}`} onSubmit={save} />
         {domains.map((domain, i) => {
           const wildcard = domain.hostname.startsWith("*.");
@@ -410,7 +421,10 @@ export default function DomainsEditor({
                   />
                 </Field>
                 <div className="form-grid">
-                  <Field label={`Target port ${i + 1}`}>
+                  <Field
+                    label={`Target port ${i + 1}`}
+                    hint="Internal application port. Use Container ports above to inspect the running service."
+                  >
                     <input
                       form={`domain-routes-${service.id}`}
                       type="number"

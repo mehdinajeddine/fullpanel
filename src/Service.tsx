@@ -17,6 +17,7 @@ import {
   Globe2,
   Hammer,
   HardDrive,
+  KeyRound,
   Layers,
   Pause,
   Play,
@@ -64,6 +65,7 @@ import { RestoreHistory } from "./Restores";
 import GitHubWebhook from "./GitHubWebhook";
 import Releases from "./Releases";
 import ServiceMetrics from "./ServiceMetrics";
+import { githubSshRepository } from "./git-source";
 const ServiceTerminal = lazy(() => import("./Terminal"));
 const tabs = [
   ["overview", "Overview"],
@@ -642,6 +644,12 @@ function SourceEditor({
     (source.type !== "image" ||
       source.image?.trim() === service.source.image?.trim());
   const sourceDraft = cleanSource();
+  const sshRepository =
+    source.type === "git" ? githubSshRepository(source.repository) : undefined;
+  const sshPrepared =
+    source.type === "git" &&
+    !sourceSaved &&
+    githubSshRepository(service.source.repository) === source.repository;
   const sourceHasEdits = (
     [
       "type",
@@ -732,6 +740,45 @@ function SourceEditor({
         )}
         {source.type === "git" && (
           <>
+            <div
+              className="repository-access-guide"
+              aria-label="Git authentication options"
+            >
+              <div>
+                <strong>HTTPS · access token</strong>
+                <code>https://github.com/org/repo.git</code>
+              </div>
+              <div>
+                <strong>SSH · deploy key</strong>
+                <code>git@github.com:org/repo.git</code>
+                {sshRepository && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={busy}
+                    onClick={() => set("repository", sshRepository)}
+                  >
+                    <KeyRound size={16} />
+                    Use SSH key
+                  </Button>
+                )}
+              </div>
+              <p>
+                For an SSH deploy key, enter your SSH repository URL, select
+                Save changes, then Generate SSH deploy key below. Changing the
+                saved repository revokes its stored access credentials.
+              </p>
+            </div>
+            {sshPrepared && (
+              <Notice
+                tone="warning"
+                title="SSH URL prepared — save to continue"
+              >
+                Select Save changes to use this SSH repository. Saving revokes
+                the access credentials for the previous repository. Then
+                Generate SSH deploy key will appear below.
+              </Notice>
+            )}
             <Field
               label="Repository URL"
               hint="Use HTTPS, git@host:owner/repo.git, or ssh://git@host:port/path. Save first, then configure private access below."

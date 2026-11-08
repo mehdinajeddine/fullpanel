@@ -10,7 +10,7 @@ export interface Project { id: string; name: string; description: string; color:
 export interface Source { type: 'image' | 'git' | 'dockerfile' | 'compose'; image?: string; repository?: string; branch?: string; dockerfile?: string; context?: string; compose?: string }
 export interface SourceCredentialStatus {
   git: { configured: boolean; repository?: string; username?: string; updatedAt?: string };
-  ssh: { configured: boolean; repository?: string; publicKey?: string; fingerprint?: string; knownHosts?: string; hostKeyConfigured?: boolean; hostFingerprints?: string[]; updatedAt?: string; hostKeyUpdatedAt?: string };
+  ssh: { configured: boolean; repository?: string; publicKey?: string; fingerprint?: string; knownHosts?: string; hostKeyConfigured?: boolean; hostFingerprints?: string[]; hostKeySource?: 'github-published' | 'manual'; updatedAt?: string; hostKeyUpdatedAt?: string };
   registry: { configured: boolean; registry?: string; imageRepository?: string; username?: string; updatedAt?: string };
   capabilities: { gitHttps: boolean; gitSsh: boolean; registryImages: boolean; registryBuilds: boolean };
 }

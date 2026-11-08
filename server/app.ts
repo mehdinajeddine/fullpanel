@@ -19,6 +19,7 @@ import { registerProjectEnvironment } from './project-environment.js';
 import { effectiveServiceEnvironment } from '../shared/environment.js';
 import { testDomainHostname } from '../shared/test-domains.js';
 import { ServiceMetricsCache } from './service-metrics.js';
+import { ServicePortsCache, unavailablePorts } from './service-ports.js';
 import { emptyMetricValues } from './docker-metrics.js';
 import { registerRestoreJobs, recoverPreparedRestores, backupFileHash, safeLocalBackupPath } from './restore-jobs.js';
 import { DockerDriver, DemoDriver, type RuntimeDriver, sanitizeCompose } from './docker.js';
@@ -61,6 +62,7 @@ export async function createApp(options: AppOptions = {}) {
   const jobs = new Set<Promise<unknown>>();
   const busy = new Set<string>();
   const serviceMetrics = new ServiceMetricsCache(driver.serviceMetrics?.bind(driver), mode);
+  const servicePorts = new ServicePortsCache(driver.servicePorts?.bind(driver), mode);
   let terminals:TerminalManager|undefined;
   let cachedMetrics: { at: number; value: Awaited<ReturnType<RuntimeDriver['metrics']>> } | undefined;
   let metricsPromise: Promise<Awaited<ReturnType<RuntimeDriver['metrics']>>> | undefined;
@@ -129,6 +131,7 @@ export async function createApp(options: AppOptions = {}) {
   };
   const enqueue = (serviceId: string, action: () => Promise<void>) => {
     serviceMetrics.invalidate(serviceId);
+    servicePorts.invalidate(serviceId);
     busy.add(serviceId);
     const job = Promise.resolve().then(async()=>{
       try{await terminals?.closeService(serviceId);}catch{
@@ -140,7 +143,7 @@ export async function createApp(options: AppOptions = {}) {
         store.save();return;
       }
       await action();
-    }).catch(error => { app.log.error(error); }).finally(() => { busy.delete(serviceId); jobs.delete(job); cachedMetrics = undefined; serviceMetrics.invalidate(serviceId); });
+    }).catch(error => { app.log.error(error); }).finally(() => { busy.delete(serviceId); jobs.delete(job); cachedMetrics = undefined; serviceMetrics.invalidate(serviceId); servicePorts.invalidate(serviceId); });
     jobs.add(job); return job;
   };
   const runtimeService = (service: Service): Service => {
@@ -251,6 +254,13 @@ export async function createApp(options: AppOptions = {}) {
   });
   app.get('/api/services', async request => { const projectId = (request.query as { projectId?: string }).projectId; if (projectId) id.parse(projectId); await refreshStatuses(); return store.state.services.filter(service => (!projectId || service.projectId === projectId) && access.canRead(request, service.projectId)).map(service => access.service(request, service, true)); });
   app.get('/api/services/:id', async request => { await refreshStatuses(); return access.service(request, access.requireService(request, parameter(request))); });
+  app.get('/api/services/:id/ports', async request => {
+    const service = structuredClone(access.requireService(request, parameter(request)));
+    const result = await servicePorts.get(service);
+    const current = access.requireService(request, service.id);
+    if (current.containerId !== service.containerId || current.deployedAt !== service.deployedAt || current.status !== service.status || current.runtimeUncertain !== service.runtimeUncertain) return unavailablePorts(mode, service.id);
+    return result;
+  });
   app.get('/api/services/:id/metrics', async request => {
     const service = structuredClone(access.requireService(request, parameter(request)));
     const result = await serviceMetrics.get({ ...structuredClone(store.state.appliedServices[service.id] || service), status: service.status, containerId: service.containerId, deployedAt: service.deployedAt });
@@ -268,7 +278,7 @@ export async function createApp(options: AppOptions = {}) {
     store.activity('Service configuration saved', current.name, 'Deploy to apply changes.', current.projectId); store.save(); return current;
   });
   app.delete('/api/services/:id', async request => {
-    const service = serviceById(parameter(request)); requireIdle(service.id); busy.add(service.id); serviceMetrics.invalidate(service.id);
+    const service = serviceById(parameter(request)); requireIdle(service.id); busy.add(service.id); serviceMetrics.invalidate(service.id); servicePorts.invalidate(service.id);
     try { await terminals?.closeService(service.id); if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; delete store.state.appliedProxyAuth[service.id]; delete store.state.activeReleaseIds[service.id]; delete store.state.pendingReleaseIds[service.id]; delete store.state.githubWebhooks[service.id]; store.state.releases=store.state.releases.filter(release=>release.metadata.serviceId!==service.id); store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
     catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); }
   });
@@ -322,9 +332,9 @@ export async function createApp(options: AppOptions = {}) {
     publicUrl
   });
   for (const action of ['start', 'stop', 'restart'] as const) app.post(`/api/services/:id/${action}`, async request => {
-    const service = serviceById(parameter(request)); requireIdle(service.id); if (!service.deployedAt && !service.containerId) throw new HttpError(409, 'Deploy this service first.'); busy.add(service.id); serviceMetrics.invalidate(service.id);
+    const service = serviceById(parameter(request)); requireIdle(service.id); if (!service.deployedAt && !service.containerId) throw new HttpError(409, 'Deploy this service first.'); busy.add(service.id); serviceMetrics.invalidate(service.id); servicePorts.invalidate(service.id);
     try { await terminals?.closeService(service.id); await driver.action(service, action); service.status = action === 'stop' ? 'stopped' : 'running'; store.activity(`Service ${action === 'stop' ? 'stopped' : action === 'start' ? 'started' : 'restarted'}`, service.name, undefined, service.projectId); store.save(); return service; }
-    catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); serviceMetrics.invalidate(service.id); }
+    catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); serviceMetrics.invalidate(service.id); servicePorts.invalidate(service.id); }
   });
   app.get('/api/services/:id/logs', async request => { const service = serviceById(parameter(request)); const tail = z.coerce.number().int().min(1).max(2000).default(200).parse((request.query as { tail?: string }).tail); if (!service.deployedAt && !service.containerId && service.status !== 'failed') return { logs: 'Deploy this service to view runtime logs.' }; try { return { logs: redact(service, await driver.logs(service, tail)) }; } catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } });
   app.get('/api/deployments', async request => store.state.deployments.filter(item => access.canReadRecord(request, item)).map(item => access.deployment(request, item)));
@@ -382,6 +392,6 @@ export async function createApp(options: AppOptions = {}) {
     await app.register(staticFiles, { root: staticDir, prefix: '/' });
     app.setNotFoundHandler((request, reply) => request.url.startsWith('/api/') ? reply.status(404).send({ error: 'API route not found.' }) : reply.type('text/html').sendFile('index.html'));
   } else app.setNotFoundHandler((_request, reply) => reply.status(404).send({ error: 'Route not found.' }));
-  app.addHook('onClose', async () => { serviceMetrics.clear(); await scheduler.stop(); await Promise.allSettled([...jobs]); try { store.save(); } finally { store.close(); } });
+  app.addHook('onClose', async () => { serviceMetrics.clear(); servicePorts.clear(); await scheduler.stop(); await Promise.allSettled([...jobs]); try { store.save(); } finally { store.close(); } });
   return app;
 }

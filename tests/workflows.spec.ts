@@ -10,6 +10,7 @@ test.describe.serial('Owner workflows', () => {
     await expect(page.getByRole('link', { name: 'FullPanel home', exact: true }).first()).toBeVisible();
     expect(await page.locator('.brand-mark img').first().getAttribute('src')).toBe('/assets/fullpanel-logo.png');
     expect(await page.locator('body').evaluate(element => getComputedStyle(element).fontFamily)).toContain('Inter Variable');
+    expect(await page.locator('body').evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(15);
     await page.getByLabel('Your name').fill(credentials.name);
     await page.getByLabel('Email address').fill(credentials.email);
     await page.getByLabel(/^Password/).fill(credentials.password);
@@ -95,6 +96,8 @@ test.describe.serial('Owner workflows', () => {
     await expect(page.getByRole('heading', { name: 'Workspace overview' })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
     expect(overflow).toBe(false);
+    expect(await page.locator('.page-heading p').evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(14);
+    expect((await page.getByRole('button', { name: 'Open navigation', exact: true }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
     await page.screenshot({ path: 'test-results/dashboard-mobile.png', fullPage: true });
     await page.getByRole('button', { name: 'Open navigation', exact: true }).click();
     await page.getByRole('link', { name: 'Projects', exact: true }).click();
@@ -215,6 +218,7 @@ test.describe.serial('Owner workflows', () => {
     expect((await page.request.post(`/api/services/${service.id}/deploy`, { data: {} })).status()).toBe(403);
     expect((await page.request.get(`/api/services/${service.id}/terminal`)).status()).toBe(403);
     expect((await page.request.get(`/api/services/${service.id}/metrics`)).status()).toBe(200);
+    expect((await page.request.get(`/api/services/${service.id}/ports`)).status()).toBe(200);
     expect((await page.request.get(`/api/services/${service.id}/source-credentials`)).status()).toBe(403);
     expect((await page.request.post(`/api/services/${service.id}/source-credentials/ssh/rotate`, { data: {} })).status()).toBe(403);
     expect((await page.request.get('/api/users')).status()).toBe(403);
@@ -514,6 +518,7 @@ test.describe.serial('Owner workflows', () => {
     await page.getByLabel(/^Repository URL/).fill('https://github.com/octocat/Hello-World.git');
     await page.getByRole('button', { name: 'Save changes', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Private Git access', exact: true })).toBeVisible();
+    await expect(page.getByLabel('Git authentication options')).toContainText('then Generate SSH deploy key below');
     await expect(panel).toHaveCount(0);
     await expect(page.getByLabel('Git access token')).toBeVisible();
   });
@@ -713,6 +718,200 @@ test.describe.serial('Owner workflows', () => {
     const afterUnmount = requests;
     await page.waitForTimeout(10_500);
     expect(requests).toBe(afterUnmount);
+  });
+
+  test('inspect listening ports and explicitly save a domain target without trusting EXPOSE or stale data', async ({ page }) => {
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    const original = await (await page.request.get(`/api/services/${service.id}`)).json();
+    let reads = 0;
+    page.on('request', request => { if (request.url().endsWith(`/api/services/${service.id}/ports`)) reads += 1; });
+    await page.goto(`/#/services/${service.id}/domains`);
+    const diagnostic = page.getByRole('region', { name: 'Container port diagnostics', exact: true });
+    await expect(diagnostic.getByRole('button', { name: 'Inspect container ports', exact: true })).toBeVisible();
+    expect(reads).toBe(0);
+    await diagnostic.getByRole('button', { name: 'Inspect container ports', exact: true }).click();
+    await expect(diagnostic.getByText('Demo · no live inspection', { exact: true })).toBeVisible();
+    await expect(diagnostic.getByText('Unavailable', { exact: true })).toBeVisible();
+    await expect(diagnostic.getByRole('button', { name: /^Use TCP port/ })).toHaveCount(0);
+    let kind: 'available' | 'partial' | 'stale' | 'failed' | 'exposed' | 'stopped' = 'available';
+    await page.route(`**/api/services/${service.id}/ports`, async route => {
+      if (kind === 'failed') { await route.fulfill({ status: 503, json: { error: 'Controlled port inspection failure.' } }); return; }
+      await route.fulfill({ json: {
+        mode: 'demo', serviceId: service.id, state: kind === 'stale' ? 'available' : kind === 'exposed' ? 'unavailable' : kind,
+        sampledAt: kind === 'stopped' || kind === 'exposed' ? null : new Date(Date.now() - (kind === 'stale' ? 90_000 : 0)).toISOString(), checkedAt: new Date().toISOString(),
+        listeners: kind === 'stopped' || kind === 'exposed' ? [] : [{ port: 3000, protocol: 'tcp', address: '0.0.0.0', family: 'ipv4', scope: 'wildcard' }, { port: 9229, protocol: 'tcp', address: '127.0.0.1', family: 'ipv4', scope: 'loopback' }],
+        exposed: [{ port: 80, protocol: 'tcp' }, { port: 53, protocol: 'udp' }],
+        message: kind === 'exposed' ? 'Socket inspection unavailable; image declarations only.' : undefined,
+      } });
+    });
+    const refresh = () => diagnostic.getByRole('button', { name: 'Refresh port inspection', exact: true }).click();
+    const use3000 = diagnostic.getByRole('button', { name: 'Use TCP port 3000 on 0.0.0.0', exact: true });
+    try {
+      await refresh();
+      await expect(use3000).toBeEnabled();
+      await expect(diagnostic.getByRole('button', { name: 'Use TCP port 9229 on 127.0.0.1', exact: true })).toBeDisabled();
+      await expect(diagnostic).toContainText('proxy cannot reach a loopback-only listener');
+      await expect(diagnostic).toContainText('80/TCP · Declared');
+      await expect(diagnostic).toContainText('53/UDP · Declared');
+      await expect(diagnostic.getByRole('button', { name: /^Use TCP port 80 / })).toHaveCount(0);
+      await expect(diagnostic).toContainText('A TCP listener does not confirm HTTP or HTTPS');
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await diagnostic.getByRole('heading', { name: 'Container ports', exact: true }).click();
+      await diagnostic.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: 'test-results/ports-diagnostic-desktop.png' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await diagnostic.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/ports-diagnostic-mobile.png' });
+      await use3000.click();
+      await expect(page.getByLabel(/^Target port 1/)).toHaveValue('3000');
+      expect((await (await page.request.get(`/api/services/${service.id}`)).json()).domains).toEqual(original.domains);
+      await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+      await expect(page.getByText('Configuration saved. Deploy to apply runtime changes.').first()).toBeVisible();
+      await page.reload();
+      await expect(page.getByLabel(/^Target port 1/)).toHaveValue('3000');
+      const saved = await (await page.request.get(`/api/services/${service.id}`)).json();
+      expect(saved.domains[0].port).toBe(3000);
+      expect(saved.deployedAt).toBe(original.deployedAt);
+      await diagnostic.getByRole('button', { name: 'Inspect container ports', exact: true }).click();
+      await expect(use3000).toBeEnabled();
+      kind = 'stale'; await refresh();
+      await expect(diagnostic.getByText('Refresh before choosing a port', { exact: true })).toBeVisible();
+      await expect(use3000).toBeDisabled();
+      kind = 'available'; await refresh(); await expect(use3000).toBeEnabled();
+      kind = 'failed'; await refresh();
+      await expect(diagnostic.getByRole('alert')).toContainText('Controlled port inspection failure');
+      await expect(use3000).toBeDisabled();
+      await expect(diagnostic.getByText('Previously observed', { exact: true }).first()).toBeVisible();
+      kind = 'exposed'; await refresh();
+      await expect(diagnostic).toContainText('Socket inspection unavailable');
+      await expect(diagnostic.getByRole('button', { name: /^Use TCP port/ })).toHaveCount(0);
+      kind = 'stopped'; await refresh();
+      await expect(diagnostic.getByText('Service stopped', { exact: true })).toBeVisible();
+      kind = 'partial'; await refresh();
+      await expect(diagnostic.getByText('Partial inspection', { exact: true })).toBeVisible();
+      await expect(use3000).toBeEnabled();
+      await page.route(`**/api/services/${service.id}`, route => route.fulfill({ json: { ...saved, containerId: 'controlled-new-runtime-id' } }));
+      await expect(diagnostic.getByText('Inspect the current runtime', { exact: true })).toBeVisible({ timeout: 10_000 });
+      await expect(use3000).toBeDisabled();
+    } finally {
+      await page.request.patch(`/api/services/${service.id}`, { data: { domains: original.domains } });
+    }
+  });
+
+  test('Use SSH key saves an explicit draft, uses automatic GitHub trust, and preserves manual overrides', async ({ page }) => {
+    const projects = await (await page.request.get('/api/projects')).json();
+    const repository = 'https://github.com/octocat/Hello-World.git';
+    const created = await page.request.post('/api/services', { data: { projectId: projects[0].id, name: 'github-ssh-switch', kind: 'app', source: { type: 'git', repository, branch: 'main', context: '.', dockerfile: 'Dockerfile' } } });
+    expect(created.status()).toBe(201);
+    const service = await created.json();
+    try {
+      expect((await page.request.put(`/api/services/${service.id}/source-credentials/git`, { data: { username: 'git', token: `fixture-token-${randomUUID()}` } })).ok()).toBeTruthy();
+      await page.goto(`/#/services/${service.id}/source`);
+      const repositoryField = page.getByLabel(/^Repository URL/);
+      const guide = page.getByLabel('Git authentication options');
+      const useSsh = guide.getByRole('button', { name: 'Use SSH key', exact: true });
+      await expect(useSsh).toBeVisible();
+      for (const other of ['https://gitlab.com/org/repo.git', 'https://github.com.evil.example/org/repo.git', 'https://github.com/org/repo/tree/main', 'https://user@github.com/org/repo.git', 'https://github.com/org/repo.git?ref=main']) {
+        await repositoryField.fill(other);
+        await expect(useSsh).toHaveCount(0);
+      }
+      await repositoryField.fill(repository);
+      await expect(useSsh).toBeVisible();
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await guide.getByText('SSH · deploy key', { exact: true }).click();
+      await guide.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: 'test-results/ssh-use-key-desktop.png' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await guide.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/ssh-use-key-mobile.png' });
+      let writes = 0;
+      page.on('request', request => { if (request.method() === 'PATCH' && request.url().endsWith(`/api/services/${service.id}`)) writes += 1; });
+      await useSsh.click();
+      await expect(repositoryField).toHaveValue('git@github.com:octocat/Hello-World.git');
+      await expect(page.getByLabel('Branch', { exact: true })).toHaveValue('main');
+      await expect(page.getByText('SSH URL prepared — save to continue', { exact: true })).toBeVisible();
+      expect(writes).toBe(0);
+      expect((await (await page.request.get(`/api/services/${service.id}`)).json()).source.repository).toBe(repository);
+      expect((await (await page.request.get(`/api/services/${service.id}/source-credentials`)).json()).git.configured).toBe(true);
+      await expect(page.getByRole('button', { name: 'Generate SSH deploy key', exact: true })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+      const generate = page.getByRole('button', { name: 'Generate SSH deploy key', exact: true });
+      await expect(generate).toBeVisible();
+      expect(writes).toBe(1);
+      const metadata = await (await page.request.get(`/api/services/${service.id}/source-credentials`)).json();
+      expect(metadata.git.configured).toBe(false);
+      expect(metadata.ssh.configured).toBe(false);
+      while (await page.getByRole('button', { name: 'Dismiss notification', exact: true }).count()) await page.getByRole('button', { name: 'Dismiss notification', exact: true }).first().click();
+      await generate.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: 'test-results/ssh-generate-mobile.png' });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.locator('.ssh-credentials').getByRole('heading', { name: 'SSH deploy key', exact: true }).click();
+      await page.locator('.ssh-credentials').evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/ssh-generate-desktop.png' });
+      let hostWrites = 0;
+      page.on('request', request => { if (request.method() === 'PUT' && request.url().endsWith('/source-credentials/ssh/host-key')) hostWrites += 1; });
+      await generate.click();
+      const publicKey = page.getByLabel(/^Public deploy key/);
+      await expect(publicKey).toHaveValue(/^ssh-ed25519 /);
+      const panel = page.locator('.ssh-credentials');
+      const automatic = panel.getByRole('region', { name: 'GitHub server identity', exact: true });
+      await expect(automatic.getByRole('heading', { name: 'GitHub server verification is automatic', exact: true })).toBeVisible();
+      await expect(panel.getByRole('heading', { name: 'Verify the Git server', exact: true })).toHaveCount(0);
+      await expect(panel.getByRole('button', { name: 'Trust GitHub host key', exact: true })).toHaveCount(0);
+      await expect(panel.getByLabel('I verified these server keys against a trusted provider or administrator.', { exact: true })).not.toBeVisible();
+      const credentialStatus = async () => (await (await page.request.get(`/api/services/${service.id}/source-credentials`)).json()).ssh;
+      const automaticStatus = await credentialStatus();
+      expect(automaticStatus.hostKeyConfigured).toBe(true);
+      expect(automaticStatus.hostKeySource).toBe('github-published');
+      expect(automaticStatus.knownHosts.trim()).toBe('github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl');
+      expect(automaticStatus.hostFingerprints).toEqual(['SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU']);
+      expect(automaticStatus.hostKeyUpdatedAt).toBeUndefined();
+      expect(hostWrites).toBe(0);
+      while (await page.getByRole('button', { name: 'Dismiss notification', exact: true }).count()) await page.getByRole('button', { name: 'Dismiss notification', exact: true }).first().click();
+      await automatic.getByRole('heading').click();
+      await automatic.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/ssh-github-auto-desktop.png' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await automatic.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/ssh-github-auto-mobile.png' });
+      await automatic.locator('summary').click();
+      await expect(automatic).toContainText(automaticStatus.hostFingerprints[0]);
+      await page.reload();
+      await expect(automatic).toBeVisible();
+      expect(hostWrites).toBe(0);
+      // A deliberately different cryptographic fixture tests preservation, not GitHub network trust.
+      const manualKey = `github.com ${(await publicKey.inputValue()).split(' ').slice(0, 2).join(' ')}`;
+      const override = await page.request.put(`/api/services/${service.id}/source-credentials/ssh/host-key`, { data: { knownHosts: manualKey } });
+      expect(override.ok()).toBeTruthy();
+      await page.reload();
+      await expect(panel.getByText('Custom GitHub server keys are pinned', { exact: true })).toBeVisible();
+      await expect(automatic).toHaveCount(0);
+      expect((await credentialStatus()).hostKeySource).toBe('manual');
+      expect((await credentialStatus()).knownHosts.trim()).toBe(manualKey);
+      expect(hostWrites).toBe(0);
+      await page.setViewportSize({ width: 1280, height: 900 });
+      // Non-default ports and lookalike hosts must keep the explicit trust workflow.
+      for (const sshRepository of ['ssh://git@github.com:2222/octocat/Hello-World.git', 'git@github.com.evil.example:octocat/Hello-World.git']) {
+        await repositoryField.fill(sshRepository);
+        await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+        await expect(generate).toBeVisible();
+        await expect(automatic).toHaveCount(0);
+        await generate.click();
+        await expect(publicKey).toHaveValue(/^ssh-ed25519 /);
+        await expect(panel.getByText('Next: verify the Git server', { exact: true })).toBeVisible();
+        expect((await credentialStatus()).hostKeyConfigured).toBe(false);
+        expect((await credentialStatus()).hostKeySource).toBeUndefined();
+      }
+    } finally { await page.request.delete(`/api/services/${service.id}`); }
   });
 
 });
