@@ -158,6 +158,8 @@ FullPanel currently manages services on a single Docker host. Interactive termin
 
 Also planned: [FullPanel Mobile](docs/specs/16-mobile-monitoring.md), an iOS and Android app to pair your phone by scanning a QR code and follow your servers and services in read-only mode. It is not available yet.
 
+Planned [server environments](docs/specs/17-server-purpose.md) will let you choose Development, Staging or Production: keep non-production apps behind mandatory access controls and crawler restrictions, then publish public sites when they are ready. Your administration panel will remain private in every mode.
+
 ## Documentation
 
 - [GitHub automatic deployments](docs/specs/12-github-auto-deploy.md)

@@ -2,6 +2,8 @@
 
 Status: **partial implementation** on 2026-11-08: opt-in public-IPv4 HTTP hostname allocation is implemented; public service reachability and HTTPS are not verified. Tracks R08 (default and primary domains), R07 (HTTPS) and R06 (routing). This supplements the current backlog; the approved DOCX and historical corpus remain dated snapshots.
 
+Future dependency: [M03's server-purpose policy](17-server-purpose.md) will require restricted HTTPS access and authentication for development/staging. Today's generated HTTP route does not satisfy that policy; it must not remain an unprotected alternative when M03 is implemented.
+
 ## Current behavior and missing outcome
 
 Settings → **Automatic test URLs** exposes **Public server IPv4**, stored as `settings.testDomainIp`. Empty is the default and disables future automatic test URLs. An owner/admin can enter the server's canonical public IPv4; private, loopback, special-use/reserved addresses, IPv6 and leading-zero forms are rejected. This validates address syntax/policy, not ownership or reachability. No public address is discovered automatically.

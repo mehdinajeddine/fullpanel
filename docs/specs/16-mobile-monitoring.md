@@ -19,6 +19,8 @@ Le premier lot permet la **consultation en lecture seule**. Déployer, redémarr
 
 Un téléphone peut suivre plusieurs panels indépendants. Le nom du panel reste visible sur chaque écran ; les données et les accès des différents serveurs sont isolés.
 
+L'[usage du serveur et sa politique de protection M03](17-server-purpose.md) devront être affichés. Sur un panel de développement ou de staging, le téléphone doit satisfaire les restrictions réseau et la barrière d'accès avant l'association et le suivi ; le QR ne crée aucune exemption.
+
 ## Ce que l'application affiche
 
 | Vue | Informations utiles |
