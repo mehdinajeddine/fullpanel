@@ -1,14 +1,18 @@
 # Easypanel reference analysis
 
-Research date: **2026-11-08**. Target implementation: **Harborlight**, an independently implemented, open-source server control panel with a different visual identity.
+Research date: **2026-11-08**. Target implementation: **FullPanel**, an independently implemented, open-source server control panel with a different visual identity.
 
 ## Scope and method
 
 This document records observations of the publicly downloadable installer, the requested public Docker image, and the official product documentation. The original application was **not run**. There was no interaction with an Easypanel account or production server. Docker Swarm was not initialized, joined, left, or reconfigured.
 
-The image was pulled, a stopped container with no mounts was created, `/app` was copied to a temporary directory, and that temporary container was removed. Inspection was limited to metadata, package information, file inventory, endpoint and operation-name discovery. Bundled application code is minified. Its presence does not establish source-code licensing or a permission to redistribute it. No original executable code, UI assets, templates, branding, or bundled dependencies were copied into Harborlight.
+The image was pulled, a stopped container with no mounts was created, `/app` was copied to a temporary directory, and that temporary container was removed. Inspection was limited to metadata, package information, file inventory, endpoint and operation-name discovery. Bundled application code is minified. Its presence does not establish source-code licensing or a permission to redistribute it. The implementation record states that no original executable code, extracted UI assets, templates, branding or bundled dependencies were incorporated into the FullPanel application.
 
-Extracted third-party material lives outside this repository at `/private/tmp/harborlight-easypanel-reference/app`. Harborlight's specs describe requirements and new implementation choices; they are not a decompiled source distribution. No byte-for-byte, API-wire-compatible, or complete feature parity is claimed.
+Extracted third-party material was kept outside this repository at `/private/tmp/harborlight-easypanel-reference/app` during inspection. FullPanel's specs describe requirements and new implementation choices; they are not a decompiled source distribution. No byte-for-byte, API-wire-compatible, or complete feature parity is claimed.
+
+Separately, three official historical screenshots were downloaded from published pages for comparative documentation. They are present in [docs/images/reference](images/reference/README.md) and reproduced in the specifications DOCX, not used as FullPanel application UI assets. Their sources and hashes are recorded; no express permission to republish them is recorded in those notices, and this project's Apache-2.0 license is not asserted over them.
+
+This document records the stated inspection and implementation method. It is not an independent comparative audit of the two codebases and does not establish a strictly separated clean-room process: the reference bundles were inspected. It provides no legal conclusion or guarantee concerning third-party rights.
 
 ## Reproducible artifact identity
 

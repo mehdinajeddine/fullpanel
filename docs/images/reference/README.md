@@ -1,6 +1,6 @@
 # Captures officielles historiques Easypanel
 
-Références historiques pour documentation comparative. Ces images tierces ne font pas partie des assets UI Harborlight; aucune licence Apache-2.0 sur elles n’est revendiquée. La date indiquée est celle de la publication source, pas nécessairement celle de création de l’image.
+Références historiques pour documentation comparative. Ces trois images tierces sont présentes dans le dépôt et reproduites dans le DOCX de spécifications ; elles ne font pas partie des éléments d'interface de l'application FullPanel (initialement Harborlight). Aucune licence Apache-2.0 sur elles n'est revendiquée. Leurs droits restent ceux de leurs titulaires respectifs ; aucune autorisation expresse de republication n'est consignée dans ces notices. Les liens, attributions et empreintes documentent leur provenance, sans constituer une autorisation ni une conclusion juridique. La date indiquée est celle de la publication source, pas nécessairement celle de création de l'image.
 
 ## REF-UI-01
 

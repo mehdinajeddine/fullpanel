@@ -1,4 +1,4 @@
-# Historique public Easypanel → exigences originales Harborlight
+# Historique public Easypanel → exigences originales FullPanel
 
 Consultation : **2026-11-08**. **151 versions**, dont **71 patches**, toutes accessibles en HTTP 200; **70 règles consolidées**. Les versions documentées couvrent le **2022-10-15 au 2026-10-22**; un article officiel complète la chronologie au **2022-08-12**.
 
@@ -13,7 +13,8 @@ Faits: paraphrases du contenu publié. Exigences et scénarios: propositions ori
 - Les dates sont celles publiées, pas des dates de découverte ou déploiement effectif.
 - Les catalogues sont regroupés; aucun inventaire exhaustif de bugs des logiciels tiers ni certification des centaines de modèles n’est revendiqué.
 - La disponibilité historique ne prouve pas la disponibilité actuelle: cluster et compression ont connu dépréciation/retrait.
-- Aucune reproduction du code propriétaire ni de ses éléments graphiques. Les pagesHTML de travail sont conservées uniquement sous /private/tmp.
+- Le corpus propose des exigences originales, et non une reproduction du code propriétaire. Les pages HTML de travail ont été conservées hors dépôt sous /private/tmp. Trois captures officielles tierces sont néanmoins présentes dans [la documentation comparative](../../images/reference/README.md) et dans le DOCX ; elles ne sont pas des éléments UI de l'application FullPanel. Leurs droits ne sont pas placés sous Apache-2.0 et aucune autorisation expresse de republication n'est consignée dans leurs notices.
+- La méthode comprend une inspection statique des bundles de référence. Ce corpus ne constitue ni un audit comparatif indépendant des codes ni la preuve d'un processus clean-room strictement séparé ; aucune conclusion ou garantie juridique n'en est déduite.
 - Les tests dérivés sont à rapprocher du registre de preuves Harborlight; documenter une règle ne signifie pas que son scénario a été exécuté.
 
 La priorité est celle de la règle Harborlight : P0 = sécurité/intégrité/fondation; P1 = exploitation courante; P2 = capacité avancée. Les IDs F/A/R/D/C/S renvoient à [FEATURE-PARITY.md](../../FEATURE-PARITY.md). Une règle peut viser une fonctionnalité encore absente.

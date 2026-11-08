@@ -1,17 +1,30 @@
-Harborlight
-Copyright 2026 Harborlight contributors
+FullPanel
+Copyright 2026 FullPanel contributors
 
-Harborlight is an independent implementation of a self-hosted application
+FullPanel is an independent implementation of a self-hosted application
 control panel. It is not affiliated with or endorsed by Easypanel.
 
 Public Easypanel documentation and a locally inspected distribution informed
-functional specifications. No Easypanel application source, artwork, logos,
-or distribution files are included in this repository.
+functional specifications. The application is an original implementation;
+Easypanel executable code and extracted runtime/UI assets are not distributed
+as part of the FullPanel application.
+
+The repository does include three attributed historical Easypanel screenshots
+for comparative documentation, also reproduced in the specifications DOCX.
+See docs/images/reference/README.md for their provenance. These third-party
+images are not FullPanel UI assets and are not offered under this project's
+Apache-2.0 license. Their rights remain with their respective holders; no
+express republication permission is recorded in the repository notices.
+
+The provenance record is not a comparative source-code audit or evidence of
+a strictly separated clean-room process. It provides no legal conclusion or
+guarantee concerning third-party rights.
 
 Third-party packages retain their own licenses. See package-lock.json and
 the licenses distributed with each package.
 
-The bundled DM Sans and Manrope fonts are distributed under the SIL Open
-Font License 1.1. Their notices and complete license texts are included in
-public/licenses/ and served alongside the application. No remote font
-service is required at runtime.
+The current application bundles Inter under the SIL Open Font License 1.1.
+Its notice and complete license are in public/licenses/Inter-OFL.txt. The
+earlier DM Sans and Manrope license notices are retained in public/licenses/;
+they are not the current UI font selection. No remote font service is
+required at runtime.
