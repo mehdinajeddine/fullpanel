@@ -129,13 +129,14 @@ Priority: **P0** usable secure foundation; **P1** core operational parity; **P2*
 | S11 | Upgrade and recovery (I,S) | P1 | Versioned migrations and a documented configuration restore path work. | partial — encrypted state/key recovery, writer locking and interrupted-job handling [E1]; versioned upgrade migrations not implemented |
 | S12 | Interface preferences (S,I) | P1 | Theme, responsive layout and keyboard access remain consistent across screens. | verified for main flows — persisted dark theme, keyboard palette, mobile navigation and 390px dashboard overflow check [E5]; full accessibility audit pending |
 
-## Future migration milestone
+## Future milestones
 
 This user-requested roadmap extension follows the current feature work and is outside the frozen 91-criterion DOCX baseline. It adds no claim of implemented reference parity.
 
 | ID | Feature / evidence | Priority | Acceptance criterion | Status |
 | --- | --- | --- | --- | --- |
 | M01 | [Migration from Easypanel, Portainer and other platforms](specs/15-platform-migration.md) (I,D) | P1 — subsequent milestone | Read-only inventory, reviewed mapping/dry run, verified isolated data recovery, explicit traffic cutover and rollback, durable idempotent resume; source preserved and unsupported resources visible. | pending — source API/backup capabilities researched; no adapter, import or real migration implemented or verified |
+| M02 | [Mobile monitoring through QR pairing](specs/16-mobile-monitoring.md) (I) | P1 — future milestone | Pair an iOS/Android device by scanning a short-lived QR and confirming it in the panel; read-only, scoped overview of services, resources, deployments and backups, truthful offline state and per-device revocation. | pending — requested and specified; no mobile app, pairing endpoint or real-device validation. Direct network reachability is required; incident push notifications are a later extension |
 
 ## Verification record — 2026-11-08
 

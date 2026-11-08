@@ -156,6 +156,8 @@ The CLI prints JSON, refuses HTTP redirects, and exits unsuccessfully when a wai
 
 FullPanel currently manages services on a single Docker host. Interactive terminals, offsite backups and rolling deployments are still in development. Public certificate issuance and renewal remain unverified. An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned.
 
+Also planned: [FullPanel Mobile](docs/specs/16-mobile-monitoring.md), an iOS and Android app to pair your phone by scanning a QR code and follow your servers and services in read-only mode. It is not available yet.
+
 ## Documentation
 
 - [GitHub automatic deployments](docs/specs/12-github-auto-deploy.md)
