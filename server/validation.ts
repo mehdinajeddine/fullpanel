@@ -3,6 +3,7 @@ import { domainInput } from './proxy-routing.js';
 import { normalizeGitRepository } from './source-credentials.js';
 import { isSshRepository } from './git-ssh.js';
 import { environmentInput } from './project-environment.js';
+import { isPublicTestDomainIp } from '../shared/test-domains.js';
 const identifier = z.string().min(1).max(63).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and single hyphens.');
 const text = z.string().max(500);
 export const id = z.string().uuid();
@@ -20,6 +21,6 @@ const port = z.object({ published: z.number().int().min(1024).max(65535), target
 export const serviceFields = z.object({ name: identifier, kind: z.enum(['app', 'postgres', 'mysql', 'mariadb', 'mongo', 'redis', 'compose']), source: sourceInput.optional(), env: environmentInput.optional(), domains: z.array(domain).max(20).optional(), mounts: z.array(mount).max(20).optional(), ports: z.array(port).max(20).optional(), resources: z.object({ cpu: z.number().min(0.1).max(128), memoryMb: z.number().int().min(16).max(1048576) }).strict().optional(), notes: z.string().max(10000).optional() }).strict();
 export const serviceCreate = serviceFields.extend({ projectId: id });
 export const servicePatch = serviceFields.omit({ kind: true }).partial();
-export const settingsInput = z.object({ serverName: z.string().min(1).max(80), baseDomain: z.union([z.literal(''), z.string().max(253).regex(/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i)]), letsEncryptEmail: z.union([z.literal(''), z.email()]), theme: z.enum(['light', 'dark', 'system']) }).strict().partial();
+export const settingsInput = z.object({ serverName: z.string().min(1).max(80), baseDomain: z.union([z.literal(''), z.string().max(253).regex(/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i)]), testDomainIp: z.string().max(15).refine(value => value === '' || isPublicTestDomainIp(value), 'Use a canonical public IPv4 address, or leave empty to disable automatic test URLs.'), letsEncryptEmail: z.union([z.literal(''), z.email()]), theme: z.enum(['light', 'dark', 'system']) }).strict().partial();
 export const setupInput = z.object({ name: z.string().trim().min(1).max(80), email: z.email().max(254).transform(value => value.toLowerCase()), password: z.string().min(12, 'Use at least 12 characters.').max(200) }).strict();
 export const loginInput = z.object({ email: z.email().max(254).transform(value => value.toLowerCase()), password: z.string().min(1).max(200) }).strict();

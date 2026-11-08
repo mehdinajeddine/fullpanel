@@ -19,6 +19,7 @@
     "test:e2e": "playwright test",
     "test:docker": "tsx scripts/smoke-docker.ts",
     "test:proxy": "tsx scripts/smoke-proxy.ts",
+    "test:test-domains": "tsx scripts/smoke-test-domains.ts",
     "test:package": "tsx scripts/smoke-package.ts",
     "test:credentials": "tsx scripts/smoke-credentials.ts",
     "test:git": "tsx scripts/smoke-git.ts",

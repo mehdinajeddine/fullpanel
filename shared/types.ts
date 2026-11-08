@@ -31,7 +31,7 @@ export interface Backup { id: string; serviceId: string; projectId?: string; sch
 export interface RestoreJob { id: string; sourceBackupId: string; sourceProjectId?: string; targetServiceId: string; targetProjectId: string; requestedBy: string; preRestoreBackupId?: string; status: 'queued' | 'running' | 'success' | 'failed'; phase: 'validating' | 'pre-backup' | 'restoring' | 'finished'; createdAt: string; startedAt?: string; finishedAt?: string; output: string; error?: string }
 export interface Activity { id: string; action: string; resource: string; createdAt: string; detail?: string; projectId?: string }
 export interface Template { id: string; name: string; description: string; category: string; kind: ServiceKind; image: string; port: number; website: string; env?: Record<string,string>; mounts?: { name: string; mountPath: string }[] }
-export interface Settings { serverName: string; baseDomain: string; letsEncryptEmail: string; theme: 'light' | 'dark' | 'system' }
+export interface Settings { serverName: string; baseDomain: string; testDomainIp?: string; letsEncryptEmail: string; theme: 'light' | 'dark' | 'system' }
 export interface Metrics { mode: RuntimeMode; cpuPercent: number | null; memoryUsedBytes: number; memoryTotalBytes: number; diskUsedBytes: number | null; diskTotalBytes: number | null; uptime: number; dockerVersion: string | null; containersRunning: number; error?: string; restricted?: boolean }
 export interface Session { authenticated: boolean; setupRequired: boolean; mode: RuntimeMode; user?: PublicUser }
 export interface Overview { projects: Project[]; services: Service[]; deployments: Deployment[]; activity: Activity[]; metrics: Metrics }

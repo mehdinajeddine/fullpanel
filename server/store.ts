@@ -87,6 +87,7 @@ export class Store {
     this.state.activeReleaseIds ||= {};
     this.state.pendingReleaseIds ||= {};
     this.state.appliedProxyAuth ||= {};
+    this.state.settings.testDomainIp ??= '';
     for (const restore of this.state.restores) if (restore.status === 'queued' || restore.status === 'running') { restore.status = 'failed'; restore.phase = 'finished'; restore.finishedAt = now(); restore.error = 'Restore interrupted by server restart. Inspect the runtime and retained volumes before retrying.'; restore.output += `\n${restore.error}\n`; }
     // Upgrade the original single-owner state and preserve its valid browser sessions.
     if (!this.state.users.length && this.state.owner) this.state.users.push({ ...this.state.owner, id: randomUUID(), role: 'owner', memberships: [], disabled: false, createdAt: now(), updatedAt: now() });

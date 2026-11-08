@@ -17,6 +17,7 @@ import { DockerTerminalRuntime } from './container-terminal.js';
 import { assertDomainOwnership } from './domain-ownership.js';
 import { registerProjectEnvironment } from './project-environment.js';
 import { effectiveServiceEnvironment } from '../shared/environment.js';
+import { testDomainHostname } from '../shared/test-domains.js';
 import { registerRestoreJobs, recoverPreparedRestores, backupFileHash, safeLocalBackupPath } from './restore-jobs.js';
 import { DockerDriver, DemoDriver, type RuntimeDriver, sanitizeCompose } from './docker.js';
 import { templates } from './templates.js';
@@ -169,6 +170,7 @@ export async function createApp(options: AppOptions = {}) {
   }
   function newService(input: z.infer<typeof serviceCreate>, defaultPort = 80): Service {
     const project = projectById(input.projectId);
+    const serviceId = randomUUID();
     const password = randomBytes(24).toString('base64url');
     const defaults: Record<string, { image: string; env: Record<string, string>; path: string }> = {
       postgres: { image: 'postgres:17-alpine', env: { POSTGRES_DB: input.name.replaceAll('-', '_'), POSTGRES_USER: 'harborlight', POSTGRES_PASSWORD: password }, path: '/var/lib/postgresql/data' },
@@ -179,9 +181,14 @@ export async function createApp(options: AppOptions = {}) {
     };
     const database = defaults[input.kind];
     const source = input.source || (database ? { type: 'image' as const, image: database.image } : input.kind === 'compose' ? { type: 'compose' as const, compose: 'services:\n  web:\n    image: nginx:1.28-alpine\n' } : { type: 'image' as const, image: 'nginx:1.28-alpine' });
-    const defaultDomains = input.domains === undefined && input.kind === 'app' && store.state.settings.baseDomain ? [{ id: randomUUID(), hostname: `${`${input.name}-${project.name}`.slice(0, 63).replace(/-$/, '')}.${store.state.settings.baseDomain}`, port: defaultPort, https: true, path: '/' }] : [];
+    const { baseDomain, testDomainIp } = store.state.settings;
+    const defaultDomains = input.domains === undefined && input.kind === 'app'
+      ? baseDomain
+        ? [{ id: randomUUID(), hostname: `${`${input.name}-${project.name}`.slice(0, 63).replace(/-$/, '')}.${baseDomain}`, port: defaultPort, https: true, path: '/' }]
+        : testDomainIp ? [{ id: randomUUID(), hostname: testDomainHostname(serviceId, testDomainIp), port: defaultPort, https: false, path: '/' }] : []
+      : [];
     if (defaultDomains.some(domain => domain.hostname.length > 253)) throw new HttpError(400, 'The automatic domain is too long. Choose a shorter base domain or add an explicit domain.');
-    const service: Service = { id: randomUUID(), projectId: input.projectId, name: input.name, kind: input.kind, source, env: { ...database?.env, ...input.env }, status: 'not-deployed', domains: (input.domains || defaultDomains).map(domain => ({ ...domain, id: domain.id || randomUUID() })), mounts: (input.mounts || (database ? [{ name: 'data', mountPath: database.path }] : [])).map(mount => ({ ...mount, id: mount.id || randomUUID() })), ports: input.ports || [], resources: input.resources || { cpu: 1, memoryMb: database ? 512 : 256 }, notes: input.notes || '', createdAt: now(), updatedAt: now() };
+    const service: Service = { id: serviceId, projectId: input.projectId, name: input.name, kind: input.kind, source, env: { ...database?.env, ...input.env }, status: 'not-deployed', domains: (input.domains || defaultDomains).map(domain => ({ ...domain, id: domain.id || randomUUID() })), mounts: (input.mounts || (database ? [{ name: 'data', mountPath: database.path }] : [])).map(mount => ({ ...mount, id: mount.id || randomUUID() })), ports: input.ports || [], resources: input.resources || { cpu: 1, memoryMb: database ? 512 : 256 }, notes: input.notes || '', createdAt: now(), updatedAt: now() };
     validateService(service); store.state.services.push(service); store.activity('Service created', service.name, undefined, service.projectId); store.save(); return service;
   }
 

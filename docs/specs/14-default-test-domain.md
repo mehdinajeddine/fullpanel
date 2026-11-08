@@ -1,10 +1,20 @@
 # Default test URL and certificate state
 
-Status: proposed requirement, **not implemented or verified** on 2026-11-08. Tracks R08 (default and primary domains), R07 (HTTPS) and R06 (routing). This supplements the current backlog; the approved DOCX and historical corpus remain dated snapshots.
+Status: **partial implementation** on 2026-11-08: opt-in public-IPv4 HTTP hostname allocation is implemented; public service reachability and HTTPS are not verified. Tracks R08 (default and primary domains), R07 (HTTPS) and R06 (routing). This supplements the current backlog; the approved DOCX and historical corpus remain dated snapshots.
 
 ## Current behavior and missing outcome
 
-`server/app.ts` generates `<service>-<project>.<baseDomain>` for a new application only when an administrator has already configured `settings.baseDomain` and the create request omits domains. Templates can supply the correct target port. The resulting hostname is saved rather than silently rewritten when settings later change. Selecting a primary exact hostname controls Open. This does not provide a usable domain on an unconfigured installation and does not create DNS records.
+Settings → **Automatic test URLs** exposes **Public server IPv4**, stored as `settings.testDomainIp`. Empty is the default and disables future automatic test URLs. An owner/admin can enter the server's canonical public IPv4; private, loopback, special-use/reserved addresses, IPv6 and leading-zero forms are rejected. This validates address syntax/policy, not ownership or reachability. No public address is discovered automatically.
+
+When a create request omits `domains` and `kind` is `app`, allocation follows this precedence:
+
+1. A nonempty `baseDomain` retains the existing `<service>-<project>.<baseDomain>` HTTPS route and takes priority.
+2. Otherwise, a nonempty `testDomainIp` creates `fp-<service-UUID-without-hyphens>.<IPv4-with-hyphens>.sslip.io`, with `https: false`, path `/` and target port 80 or the template's declared HTTP port.
+3. Otherwise, no domain is generated.
+
+Explicit domains, including `domains: []`, are preserved. Databases and Compose services receive no automatic route. The UUID makes the saved test hostname independent of project/service renames. Editing or clearing the IP, or changing the base domain, affects future creations only; existing routes are not rewritten. Existing state without the setting defaults to empty. Selecting a primary exact hostname still controls Open.
+
+The administrator supplies the IP once, but does not manually create per-service DNS records for this provider. The proxy must still be running and reachable on port 80, and the target application must listen on the selected internal port. The Settings preview and enabled state do not perform DNS or HTTP probes. The generated route is HTTP for testing; HTTPS must be configured separately before transmitting sensitive data.
 
 `compose.yaml` defines a Traefik Let's Encrypt resolver using `ACME_EMAIL`, persistent certificate storage and the HTTP challenge on the web entrypoint. TLS labels select that resolver. The API's saved `letsEncryptEmail` setting does not currently reconfigure the deployed proxy. Existing tests establish HTTP routing and redirect responses, not public issuance, certificate trust or renewal.
 
@@ -12,13 +22,13 @@ The required outcome is that an operator can create an HTTP application and open
 
 ## Address allocation and deployment modes
 
-For a publicly reachable installation, select one explicit allocation strategy: an IP-encoding DNS service such as nip.io/sslip.io, or a FullPanel-controlled domain whose DNS is provisioned automatically. Neither strategy is implemented yet. The chosen provider and availability dependency must be documented. A provider change must preserve existing saved routes until an operator deliberately migrates them.
+The implemented slice uses sslip.io's IP-encoding DNS service. A FullPanel-controlled domain with automated DNS provisioning is a separate future strategy. Provider availability and the client's DNS resolver remain external dependencies. A provider change must preserve existing saved routes until an operator deliberately migrates them.
 
 Surge can host a separately built static interface demonstration at a `surge.sh` name. Its documented publishing service serves static files, and its custom-domain setup directs traffic to Surge's infrastructure. Therefore it does not satisfy this requirement to route a generated test hostname to the user's Docker server or run the FullPanel API and workloads. This is an architectural choice inferred from [Surge's publishing model](https://surge.sh/) and [domain documentation](https://surge.sh/docs/platform/custom-domains); no Surge deployment or integration is implemented or claimed.
 
-IP-based names require a validated server address. If automatic discovery is inconclusive, the administrator may supply the public address once; this is distinct from editing DNS. Do not derive it from arbitrary request Host or forwarded headers. Use a stable service identifier in generated names so collisions, renames and long project names cannot redirect another service's traffic. Validate DNS label lengths, IPv4/IPv6 encoding and ownership with the same project isolation rules as custom domains.
+The current slice requires an explicitly supplied public IPv4 and never derives it from request Host or forwarded headers. A future address-discovery or IPv6 extension needs its own validation and evidence. Stable identifiers and the existing project/domain ownership checks apply to the generated routes.
 
-Public DNS resolution alone does not establish service reachability: NAT, ingress ports, the proxy, application port and application response must also work. Surface these checks separately. An installation restricted to loopback or a private LAN must instead show a clearly labeled local HTTP endpoint whose reachability is tested from the intended client. Do not present a localhost link as remotely reachable or rely on external DNS for the local-only verification fixture. A local HTTP success is not public HTTPS evidence.
+Public DNS resolution alone does not establish service reachability: NAT, ingress ports, the proxy, application port and application response must also work. Separate diagnostics remain future work. A local-only/offline endpoint is also future work; this setting refuses loopback/private addresses. Do not present a localhost link as remotely reachable or rely on external DNS for the local-only verification fixture. A local HTTP success is not public HTTPS evidence.
 
 Do not automatically expose database ports or infer an HTTP route for arbitrary Compose children. Initially, default test URLs cover single-container HTTP applications and templates with an explicit HTTP target port. Retain custom domains and an explicitly chosen primary domain. Deleting a service removes its route and any provider-owned record where applicable; allocation must not reuse an old identifier in a way that directs an old URL to a different service.
 
@@ -31,6 +41,10 @@ The bundled HTTP-01 strategy requires validation reachability on public port 80 
 The implementation must connect its effective ACME identity/configuration to the actual proxy, distinguish pending issuance from a certificate verified by a normal TLS client, and retain persistent account/certificate data across restarts. Failed resolution, blocked validation ports or CA failures must leave an actionable state with bounded retries. Do not represent a configured `https` field or a redirect response as an issued certificate. Do not test by disabling TLS verification or silently weakening a route configured to require HTTPS.
 
 Provider and CA rate limits/availability remain external constraints; the product must not promise unlimited certificates or uninterrupted third-party DNS. Do not silently switch names or retry issuance without bounds. Certificate renewal must have its own recorded result; a first successful issue does not prove renewal.
+
+## Recorded evidence for this slice
+
+The production build/typecheck and **19 demo-runtime browser workflows** passed, including the new Settings flow: private IPv4 rejection, public IPv4 save/reload, exact UUID-based HTTP route with app port 80, a Dozzle template route with port 8080, custom-base-domain precedence, and disabling allocation while preserving existing routes. Desktop and 390px mobile captures were visually inspected: [Settings desktop](../images/r08-test-urls-desktop.png), [Settings mobile](../images/r08-test-urls-mobile.png). This browser evidence exercises the actual API and simulated workload adapter; it does not establish external routing. Additional API/runtime evidence is tracked in [VERIFICATION.md](../VERIFICATION.md).
 
 ## Acceptance and non-regression scenarios
 
@@ -46,4 +60,6 @@ Provider and CA rate limits/availability remain external constraints; the produc
 | R07-02 | Invalid ACME identity, blocked port 80, provider/CA failure and panel restart. | Honest issuance state, useful error, bounded retries and retained account/certificate storage. HTTP routing or redirects alone cannot satisfy the test. |
 | R07-03 | Renewal path and HTTPS-only access policy. | Separately record renewal with controlled CA/testing infrastructure and continued routing after proxy restart; failures never silently relax HTTPS requirements. Real elapsed production renewal remains a distinct longer-term proof. |
 
-All scenarios above are pending. Unit fixtures can establish allocation and state handling; only the named network/CA fixtures can establish public DNS, TLS issuance and renewal behavior.
+These complete scenarios remain acceptance targets, not a completion claim. The implemented slice covers allocation, precedence and saved-state behavior; its current test results are recorded in [VERIFICATION.md](../VERIFICATION.md). A Traefik fixture reached on loopback with an explicitly supplied Host header establishes local routing only. One generated hostname containing the official provider mirror's IPv4 `64.176.22.9` was resolved externally to exactly that IPv4 on 2026-11-08, without an HTTP/TLS request: this establishes the tested name's provider DNS resolution only. Neither establishes public HTTP access to the FullPanel server, public TLS, IPv6 support, offline local URLs, bounded diagnostics or ACME issuance/renewal.
+
+The complete unit/API suite passes 135 tests, including six focused test-domain cases. The real `npm run test:test-domains` fixture passes API allocation through Traefik to two distinct Whoami containers on loopback, with unknown-host 404 and exact-owned cleanup. This is separate from the external DNS-only observation above.

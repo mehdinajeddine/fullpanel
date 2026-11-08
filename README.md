@@ -70,7 +70,7 @@ Open http://127.0.0.1:3000 through that tunnel. Create the owner before exposing
 
 ### Application domains and HTTPS
 
-Point the domain's DNS A/AAAA records at this server. Set `ACME_EMAIL` in `.env`, ensure ports 80 and 443 are available, and start the optional Traefik proxy:
+Start the optional Traefik proxy for application routes. Custom HTTPS domains also require DNS A/AAAA records pointing to this server, `ACME_EMAIL` in `.env`, and reachable ports 80 and 443:
 
 ```sh
 docker compose --profile proxy up -d
@@ -78,7 +78,9 @@ docker compose --profile proxy up -d
 
 Create a project and service, add its hostname and internal application port in **Domains**, save, then **Deploy**. Services with domains join the `harborlight-proxy` network. The bundled proxy discovers container labels and requests certificates for HTTPS domains. A saved domain is configuration, not proof that DNS or a certificate is ready.
 
-Setting a base domain in **Settings** gives new HTTP applications a saved `<service>-<project>.<baseDomain>` route. You must configure that domain's DNS to reach the server. An automatically usable test address without manual DNS is [specified separately](docs/specs/14-default-test-domain.md) and remains pending. The effective proxy email is `ACME_EMAIL`; saving the panel's email setting does not currently reconfigure Traefik. Public certificate issuance and renewal remain separate, unverified checks.
+For HTTP test URLs without adding DNS records yourself, open **Settings → Automatic test URLs → Public server IPv4** and save this server's public IPv4. New applications receive `http://fp-<service-UUID-without-hyphens>.<IPv4-with-hyphens>.sslip.io`. Leave the field empty to disable future allocations. This opt-in setting supports public IPv4 only; it does not discover the address or verify DNS/reachability. Traefik must be reachable on port 80 and the application target port must be correct; templates use their declared port. The external sslip.io DNS service must remain available. Use HTTPS separately before sending sensitive data.
+
+A configured **Base domain** takes priority and gives new applications the existing `<service>-<project>.<baseDomain>` HTTPS route; its DNS remains your responsibility. Settings changes do not rewrite saved routes. Databases, Compose services and creation requests with explicit domains (including an empty list) do not receive an automatic test URL. See the [implemented subset and remaining acceptance criteria](docs/specs/14-default-test-domain.md). The effective proxy email is `ACME_EMAIL`; saving the panel's email setting does not currently reconfigure Traefik. Public HTTP reachability and certificate issuance/renewal remain separate, unverified checks.
 
 To expose the panel itself over HTTPS after owner setup, configure `PANEL_DOMAIN` and `ACME_EMAIL` in `.env`:
 

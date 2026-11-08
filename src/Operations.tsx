@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Download,
+  Globe,
   HardDrive,
   Package,
   Plus,
@@ -22,6 +23,7 @@ import type {
   Settings,
   Template,
 } from "../shared/types";
+import { isPublicTestDomainIp } from "../shared/test-domains";
 import {
   bytes,
   date,
@@ -769,6 +771,7 @@ export function SettingsPage() {
     try {
       const saved = await patch<Settings>("/settings", values);
       setValues(saved);
+      query.setData(saved);
       window.dispatchEvent(
         new CustomEvent("harborlight:settings", { detail: saved }),
       );
@@ -826,6 +829,13 @@ export function SettingsPage() {
                 your deployment environment. DNS must point to this server
                 before HTTPS can work.
               </Notice>
+              <AutomaticTestUrls
+                values={values}
+                saved={query.data}
+                onChange={(testDomainIp) =>
+                  setValues({ ...values, testDomainIp })
+                }
+              />
               <Field label="Appearance">
                 <select
                   value={values.theme}
@@ -863,5 +873,92 @@ export function SettingsPage() {
         <span className="category-tag">Apache-2.0</span>
       </div>
     </>
+  );
+}
+
+function AutomaticTestUrls({
+  values,
+  saved,
+  onChange,
+}: {
+  values: Settings;
+  saved?: Settings;
+  onChange: (ip: string) => void;
+}) {
+  const ip = values.testDomainIp || "";
+  const customDomain = values.baseDomain;
+  const changed =
+    ip !== (saved?.testDomainIp || "") ||
+    customDomain !== (saved?.baseDomain || "");
+  const validFormat = isPublicTestDomainIp(ip);
+  return (
+    <section
+      className="test-domain-settings"
+      aria-labelledby="test-domain-title"
+    >
+      <div className="test-domain-heading">
+        <div>
+          <Globe size={18} aria-hidden="true" />
+          <h3 id="test-domain-title">Automatic test URLs</h3>
+        </div>
+        <Badge
+          status={
+            changed
+              ? "pending"
+              : ip && !customDomain
+                ? "configured"
+                : "disabled"
+          }
+          tone={changed ? "warning" : ip && !customDomain ? "info" : "neutral"}
+          label={
+            changed
+              ? "Save to apply"
+              : customDomain
+                ? "Custom domain takes priority"
+                : ip
+                  ? "Enabled for new apps"
+                  : "Off"
+          }
+        />
+      </div>
+      <p className="test-domain-description">
+        Opt in to an sslip.io URL for each new application, without adding DNS
+        records yourself.
+      </p>
+      <Field
+        label="Public server IPv4"
+        hint="Use this server’s public IPv4 address. Leave empty to disable future test URLs."
+      >
+        <input
+          value={values.testDomainIp || ""}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="Enter your server’s public IPv4"
+          inputMode="decimal"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={15}
+        />
+      </Field>
+      {customDomain ? (
+        <p className="test-domain-description">
+          Your custom base domain takes priority. Remove it to use automatic
+          test URLs.
+        </p>
+      ) : validFormat ? (
+        <div className="test-domain-preview" aria-label="Test URL preview">
+          <span>URL pattern · unique ID per service</span>
+          <code>{`http://fp-<service-id>.${ip.replaceAll(".", "-")}.sslip.io`}</code>
+        </div>
+      ) : null}
+      <Notice title="HTTP · for testing only">
+        The address must point to this server and Traefik must be reachable on
+        port 80. DNS and reachability are not verified here. Configure HTTPS
+        separately in Domains before sending sensitive data.
+      </Notice>
+      <p className="test-domain-footnote">
+        Existing saved URLs stay unchanged when you edit or disable this
+        setting.
+      </p>
+    </section>
   );
 }

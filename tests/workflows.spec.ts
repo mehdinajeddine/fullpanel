@@ -536,4 +536,93 @@ test.describe.serial('Owner workflows', () => {
     await page.request.delete(`/api/projects/${project.id}`);
   });
 
+  test('opt in to automatic HTTP test URLs and preserve existing routes when disabled', async ({ page }) => {
+    const original = await (await page.request.get('/api/settings')).json();
+    const projects = await (await page.request.get('/api/projects')).json();
+    const project = projects.find((item: { name: string }) => item.name === 'acceptance-project');
+    const createdIds: string[] = [];
+    const save = async () => {
+      const [response] = await Promise.all([
+        page.waitForResponse(response => response.url().endsWith('/api/settings') && response.request().method() === 'PATCH'),
+        page.getByRole('button', { name: 'Save settings', exact: true }).click(),
+      ]);
+      return response;
+    };
+    try {
+      await page.goto('/#/settings');
+      const section = page.getByRole('region', { name: 'Automatic test URLs', exact: true });
+      await page.getByLabel(/^Base domain/).fill('');
+      await page.getByLabel(/^Public server IPv4/).fill('10.0.0.1');
+      expect((await save()).status()).toBe(400);
+      await expect(page.getByRole('alert')).toBeVisible();
+      expect((await (await page.request.get('/api/settings')).json()).testDomainIp || '').toBe(original.testDomainIp || '');
+      await page.getByLabel(/^Public server IPv4/).fill('8.8.8.8');
+      await page.getByLabel('Appearance').selectOption('light');
+      expect((await save()).ok()).toBeTruthy();
+      await page.reload();
+      await expect(page.getByLabel(/^Public server IPv4/)).toHaveValue('8.8.8.8');
+      await expect(section.getByText('Enabled for new apps', { exact: true })).toBeVisible();
+      await expect(section.getByLabel('Test URL preview')).toContainText('http://fp-<service-id>.8-8-8-8.sslip.io');
+      await expect(section).toContainText('DNS and reachability are not verified here');
+      await page.getByLabel(/^Public server IPv4/).fill('8.8.8.8 ');
+      await expect(section.getByText('Save to apply', { exact: true })).toBeVisible();
+      await expect(section.getByLabel('Test URL preview')).toHaveCount(0);
+      await page.getByLabel(/^Public server IPv4/).fill('8.8.8.8');
+      await expect(section.getByText('Enabled for new apps', { exact: true })).toBeVisible();
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await section.getByRole('heading').click();
+      await section.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({ path: 'test-results/automatic-test-urls-desktop.png' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await section.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+      await page.screenshot({ path: 'test-results/automatic-test-urls-mobile.png' });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(`/#/projects/${project.id}`);
+      await page.getByRole('button', { name: 'Add service', exact: true }).first().click();
+      await page.getByRole('dialog').getByLabel('Service name').fill('automatic-url-app');
+      await page.getByRole('dialog').getByRole('button', { name: 'Create service', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'automatic-url-app', exact: true })).toBeVisible();
+      const serviceId = page.url().match(/services\/([^/]+)/)![1];
+      createdIds.push(serviceId);
+      const service = await (await page.request.get(`/api/services/${serviceId}`)).json();
+      const hostname = `fp-${serviceId.replaceAll('-', '')}.8-8-8-8.sslip.io`;
+      expect(service.domains).toHaveLength(1);
+      expect(service.domains[0]).toMatchObject({ hostname, port: 80, https: false });
+      await page.getByRole('link', { name: 'Domains', exact: true }).click();
+      await expect(page.getByLabel('Hostname 1', { exact: true })).toHaveValue(hostname);
+      await expect(page.getByLabel('Enable HTTPS with automatic certificates', { exact: true })).not.toBeChecked();
+      await page.goto('/#/templates');
+      await page.getByLabel('Search templates').fill('Dozzle');
+      await page.locator('.template-card').filter({ has: page.getByRole('heading', { name: 'Dozzle', exact: true }) }).getByRole('button', { name: 'Use template', exact: true }).click();
+      await page.getByRole('dialog').getByLabel('Project', { exact: true }).selectOption(project.id);
+      await page.getByRole('dialog').getByLabel('Service name').fill('automatic-url-template');
+      const [installResponse] = await Promise.all([
+        page.waitForResponse(response => response.url().endsWith('/api/templates/dozzle/install') && response.request().method() === 'POST'),
+        page.getByRole('dialog').getByRole('button', { name: 'Add to project', exact: true }).click(),
+      ]);
+      expect(installResponse.ok()).toBeTruthy();
+      const templateService = await installResponse.json();
+      createdIds.push(templateService.id);
+      expect(templateService.domains[0]).toMatchObject({ hostname: `fp-${templateService.id.replaceAll('-', '')}.8-8-8-8.sslip.io`, port: 8080, https: false });
+      await expect(page.getByRole('heading', { name: 'automatic-url-template', exact: true })).toBeVisible();
+      await page.goto('/#/settings');
+      await page.getByLabel(/^Base domain/).fill('apps.example.test');
+      expect((await save()).ok()).toBeTruthy();
+      await expect(section.getByText('Custom domain takes priority', { exact: true })).toBeVisible();
+      await expect(section.getByLabel('Test URL preview')).toHaveCount(0);
+      await page.getByLabel(/^Base domain/).fill('');
+      await page.getByLabel(/^Public server IPv4/).fill('');
+      expect((await save()).ok()).toBeTruthy();
+      await page.reload();
+      await expect(section.getByText('Off', { exact: true })).toBeVisible();
+      expect((await (await page.request.get(`/api/services/${serviceId}`)).json()).domains).toEqual(service.domains);
+    } finally {
+      await page.request.patch('/api/settings', { data: original });
+      for (const id of createdIds) await page.request.delete(`/api/services/${id}`);
+    }
+  });
+
 });

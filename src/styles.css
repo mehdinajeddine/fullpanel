@@ -6632,3 +6632,63 @@ input[type="radio"] {
   font-size: 11px;
   line-height: 1.8;
 }
+
+.test-domain-settings {
+  margin: 24px 0;
+  padding: 23px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+.test-domain-heading,
+.test-domain-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.test-domain-heading {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.test-domain-heading h3 {
+  font-size: 14px;
+}
+.test-domain-heading svg {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.test-domain-description,
+.test-domain-footnote {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.test-domain-description {
+  margin: 0 0 18px;
+}
+.test-domain-footnote {
+  margin: 12px 0 0;
+}
+.test-domain-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 18px;
+  min-width: 0;
+}
+.test-domain-preview span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.test-domain-preview code {
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.test-domain-settings .notice {
+  margin-bottom: 0;
+}

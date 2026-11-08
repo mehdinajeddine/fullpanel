@@ -15,6 +15,10 @@ Owner/admin browser sessions manage accounts, projects, server settings and glob
 - GET `/templates` -> Template[]. POST `/templates/:id/install` {projectId,name} -> Service (config only, explicit Deploy follows).
 - GET `/activity` -> Activity[]. GET `/settings` -> Settings; PATCH `/settings` -> Settings.
 
+Settings accepts optional `testDomainIp` in PATCH: `""` disables automatic test URLs, otherwise a canonical ordinary public IPv4 is required (400 for private/loopback/special-use/reserved, IPv6, leading-zero or malformed values). Missing stored values default to `""`; server settings retain owner/admin browser-session restrictions. This is opt-in configuration, not IP discovery or a DNS/reachability check.
+
+On new `kind:'app'` services only, omitted `domains` allocates a saved default route: `baseDomain` takes priority with the existing HTTPS hostname; otherwise `testDomainIp` generates `fp-<service UUID without hyphens>.<IPv4 with hyphens>.sslip.io`, `https:false`, `path:'/'`, port 80 or the template's declared port. Explicit domains, including `[]`, suppress this allocation; databases and Compose are excluded. Changes to settings or names do not rewrite existing routes. See [default test-domain scope and limits](docs/specs/14-default-test-domain.md).
+
 ## Environment and restoration
 
 - GET/PUT `/projects/:id/environment` -> `{env}`; PUT accepts `{env: Record<string,string>}`. GET `/services/:id/environment` -> `{inherited,overrides,effective}`. All require operator access, including reads. Service values override project defaults; explicit empty values win. Compose child YAML overrides project values but is overridden by service values. Saving does not deploy. See [environment semantics](docs/specs/09-project-environment.md).
