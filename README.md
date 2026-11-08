@@ -26,6 +26,8 @@ An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migratio
 
 Requirements: Node.js 22.13+ (24 LTS recommended), npm, and Docker Engine with Compose and Buildx for real deployments.
 
+MongoDB also depends on the Docker host's kernel. The tested `mongo:8` image (8.3.13) refuses affected Linux 6.19–7.0.13 kernels; containerization does not remove this constraint. The MongoDB CI job uses Ubuntu 22.04's compatible kernel while the other jobs use the latest runner. See the [upstream MongoDB issue](https://jira.mongodb.org/browse/SERVER-136272) before choosing a MongoDB host.
+
 ```sh
 git clone https://github.com/mehdinajeddine/fullpanel.git
 cd fullpanel

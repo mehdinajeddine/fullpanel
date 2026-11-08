@@ -59,11 +59,20 @@ jobs:
           name: restore-ui-results
           path: .local/restore-ui/
   native-engines:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        engine: [mysql, mariadb, mongo]
+        include:
+          - engine: mysql
+            runner: ubuntu-latest
+          - engine: mariadb
+            runner: ubuntu-latest
+          # MongoDB 8.3.13 refuses the Linux 6.19–7.0.13 kernel range.
+          # Keep the real engine and restore checks on a supported host kernel.
+          # https://jira.mongodb.org/browse/SERVER-136272
+          - engine: mongo
+            runner: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,6 +80,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Record database host runtime
+        run: docker info --format 'Kernel={{.KernelVersion}} OS={{.OperatingSystem}} Architecture={{.Architecture}}'
       - run: npm run test:engines
         env:
           ENGINE_KINDS: ${{ matrix.engine }}
