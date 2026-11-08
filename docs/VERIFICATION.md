@@ -2,6 +2,16 @@
 
 FullPanel is the product name; `harborlight`, `hl-` and `HARBORLIGHT_*` remain technical identifiers. This is a development verification record, not a production-readiness certification or a claim of full reference parity. The [91-criterion baseline and subsequent roadmap](FEATURE-PARITY.md) remain the feature backlog.
 
+## Per-service resource monitoring increment
+
+The [R17 implementation](specs/18-service-metrics.md) passes **147/147 unit/API tests**, including twelve additional collector, permission, revocation and bounded-cache checks. A final independent rerun of the five API/cache cases also passes after ensuring blocked test requests are released on assertion failure. Typecheck/build and **20/20 Chromium browser workflows** pass. The added metrics workflow checks real demo unavailable/stopped/undeployed states and controlled simulated CPU/memory/network values, viewer access, partial totals, expired samples, refresh failure/retry and polling suspension when hidden or unmounted. Desktop/mobile dark-theme captures were visually inspected: [desktop](images/r17-metrics-desktop.png), [mobile](images/r17-metrics-mobile.png). A narrow-screen table overflow was corrected by containing its accessible hidden label within the scroll region. Final interface bundles are `index-CsBt_3PL.js` / `index-pc-tbFqk.css`.
+
+`npm run test:service-metrics` passes against Docker Engine **29.4.0**, Linux/aarch64 via OrbStack. API deployment creates a disposable Nginx service limited to **128 MiB**. The final run observes **24.98% CPU** under a bounded 0.25-core load, **18,025,021 bytes** of Docker CLI memory usage and **16,800,000 bytes** transmitted after a private 16 MiB download. These rounded CLI counters are not throughput rates or exact byte accounting. Repeated cache reads retain their collection time.
+
+The same fixture verifies stopped/null and restarted/replaced-container samples; a two-container Compose stack; exclusion of previous, unrelated and one-off containers; and partial results when a Compose member stops. An actual Docker CLI request against an isolated nonexistent socket returns unavailable/null with no raw connection-detail leak, without stopping or changing the shared daemon. Exact-owned fixture cleanup succeeds. The fixture is part of the Docker integration CI job.
+
+The Nginx fixture resolves to image ID `sha256:feb29ad4d53f4c6d793d598ed2af77917b8587163de8df86d6ae8e2acec5a5d4`, repository digest `nginx@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236`. Measurements are on-demand snapshots without retained history. Legacy Compose containers without the project ownership label need redeployment before their metrics can be verified. Workspace-level Docker CPU and panel-host memory/disk still have different scopes, now labelled explicitly.
+
 ## Public-IPv4 test URL increment
 
 The new opt-in `testDomainIp` setting passes **135/135 unit/API tests** (six additional allocation/validation/access/persistence checks), typecheck/build and **19/19 browser workflows** against the final build. The final browser rerun includes the canonical-address helper correction and completed in 52.7 seconds. [Desktop](images/r08-test-urls-desktop.png) and [mobile](images/r08-test-urls-mobile.png) settings captures were visually inspected; these show demo configuration, not a live public server.
@@ -10,7 +20,7 @@ The new opt-in `testDomainIp` setting passes **135/135 unit/API tests** (six add
 
 A separate DNS-only check resolved `fp-17c7cf33f0c94b6fbd2bf33cc2cc9994.64-176-22-9.sslip.io` to exactly `64.176.22.9`, the mirror address documented by the [provider](https://nip.io/). No HTTP/TLS request was made to that address. This verifies the tested provider-name format only; server ownership, public application reachability, IPv6 and ACME remain outside this increment's evidence.
 
-The local Docker-mode preview at `http://localhost:3080/` was gracefully restarted after copying its encrypted state and matching key to a private safety directory. It serves final bundles `index-ClWbChk8.js` / `index-YI-fmGzo.css`; the page and health endpoint both return 200. Existing service/domain data was retained. The local image/package proof below belongs to the earlier SSH/Inter baseline; this increment's remote container check is pending publication/CI.
+At that milestone, the local Docker-mode preview at `http://localhost:3080/` served bundles `index-ClWbChk8.js` / `index-YI-fmGzo.css` after a graceful restart with a private state/key safety copy; page and health returned 200 and existing data was retained. The local image/package proof below belongs to the earlier SSH/Inter baseline. The [published test-URL CI run](https://github.com/mehdinajeddine/fullpanel/actions/runs/42518617607) completed successfully across all five jobs, including the production container check.
 
 ## Passing checks
 
@@ -90,7 +100,7 @@ The [history corpus](research/easypanel-history-2026-11-08/README.md) covers the
 ## Limits that remain material
 
 - There is no full Easypanel feature parity. Pending and partial rows remain in the ledger; documentation coverage is not implementation completion.
-- The 19 main browser workflows use the demo runtime. The dedicated restoration and release browser tests, Docker scripts and package test verify real infrastructure operations. The SSH/Inter baseline image passed the package fixture; the subsequent test-URL source increment has its separate evidence above.
+- The 20 main browser workflows use the demo runtime, with explicit controlled sample fixtures for metrics display. The dedicated restoration and release browser tests, Docker scripts and package test verify real infrastructure operations. The SSH/Inter baseline image passed the package fixture; the subsequent test-URL source increment has its separate evidence above.
 - HTTPS/ACME issuance was not exercised against a real owned domain. Only HTTP routing and redirect responses are verified. The bundled resolver reads `ACME_EMAIL` from deployment configuration; the saved `letsEncryptEmail` setting does not currently reconfigure it.
 - New applications can receive a saved sslip.io HTTP test route after an administrator configures a public IPv4; a custom `baseDomain` takes priority. This removes per-service DNS editing but still requires a reachable server and proxy. IP discovery, IPv6, a local-offline endpoint and public service/ACME diagnostics remain pending in [R08](specs/14-default-test-domain.md). Provider DNS and local routing proofs above do not establish public application reachability or certificate issuance.
 - Native GitHub tests use locally signed fixture deliveries. GitHub App/OAuth installation and delivery from GitHub to an owned public HTTPS domain remain unverified/unsupported. Replay deduplication retains 256 accepted receipts per configured service.
@@ -103,5 +113,5 @@ The [history corpus](research/easypanel-history-2026-11-08/README.md) covers the
 - Schedules use UTC and a 15-second polling loop. Controlled-clock tests verify scheduling and retention rules; no long-running production soak test has been performed.
 - Standalone container replacement can interrupt traffic. Start success is not application readiness, and no zero-downtime guarantee is claimed.
 - Project permissions protect the control-plane API. Domain applications share a proxy Docker network and can reach each other directly on that network; operators must be trusted. The panel is not a hostile-tenant isolation boundary.
-- Metrics combine Docker CPU statistics with the panel process host's memory/disk measurements. Remote daemons and containerized hosts can have different measurement scopes.
+- Workspace metrics combine Docker CPU statistics with the panel process host's memory/disk measurements, now labelled separately. Service metrics use only verified current service containers. Remote daemons and containerized hosts can have different global measurement scopes; no historical retention is implemented.
 - Source and the dated DOCX are published at [mehdinajeddine/fullpanel](https://github.com/mehdinajeddine/fullpanel); no public container image is published. The published SSH/Inter baseline has a fully passing remote CI run, linked above.

@@ -214,6 +214,7 @@ test.describe.serial('Owner workflows', () => {
     expect(detail.env).toEqual({});
     expect((await page.request.post(`/api/services/${service.id}/deploy`, { data: {} })).status()).toBe(403);
     expect((await page.request.get(`/api/services/${service.id}/terminal`)).status()).toBe(403);
+    expect((await page.request.get(`/api/services/${service.id}/metrics`)).status()).toBe(200);
     expect((await page.request.get(`/api/services/${service.id}/source-credentials`)).status()).toBe(403);
     expect((await page.request.post(`/api/services/${service.id}/source-credentials/ssh/rotate`, { data: {} })).status()).toBe(403);
     expect((await page.request.get('/api/users')).status()).toBe(403);
@@ -623,6 +624,95 @@ test.describe.serial('Owner workflows', () => {
       await page.request.patch('/api/settings', { data: original });
       for (const id of createdIds) await page.request.delete(`/api/services/${id}`);
     }
+  });
+
+  test('service metrics distinguish missing, stopped, recent, partial and stale samples', async ({ page }) => {
+    test.setTimeout(65_000);
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    await page.goto(`/#/services/${service.id}/overview`);
+    const metrics = page.getByRole('region', { name: 'Service metrics', exact: true });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(metrics.getByText('Demo · no live measurements', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('Unavailable', { exact: true })).toBeVisible();
+    await expect(metrics.locator('.service-metric-card')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Stop', exact: true }).click();
+    await expect(metrics.getByText('Service stopped', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('No sample collected', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await expect(metrics.getByText('Unavailable', { exact: true })).toBeVisible();
+    const fresh = await (await page.request.post('/api/services', { data: { projectId: service.projectId, name: 'metrics-not-deployed', kind: 'app', source: { type: 'image', image: 'nginx:1.28-alpine' } } })).json();
+    try {
+      await page.goto(`/#/services/${fresh.id}/overview`);
+      await expect(metrics.getByText('Not deployed', { exact: true })).toBeVisible();
+      await expect(metrics.locator('.service-metric-card')).toHaveCount(0);
+    } finally { await page.request.delete(`/api/services/${fresh.id}`); }
+
+    // Controlled browser fixtures exercise rendering/failure states; they are explicitly marked demo.
+    let responseKind: 'available' | 'partial' | 'stale' | 'failed' = 'available';
+    let requests = 0;
+    let sampledAt = '';
+    const values = { cpuPercent: 125.4, memoryUsedBytes: 128 * 1024 ** 2, memoryLimitBytes: 512 * 1024 ** 2, networkRxBytes: 12 * 1024 ** 2, networkTxBytes: 3 * 1024 ** 2 };
+    await page.route(`**/api/services/${service.id}/metrics`, async route => {
+      requests += 1;
+      if (responseKind === 'failed') { await route.fulfill({ status: 503, json: { error: 'Controlled metrics refresh failure.' } }); return; }
+      sampledAt = new Date(Date.now() - (responseKind === 'stale' ? 90_000 : 0)).toISOString();
+      const main = { id: 'main', name: 'application', state: 'running', runtimeStartedAt: new Date(Date.now() - 3_600_000).toISOString(), sampledAt, ...values };
+      await route.fulfill({ json: {
+        mode: 'demo', serviceId: service.id, state: responseKind === 'partial' ? 'partial' : 'available', sampledAt, checkedAt: new Date().toISOString(),
+        totals: responseKind === 'partial' ? { cpuPercent: null, memoryUsedBytes: null, memoryLimitBytes: null, networkRxBytes: null, networkTxBytes: null } : values,
+        containers: responseKind === 'partial' ? [main, { ...main, id: 'worker', name: 'worker', state: 'unavailable', sampledAt: null, cpuPercent: null, memoryUsedBytes: null, memoryLimitBytes: null, networkRxBytes: null, networkTxBytes: null }] : [main],
+      } });
+    });
+    await page.goto(`/#/services/${service.id}/overview`);
+    await expect(metrics.getByText('Recent sample', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('125.4%', { exact: true }).first()).toBeVisible();
+    await expect(metrics.getByRole('meter', { name: 'Memory usage' })).toHaveAttribute('aria-valuenow', '25');
+    await expect(metrics).toContainText('not transfer rates');
+    await expect(metrics.locator('.metrics-timestamps time').first()).toHaveAttribute('datetime', sampledAt);
+    await expect(metrics).toContainText('Any displayed sample values are simulated');
+    while (await page.getByRole('button', { name: 'Dismiss notification', exact: true }).count()) await page.getByRole('button', { name: 'Dismiss notification', exact: true }).first().click();
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await metrics.getByRole('heading', { name: 'Service metrics', exact: true }).click();
+    await metrics.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: 'test-results/r17-metrics-desktop.png' });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+    await metrics.evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY - 20, behavior: 'instant' }));
+    await page.screenshot({ path: 'test-results/r17-metrics-mobile.png' });
+    responseKind = 'failed';
+    await metrics.getByRole('button', { name: 'Refresh metrics', exact: true }).click();
+    await expect(metrics.getByText('Metrics refresh failed', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('Stale sample', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('125.4%', { exact: true }).first()).toBeVisible();
+    await expect(metrics).toHaveAttribute('data-stale', 'true');
+    responseKind = 'partial';
+    await metrics.getByRole('button', { name: 'Retry metrics', exact: true }).click();
+    await expect(metrics.getByText('Partial sample', { exact: true })).toBeVisible();
+    await expect(metrics.locator('.service-metric-card').filter({ has: page.getByText('CPU', { exact: true }) })).toContainText('Unavailable');
+    await metrics.locator('.metrics-breakdown summary').click();
+    await expect(metrics.getByText('worker', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('125.4%', { exact: true })).toBeVisible();
+    responseKind = 'stale';
+    await metrics.getByRole('button', { name: 'Refresh metrics', exact: true }).click();
+    await expect(metrics.getByText('Sample is out of date', { exact: true })).toBeVisible();
+    await expect(metrics.getByText('Stale sample', { exact: true })).toBeVisible();
+    responseKind = 'available';
+    await metrics.getByRole('button', { name: 'Refresh metrics', exact: true }).click();
+    await expect(metrics).toHaveAttribute('data-stale', 'false');
+    await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+    const beforeHidden = requests;
+    await page.waitForTimeout(10_500);
+    expect(requests).toBe(beforeHidden);
+    await page.evaluate(() => { delete (document as unknown as Record<string, unknown>).hidden; document.dispatchEvent(new Event('visibilitychange')); });
+    await expect.poll(() => requests).toBeGreaterThan(beforeHidden);
+    await page.getByRole('link', { name: 'Source', exact: true }).click();
+    await expect(metrics).toHaveCount(0);
+    const afterUnmount = requests;
+    await page.waitForTimeout(10_500);
+    expect(requests).toBe(afterUnmount);
   });
 
 });

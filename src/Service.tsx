@@ -63,6 +63,7 @@ import { ServiceEnvironment } from "./Environment";
 import { RestoreHistory } from "./Restores";
 import GitHubWebhook from "./GitHubWebhook";
 import Releases from "./Releases";
+import ServiceMetrics from "./ServiceMetrics";
 const ServiceTerminal = lazy(() => import("./Terminal"));
 const tabs = [
   ["overview", "Overview"],
@@ -427,6 +428,7 @@ function ServiceOverview({ service }: { service: Service }) {
     `${service.source.type} source`;
   return (
     <>
+      <ServiceMetrics service={service} />
       {canEdit && !["app", "compose"].includes(service.kind) && (
         <DatabaseConnection service={service} />
       )}

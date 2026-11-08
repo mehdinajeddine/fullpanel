@@ -147,14 +147,19 @@ export default function Dashboard({ name }: { name?: string }) {
           </span>
         </div>
         <span className="live-indicator">
-          <i /> {metrics.mode === "demo" ? "Demo workspace" : "Live overview"}
+          <i />{" "}
+          {metrics.mode === "demo"
+            ? "Demo workspace"
+            : error || metrics.error
+              ? "Overview refresh failed"
+              : "Latest overview"}
         </span>
       </div>
       <ServiceStateSummary services={services} />
       {access.isAdmin ? (
         <div className="metrics-grid">
           <Metric
-            label="Runtime CPU"
+            label={metrics.mode === "demo" ? "CPU (demo)" : "Docker CPU"}
             value={
               metrics.cpuPercent === null
                 ? "—"
@@ -163,20 +168,24 @@ export default function Dashboard({ name }: { name?: string }) {
             detail={
               metrics.cpuPercent === null
                 ? "Waiting for runtime metrics"
-                : "Current runtime utilization"
+                : metrics.mode === "demo"
+                  ? "Simulated CPU usage"
+                  : "All containers · normalized by host cores"
             }
             percent={metrics.cpuPercent}
             icon={<Cpu size={17} />}
           />
           <Metric
-            label="Runtime memory"
+            label={
+              metrics.mode === "demo" ? "Memory (demo)" : "Panel host memory"
+            }
             value={bytes(metrics.memoryUsedBytes)}
-            detail={`of ${bytes(metrics.memoryTotalBytes)} available`}
+            detail={`of ${bytes(metrics.memoryTotalBytes)} · ${metrics.mode === "demo" ? "simulated" : "host running the panel"}`}
             percent={memoryPercent}
             icon={<MemoryStick size={17} />}
           />
           <Metric
-            label="Disk usage"
+            label={metrics.mode === "demo" ? "Disk (demo)" : "Panel disk"}
             value={
               metrics.diskUsedBytes === null
                 ? "—"
@@ -184,7 +193,7 @@ export default function Dashboard({ name }: { name?: string }) {
             }
             detail={
               metrics.diskTotalBytes
-                ? `of ${bytes(metrics.diskTotalBytes)} total`
+                ? `of ${bytes(metrics.diskTotalBytes)} · ${metrics.mode === "demo" ? "simulated" : "data filesystem"}`
                 : "Disk metrics unavailable"
             }
             percent={diskPercent}
@@ -225,6 +234,26 @@ export default function Dashboard({ name }: { name?: string }) {
             icon={<Rocket size={17} />}
           />
         </div>
+      )}
+      {access.isAdmin && (
+        <p className="dashboard-metrics-source">
+          {metrics.sampledAt ? (
+            <>
+              Metrics collected{" "}
+              <time dateTime={metrics.sampledAt} title={metrics.sampledAt}>
+                {new Date(metrics.sampledAt).toLocaleString(undefined, {
+                  dateStyle: "medium",
+                  timeStyle: "long",
+                })}
+              </time>
+              .
+            </>
+          ) : (
+            "Metrics collection time unavailable."
+          )}
+          {(error || metrics.error) &&
+            " Refresh failed; displayed values may be out of date."}
+        </p>
       )}
       <div className="dashboard-grid">
         <div className="dashboard-main">

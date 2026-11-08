@@ -7,6 +7,8 @@ import { randomUUID } from 'node:crypto';
 import { parse, stringify } from 'yaml';
 import type { Service, Metrics, ServiceStatus, Backup, BackupMetadata } from '../shared/types.js';
 import type { ProxyAuthMap } from '../shared/proxy.js';
+import type { ServiceMetrics } from '../shared/metrics.js';
+import { collectDockerServiceMetrics, emptyMetricValues } from './docker-metrics.js';
 import { proxyLabels } from './proxy-routing.js';
 import { resolveSourceCredentials, withGitSourceCredentials, withDockerSourceCredentials, normalizeGitRepository, type DeploymentSourceCredentials } from './source-credentials.js';
 import { assertEngineCompatible, backupFormats, NativeDatabaseTools, restoredEnvironment, validateRestoreFile } from './database-restore.js';
@@ -27,6 +29,7 @@ export interface RuntimeDriver {
   remove(service: Service): Promise<void>;
   logs(service: Service, tail: number): Promise<string>;
   metrics(): Promise<Metrics>;
+  serviceMetrics?(service: Service): Promise<ServiceMetrics>;
   statuses(): Promise<Record<string, ServiceStatus>>;
   backup(service: Service, filename: string): Promise<BackupMetadata | void>;
   validateRestore?(service: Service, backup: Backup, filename: string, options?: RestoreOptions): Promise<void>;
@@ -317,6 +320,7 @@ export class DockerDriver implements RuntimeDriver {
     }
     return { ...compose, ...canonical };
   }
+  async serviceMetrics(service: Service): Promise<ServiceMetrics> { return collectDockerServiceMetrics(service, command); }
   async metrics(): Promise<Metrics> {
     const base: Metrics = { mode: 'docker', cpuPercent: null, memoryUsedBytes: totalmem() - freemem(), memoryTotalBytes: totalmem(), diskUsedBytes: null, diskTotalBytes: null, uptime: uptime(), dockerVersion: null, containersRunning: 0 };
     try {
@@ -326,7 +330,8 @@ export class DockerDriver implements RuntimeDriver {
       const stats = (await command('docker', ['stats', '--no-stream', '--format', '{{json .}}'], { timeout: 15000 })).trim().split('\n').filter(Boolean).map(line => JSON.parse(line));
       base.containersRunning = info.ContainersRunning;
       base.cpuPercent = Math.min(100, stats.reduce((sum, stat) => sum + (parseFloat(stat.CPUPerc) || 0), 0) / (info.NCPU || cpus().length || 1));
-    } catch (error) { base.error = String(error instanceof Error ? error.message : error).slice(0, 1000); }
+      base.sampledAt = new Date().toISOString();
+    } catch { base.sampledAt = null; base.error = 'Server measurements are incomplete. Check Docker connectivity and data-directory access.'; }
     return base;
   }
   async backup(service: Service, destination: string): Promise<BackupMetadata> {
@@ -560,7 +565,7 @@ export function sanitizeCompose(service: Service, projectEnvironment: Record<str
     const combined = { ...projectEnvironment, ...environment, ...service.env };
     // Escape Compose substitutions to avoid leaking ambient server environment into workloads.
     const escaped = JSON.parse(JSON.stringify(item).replace(/\$/g, '$$$$'));
-    services[name] = { ...escaped, environment: Object.fromEntries(Object.entries(combined).map(([key, value]) => [key, value.replace(/\$/g, '$$$$')])), labels: { [LABEL]: 'true', [SERVICE_LABEL]: service.id }, networks: ['project'], cpus: service.resources.cpu, mem_limit: `${service.resources.memoryMb}m` };
+    services[name] = { ...escaped, environment: Object.fromEntries(Object.entries(combined).map(([key, value]) => [key, value.replace(/\$/g, '$$$$')])), labels: { [LABEL]: 'true', [SERVICE_LABEL]: service.id, 'io.harborlight.project': service.projectId }, networks: ['project'], cpus: service.resources.cpu, mem_limit: `${service.resources.memoryMb}m` };
   }
   return { services, volumes, networks: { project: { name: `hl-project-${service.projectId}`, external: true } } };
 }
@@ -572,6 +577,7 @@ export class DemoDriver implements RuntimeDriver {
   async remove(service: Service) { delete this.states[service.id]; }
   async logs(service: Service) { return `DEMO — illustrative log output; no container is running.\n${service.createdAt} [info] ${service.name}: configuration loaded\n${service.updatedAt} [info] Ready to receive requests\n`; }
   async statuses() { return { ...this.states }; }
+  async serviceMetrics(service: Service): Promise<ServiceMetrics> { return { mode: 'demo', serviceId: service.id, state: service.status === 'stopped' ? 'stopped' : service.status === 'not-deployed' ? 'not-deployed' : 'unavailable', sampledAt: null, checkedAt: new Date().toISOString(), containers: [], totals: emptyMetricValues(), message: 'Demo mode has no real container measurements.' }; }
   async metrics(): Promise<Metrics> { return { mode: 'demo', cpuPercent: 12.8, memoryUsedBytes: 3.2 * 1024 ** 3, memoryTotalBytes: 8 * 1024 ** 3, diskUsedBytes: 21.4 * 1024 ** 3, diskTotalBytes: 80 * 1024 ** 3, uptime: 259200, dockerVersion: 'Demo', containersRunning: 3 }; }
   async backup(service: Service, destination: string): Promise<BackupMetadata | void> {
     await writeFile(destination, 'DEMO BACKUP — sample text, not restorable data.\n', { mode: 0o600, flag: 'wx' });

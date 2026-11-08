@@ -13,6 +13,7 @@ Deploy your applications, manage your databases and follow your services from on
 - **Deploy your applications** from Docker images, Dockerfiles or Git repositories, including private repositories with SSH deploy keys.
 - **Manage your databases** with PostgreSQL, MySQL, MariaDB, MongoDB and Redis services.
 - **See what needs attention** with service status, deployment history, logs and visible pending changes.
+- **Follow each service's resource usage** with CPU, memory and network totals, collection times and clear missing-data states.
 - **Give each app an address** with custom domains, HTTPS configuration and optional HTTP test URLs without manual DNS records.
 - **Protect your data** with scheduled local backups and restoration to compatible services.
 - **Return to a previous app version** using saved releases while keeping current volume data.
@@ -24,8 +25,8 @@ Explore the dashboard, deployment controls and mobile views below. Screenshots u
 
 | Services at a glance | Private Git over SSH |
 | --- | --- |
-| [![Service overview with runtime status, pending changes and resource limits](docs/images/inter-service-overview.png)](docs/images/inter-service-overview.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/inter-git-ssh-desktop.png)](docs/images/inter-git-ssh-desktop.png) |
-| **Know where you stand** — see what is running and what still needs deployment. | **Connect private repositories** — set up a deploy key and verify your Git server. |
+| [![Service CPU, memory and cumulative network metrics with sample times](docs/images/r17-metrics-desktop.png)](docs/images/r17-metrics-desktop.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/inter-git-ssh-desktop.png)](docs/images/inter-git-ssh-desktop.png) |
+| **Follow resource usage** — see CPU, memory and network totals with the collection time. | **Connect private repositories** — set up a deploy key and verify your Git server. |
 
 | Domains and routing | Automatic test URLs |
 | --- | --- |
@@ -38,11 +39,11 @@ Explore the dashboard, deployment controls and mobile views below. Screenshots u
 <table>
   <tr>
     <th>Workspace overview</th>
-    <th>Test URL settings</th>
+    <th>Service metrics</th>
   </tr>
   <tr>
     <td align="center"><a href="docs/images/inter-dashboard-mobile.png"><img src="docs/images/inter-dashboard-mobile.png" alt="FullPanel dashboard on a mobile screen with service indicators and next actions" width="250"></a></td>
-    <td align="center"><a href="docs/images/r08-test-urls-mobile.png"><img src="docs/images/r08-test-urls-mobile.png" alt="Automatic test URL settings on a mobile screen with HTTP and reachability information" width="250"></a></td>
+    <td align="center"><a href="docs/images/r17-metrics-mobile.png"><img src="docs/images/r17-metrics-mobile.png" alt="Service resource metrics on a mobile screen with clear sample times and simulated data" width="250"></a></td>
   </tr>
 </table>
 
