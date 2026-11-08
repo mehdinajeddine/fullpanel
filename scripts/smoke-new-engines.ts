@@ -129,6 +129,18 @@ try {
     await driver.remove(service);
     await command('docker', ['volume', 'rm', `hl-${id}-data`]);
   }
+} catch (error) {
+  // Preserve bounded, redacted startup evidence before disposable resources are removed.
+  for (const service of services) {
+    const [container] = JSON.parse(await command('docker', ['inspect', `hl-${service.id}`]).catch(() => '[]'));
+    if (container?.Config?.Labels?.['io.harborlight.service'] !== service.id) continue;
+    console.error(`${service.kind} runtime state: ${JSON.stringify({ status: container.State?.Status, exitCode: container.State?.ExitCode, oomKilled: container.State?.OOMKilled })}`);
+    let logs = '';
+    await command('docker', ['logs', '--tail', '50', container.Id], { output: chunk => { logs = (logs + chunk).slice(-12000); } }).catch(() => {});
+    for (const value of Object.values(service.env).filter(value => value.length >= 4)) logs = logs.split(value).join('[REDACTED]');
+    console.error(logs);
+  }
+  throw error;
 } finally {
   for (const service of services.reverse()) {
     await driver.remove(service).catch(() => {});
