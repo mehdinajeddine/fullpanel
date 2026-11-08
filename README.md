@@ -22,6 +22,36 @@ The terminal prototype is disabled by default. `HARBORLIGHT_EXPERIMENTAL_TERMINA
 
 An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned after the current feature work: read-only inventory, a reviewed migration plan, verified data transfer and an explicit cutover with the original installation retained.
 
+## Interface tour
+
+Actual FullPanel screens with demonstration data. Select a screenshot to view it at full size. Configuration indicators describe saved settings; they do not certify a deployment, DNS or TLS readiness.
+
+| Services at a glance | Private Git over SSH |
+| --- | --- |
+| [![Service overview with runtime status, pending changes and resource limits](docs/images/inter-service-overview.png)](docs/images/inter-service-overview.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/inter-git-ssh-desktop.png)](docs/images/inter-git-ssh-desktop.png) |
+| **Runtime and configuration states** — see what is running and what still needs deployment. | **Per-service deploy keys** — copy the public key and configure the Git server's trusted host key. |
+
+| Domains and routing | Automatic test URLs |
+| --- | --- |
+| [![Domain routing from the public hostname to the application's internal port](docs/images/inter-domain-desktop.png)](docs/images/inter-domain-desktop.png) | [![Opt-in public IPv4 setting with a generated sslip.io HTTP URL preview](docs/images/r08-test-urls-desktop.png)](docs/images/r08-test-urls-desktop.png) |
+| **Visual route mapping** — hostname, path, application port and HTTPS configuration in one place. | **HTTP test addresses** — configure the server's public IPv4 once for new application URLs. |
+
+<details>
+<summary><strong>Mobile views</strong></summary>
+
+<table>
+  <tr>
+    <th>Workspace overview</th>
+    <th>Test URL settings</th>
+  </tr>
+  <tr>
+    <td align="center"><a href="docs/images/inter-dashboard-mobile.png"><img src="docs/images/inter-dashboard-mobile.png" alt="FullPanel dashboard on a mobile screen with service indicators and next actions" width="250"></a></td>
+    <td align="center"><a href="docs/images/r08-test-urls-mobile.png"><img src="docs/images/r08-test-urls-mobile.png" alt="Automatic test URL settings on a mobile screen with HTTP and reachability information" width="250"></a></td>
+  </tr>
+</table>
+
+</details>
+
 ## Run locally
 
 Requirements: Node.js 22.13+ (24 LTS recommended), npm, and Docker Engine with Compose and Buildx for real deployments.
