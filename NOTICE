@@ -21,7 +21,12 @@ a strictly separated clean-room process. It provides no legal conclusion or
 guarantee concerning third-party rights.
 
 Third-party packages retain their own licenses. See package-lock.json and
-the licenses distributed with each package.
+the licenses distributed with each package. New builds also provide the
+collected notices at /licenses/THIRD-PARTY-NOTICES.txt. The collection records
+missing texts and does not replace the applicable licenses.
+
+See docs/PROVENANCE-AUDIT.txt for the scope, results and limitations of the
+technical provenance review, including unresolved third-party permissions.
 
 The current application bundles Inter under the SIL Open Font License 1.1.
 Its notice and complete license are in public/licenses/Inter-OFL.txt. The

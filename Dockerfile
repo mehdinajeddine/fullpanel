@@ -8,6 +8,7 @@ COPY shared ./shared
 COPY server ./server
 COPY src ./src
 COPY public ./public
+COPY scripts/generate-third-party-notices.mjs ./scripts/generate-third-party-notices.mjs
 RUN npm run build
 
 FROM docker:29-cli AS docker-cli
@@ -19,6 +20,7 @@ COPY --from=docker-cli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/
 WORKDIR /app
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3000 HARBORLIGHT_MODE=docker DATA_DIR=/var/lib/harborlight
 COPY package.json package-lock.json ./
+COPY LICENSE NOTICE ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 COPY --from=build /app/dist ./dist
 VOLUME ["/var/lib/harborlight"]

@@ -1,0 +1,107 @@
+FULLPANEL PROVENANCE REVIEW
+8 November 2026
+
+Conclusion
+
+The checks below found no exact file or long lexical code match with the
+examined Easypanel distribution. They do not establish the absence of copying,
+the legality of the reference inspection, or freedom from third-party claims.
+Three Easypanel screenshots are intentionally reproduced in the documentation.
+Express permission to republish them has not been recorded. This review cannot
+certify the whole repository as original or legally cleared.
+
+Scope and evidence
+
+Application baseline: commit 8a6d8d66d938ddef8cfe0b257d729982783a1c9f.
+Reference: the previously extracted Linux ARM64 Easypanel 2.38.0 distribution,
+image digest sha256:9af9b2f275120b5d6a05bc52a880d7a36f0c7c0f7077f54bc42be3dd5ce7db40.
+Its identity and inspection method are recorded in REFERENCE-ANALYSIS.md.
+No further proprietary source was downloaded or executed for this review.
+Reference node_modules directories were excluded; bundled files can still
+contain shared open-source dependencies.
+
+1. SHA-256 whole-file comparison: 182 current Git-tracked files against 3,203
+   reference files (3,152 distinct hashes). No identical file found. The current
+   application/configuration subset comprised 100 of those tracked files.
+
+2. SHA-256 whole-blob comparison: 340 blobs, 16,325,523 bytes, reachable through
+   the locally available Git refs. No identical reference file found. This
+   does not inspect unreachable/deleted objects or verify all remote history.
+
+3. Lexical comparison: every consecutive 60-token window in 89 tracked JS/TS
+   application, shared, script and test files, against 2,536 reference JS/TS
+   files. TypeScript's scanner skipped whitespace/comments and retained token
+   kinds, identifier names and literal spellings. Application: 68,217 tokens;
+   reference: 724,086 tokens. No matching window found. This is a lexical
+   heuristic, not an AST, semantic or renamed-identifier comparison. Minified
+   or transformed copies, smaller fragments, structural similarities and
+   ideas derived from inspected code can escape it. The original unbundled
+   Easypanel source code was not available.
+
+4. Documentary review: the 151 release records contain metadata and links;
+   the 70 derived requirements distinguish paraphrased public facts from
+   FullPanel requirements. No full HTML or long raw release-text passage was
+   identified in the published history JSON. No exhaustive phrase comparison
+   against every external source was performed.
+
+5. Confirmed third-party reproductions: the three attributed PNGs listed in
+   images/reference/README.md are byte-identical to DOCX media image15 through
+   image17. These published website images are distinct from the extracted
+   distribution files used by checks 1-3. The zero-match results therefore
+   do not contradict their presence and must not be presented as "no copied
+   assets in this repository".
+
+6. Dependency inventory: 302 dependency entries in package-lock.json declare
+   licenses: MIT 261, ISC 18, Apache-2.0 7, BSD-3-Clause 7, BlueOak-1.0.0 6,
+   OFL-1.1 1, CC-BY-4.0 1 and 0BSD 1. These are metadata declarations, not a
+   legal compatibility assessment. Installed package license texts, bundled
+   browser code and Docker distribution notices need separate attention.
+
+Corrections accompanying this review
+
+The specifications DOCX's blanket statement that no Easypanel assets were
+redistributed is corrected to disclose the three reference screenshots and
+their unresolved republication permission. Source attribution is preserved.
+The document remains a dated specification snapshot, not a current feature
+or legal certification.
+
+The application build collects installed dependency license/notice texts for
+distribution with the browser assets. Missing texts remain explicitly noted;
+license metadata is not substituted for an absent license grant. Docker builds
+also include FullPanel's root LICENSE and NOTICE. These changes apply to new
+builds; the already installed AWS test image is not changed by this review.
+
+Remaining decisions
+
+- Establish a lawful basis for publishing the three reference screenshots,
+  obtain permission, or prepare a future edition without those reproductions.
+- Have qualified counsel examine the applicable jurisdiction, the actual
+  software license and reference-inspection process. Public availability of
+  an image is not itself redistribution or reverse-engineering permission.
+- Resolve dependency notice gaps recorded by the build. An OS/base-image SBOM
+  and its source-offer/distribution obligations are outside this npm review.
+- Record the provenance and applicable reuse terms of the user-supplied logo.
+  Embedded generation metadata alone does not establish a chain of rights.
+- Preserve commit history, sources and review evidence. Do not claim a strict
+  clean-room process: reference bundles were inspected during the project.
+
+Legal reference points, not a conclusion about FullPanel
+
+In the EU, the SAS Institute judgment distinguishes software functionality
+from protected expression, and discusses lawful observation and possible
+infringement through code or manual reproduction. It is not blanket approval
+for reimplementing a product after inspecting its code.
+https://curia.europa.eu/jcms/upload/docs/application/pdf/2012-05/cp120053fr.pdf
+
+Directive 2009/24/EC sets conditions for observation and decompilation, while
+preserving other law, including contracts, trademarks and unfair competition.
+Whether and how these provisions apply here requires a jurisdiction-specific
+assessment; this review makes no such determination.
+https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32009L0024
+
+Easypanel's terms reserve rights and refer to applicable software licenses.
+The software-specific terms were not comprehensively audited in this review.
+https://easypanel.io/terms
+
+All checks are technical evidence from the stated baseline and method, not
+independent expert evidence, a legal opinion or a promise of zero litigation.
