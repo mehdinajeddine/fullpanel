@@ -2,39 +2,35 @@
 
 **Your infrastructure. In good hands.**
 
-An independent, open-source control panel for applications and databases on your own Docker host. An original interface and implementation, informed by the workflows documented in Easypanel. Apache-2.0 licensed.
+Deploy your applications, manage your databases and follow your services from one dashboard on your own server. FullPanel is an open-source control panel for Docker workloads.
 
-**Status: early development.** The [feature matrix](docs/FEATURE-PARITY.md) records observed reference behavior, acceptance criteria, and implementation status. FullPanel does not claim complete Easypanel parity. See [verification](docs/VERIFICATION.md) for what has actually been exercised.
+**Early development.** Check the [supported workflows and current limitations](docs/VERIFICATION.md) before relying on FullPanel for production workloads.
 
-The product was previously named Harborlight. Existing `harborlight` / `hl-` identifiers, storage paths, CLI commands and environment variables retain their names for compatibility. FullPanel uses the supplied logo, locally hosted Inter, navy `#16264A`, white and amber `#E3A33A`.
+![FullPanel dashboard with service status and next actions](docs/images/inter-dashboard-desktop.png)
 
-The [detailed French specification](docs/deliverables/FullPanel_Specifications_fonctionnelles_et_techniques.docx) includes 91 criteria, 25 workflows, 70 regression requirements derived from 151 public Easypanel releases, and attributed screenshots. It is a dated baseline; the [feature matrix](docs/FEATURE-PARITY.md) and [verification record](docs/VERIFICATION.md) track subsequent implementation, including SSH deploy keys.
+## What you can do
 
-![FullPanel dashboard with Inter and explicitly labeled demonstration data](docs/images/inter-dashboard-desktop.png)
-
-The current release includes projects and services, image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, shared project variables with service overrides and `.env` import, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, verified local restoration with safety backups, and revocable deployment triggers. It also provides accounts with project permissions, scoped API keys and a CLI, private image credentials, HTTPS Git tokens and per-service SSH deploy keys, and proxy password protection, prefix removal, wildcard HTTP routes and HTTPS redirects. The interface supports light and dark themes, mobile layouts, and keyboard search.
-
-GitHub push webhooks verify the signed request and deploy its exact commit. Applications retain immutable local image/configuration releases for explicit rollback, while preserving current volume data and saved desired settings. See [GitHub setup](docs/specs/12-github-auto-deploy.md) and [application releases](docs/specs/13-application-releases.md).
-
-GitHub App/OAuth connection, private build base images, offsite storage, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
-
-The terminal prototype is disabled by default. `HARBORLIGHT_EXPERIMENTAL_TERMINAL=true` opts into development testing; real Docker PTY behavior and durable session cleanup after a crash still need verification.
-
-An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned after the current feature work: read-only inventory, a reviewed migration plan, verified data transfer and an explicit cutover with the original installation retained.
+- **Deploy your applications** from Docker images, Dockerfiles or Git repositories, including private repositories with SSH deploy keys.
+- **Manage your databases** with PostgreSQL, MySQL, MariaDB, MongoDB and Redis services.
+- **See what needs attention** with service status, deployment history, logs and visible pending changes.
+- **Give each app an address** with custom domains, HTTPS configuration and optional HTTP test URLs without manual DNS records.
+- **Protect your data** with scheduled local backups and restoration to compatible services.
+- **Return to a previous app version** using saved releases while keeping current volume data.
+- **Work with your team** through project permissions, shared environment variables and scoped API keys.
 
 ## Interface tour
 
-Actual FullPanel screens with demonstration data. Select a screenshot to view it at full size. Configuration indicators describe saved settings; they do not certify a deployment, DNS or TLS readiness.
+Explore the dashboard, deployment controls and mobile views below. Screenshots use demonstration data; select one to view it at full size.
 
 | Services at a glance | Private Git over SSH |
 | --- | --- |
 | [![Service overview with runtime status, pending changes and resource limits](docs/images/inter-service-overview.png)](docs/images/inter-service-overview.png) | [![SSH deploy key with source, public key and server trust steps](docs/images/inter-git-ssh-desktop.png)](docs/images/inter-git-ssh-desktop.png) |
-| **Runtime and configuration states** — see what is running and what still needs deployment. | **Per-service deploy keys** — copy the public key and configure the Git server's trusted host key. |
+| **Know where you stand** — see what is running and what still needs deployment. | **Connect private repositories** — set up a deploy key and verify your Git server. |
 
 | Domains and routing | Automatic test URLs |
 | --- | --- |
 | [![Domain routing from the public hostname to the application's internal port](docs/images/inter-domain-desktop.png)](docs/images/inter-domain-desktop.png) | [![Opt-in public IPv4 setting with a generated sslip.io HTTP URL preview](docs/images/r08-test-urls-desktop.png)](docs/images/r08-test-urls-desktop.png) |
-| **Visual route mapping** — hostname, path, application port and HTTPS configuration in one place. | **HTTP test addresses** — configure the server's public IPv4 once for new application URLs. |
+| **Connect your domains** — manage each application's address and routing in one place. | **Try a deployed app** — configure your server's public IPv4 once for automatic HTTP test URLs. |
 
 <details>
 <summary><strong>Mobile views</strong></summary>
@@ -56,7 +52,7 @@ Actual FullPanel screens with demonstration data. Select a screenshot to view it
 
 Requirements: Node.js 22.13+ (24 LTS recommended), npm, and Docker Engine with Compose and Buildx for real deployments.
 
-MongoDB also depends on the Docker host's kernel. The tested `mongo:8` image (8.3.13) refuses affected Linux 6.19–7.0.13 kernels; containerization does not remove this constraint. The MongoDB CI job uses Ubuntu 22.04's compatible kernel while the other jobs use the latest runner. See the [upstream MongoDB issue](https://jira.mongodb.org/browse/SERVER-136272) before choosing a MongoDB host.
+For MongoDB deployments, check [host compatibility](docs/VERIFICATION.md#environment-and-image-provenance) before choosing your server.
 
 ```sh
 git clone https://github.com/mehdinajeddine/fullpanel.git
@@ -65,7 +61,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173 and create the initial owner account. The backend binds to loopback by default. Docker mode is the default; Docker failures are reported rather than replaced with simulated results.
+Open http://127.0.0.1:5173 and create your owner account. By default, FullPanel deploys real workloads through Docker.
 
 To explore without creating containers:
 
@@ -83,12 +79,7 @@ Clone FullPanel to a server with Docker Engine and the Compose plugin installed,
 sh scripts/install.sh
 ```
 
-This builds from source and starts the panel. It does not install Docker, join or leave a Swarm, or expose the administration port publicly. The installer is equivalent to:
-
-```sh
-cp .env.example .env
-docker compose up -d --build panel
-```
+The installer builds and starts FullPanel. Its administration port is accessible only from the server until you configure remote access.
 
 On a remote server, forward the loopback port to complete setup:
 
@@ -106,7 +97,7 @@ Start the optional Traefik proxy for application routes. Custom HTTPS domains al
 docker compose --profile proxy up -d
 ```
 
-Create a project and service, add its hostname and internal application port in **Domains**, save, then **Deploy**. Services with domains join the `harborlight-proxy` network. The bundled proxy discovers container labels and requests certificates for HTTPS domains. A saved domain is configuration, not proof that DNS or a certificate is ready.
+Create a project and service, add its hostname and internal application port in **Domains**, save, then **Deploy**. The proxy routes requests to your application and requests certificates for HTTPS domains. A saved domain is configuration, not proof that DNS or a certificate is ready.
 
 For HTTP test URLs without adding DNS records yourself, open **Settings → Automatic test URLs → Public server IPv4** and save this server's public IPv4. New applications receive `http://fp-<service-UUID-without-hyphens>.<IPv4-with-hyphens>.sslip.io`. Leave the field empty to disable future allocations. This opt-in setting supports public IPv4 only; it does not discover the address or verify DNS/reachability. Traefik must be reachable on port 80 and the application target port must be correct; templates use their declared port. The external sslip.io DNS service must remain available. Use HTTPS separately before sending sensitive data.
 
@@ -161,48 +152,18 @@ node scripts/harborlight.mjs deploy SERVICE_UUID --wait
 
 The CLI prints JSON, refuses HTTP redirects, and exits unsuccessfully when a waited deployment fails. `--help` lists commands. Keys cannot manage accounts, server settings or other keys. Revocation and reduced account permissions take effect on subsequent requests.
 
-## Development and checks
+## Current scope
 
-```sh
-npm run typecheck
-npm test
-npm run build
-npx playwright install chromium
-npm run test:e2e
-```
+FullPanel currently manages services on a single Docker host. Interactive terminals, offsite backups and rolling deployments are still in development. Public certificate issuance and renewal remain unverified. An [EasyPanel and Portainer migration assistant](docs/specs/15-platform-migration.md) is planned.
 
-The browser suite builds and starts an isolated production server in demo mode. Docker checks are separately opt-in because they create real containers and volumes:
+## Documentation
 
-```sh
-npm run test:docker
-npm run test:proxy
-npm run test:credentials
-npm run test:git
-npm run test:environment
-# Cached PostgreSQL, Redis, Nginx and alpine:3.21 images are required.
-HARBORLIGHT_RESTORE_TEST_ENGINES=postgres,redis,app npm run test:restore
-# Requires a production browser build and installed Playwright browser.
-npm run test:restore-ui
-npm run test:restore-recovery
-docker build -t harborlight:local .
-npm run test:package
-```
-
-These scripts clean up their disposable resources. The CI workflow exercises API/browser behavior, real Docker deployment and routing, and the built container.
-
-## Architecture
-
-- React + TypeScript + Vite, with an original responsive interface.
-- Fastify API; per-project access controls, scoped API keys and HttpOnly session cookies.
-- Encrypted, atomically persisted local state for a single server process.
-- Docker CLI subprocesses with explicit argument arrays and managed-resource labels.
-- Traefik integration for host/path routing, bcrypt HTTP authentication and Let's Encrypt HTTPS.
-- A separately selected demo runtime for local exploration and browser testing.
-
-See [API-CONTRACT.md](API-CONTRACT.md), [reference analysis](docs/REFERENCE-ANALYSIS.md), and [security model](SECURITY.md).
+- [GitHub automatic deployments](docs/specs/12-github-auto-deploy.md)
+- [Restoring a previous application release](docs/specs/13-application-releases.md)
+- [Backup restoration](docs/specs/10-local-restoration.md)
+- [Detailed functional and technical specifications — French DOCX](docs/deliverables/FullPanel_Specifications_fonctionnelles_et_techniques.docx)
+- [Current support and verification](docs/VERIFICATION.md)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Each feature should have an explicit acceptance criterion, an original implementation, and verification against its real runtime where relevant. Do not contribute proprietary source, extracted bundles, licensed product assets, or credentials.
-
-FullPanel is not affiliated with or endorsed by Easypanel. The reference installer and extracted distribution used during analysis are not included in this repository.
+FullPanel is available under the [Apache-2.0 license](LICENSE). To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues through the [security policy](SECURITY.md).
