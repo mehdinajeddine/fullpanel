@@ -3,6 +3,7 @@ import { constants, realpathSync } from 'node:fs';
 import { lstat, open, realpath } from 'node:fs/promises';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createRegistryRuntime, registryReadiness } from './registry-runtime.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repository = 'https://github.com/mehdinajeddine/fullpanel';
@@ -90,10 +91,11 @@ async function staticFile(root, pathname) {
   } catch (cause) { await handle.close(); throw cause; }
 }
 
-export async function createCommunityServer({ publicDirectory = join(here, 'public'), config = loadConfig() } = {}) {
+export async function createCommunityServer({ publicDirectory = join(here, 'public'), config = loadConfig(), registry = null } = {}) {
   const rootInfo = await lstat(publicDirectory);
   if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink()) throw new Error('The public directory must be a real directory.');
   const root = await realpath(publicDirectory);
+  const isRegistryReady = registryReadiness(registry);
   const server = http.createServer({ maxHeaderSize: 8192, headersTimeout: 5000, requestTimeout: 10000, keepAliveTimeout: 5000 }, (request, response) => {
     headers(response);
     void respond(request, response).catch(() => {
@@ -120,7 +122,7 @@ export async function createCommunityServer({ publicDirectory = join(here, 'publ
     const readable = request.method === 'GET' || request.method === 'HEAD';
     if (!readable) refuseBody(response);
     if (reserved.has(pathname)) return error(request, response, 503, 'COMMUNITY_DOMAINS_UNAVAILABLE', 'Community domain registration is planned and is not available.', { 'Retry-After': '86400' });
-    const knownApi = pathname === '/api/health' || pathname === '/api/v1/info';
+    const knownApi = ['/api/health', '/api/ready', '/api/v1/info'].includes(pathname);
     if (pathname.startsWith('/api/') && !knownApi || pathname === '/api') return error(request, response, 404, 'NOT_FOUND', 'Not found.');
     if (!readable) return error(request, response, 405, 'METHOD_NOT_ALLOWED', 'Only GET and HEAD are supported.', { Allow: 'GET, HEAD' });
     if (request.headers['transfer-encoding'] || request.headers['content-length'] && request.headers['content-length'] !== '0') {
@@ -136,6 +138,10 @@ export async function createCommunityServer({ publicDirectory = join(here, 'publ
       if (request.headers.host?.toLowerCase() !== config.canonicalHost) return error(request, response, 421, 'MISDIRECTED_REQUEST', 'Use the configured canonical hostname.');
     }
     if (pathname === '/api/health') return json(request, response, 200, { status: 'ok', service: 'fullpanel-community' });
+    if (pathname === '/api/ready') {
+      if (await isRegistryReady()) return json(request, response, 200, { status: 'ready', service: 'fullpanel-community' });
+      return error(request, response, 503, 'REGISTRY_UNAVAILABLE', 'The installation registry is not ready.', { 'Retry-After': '5' });
+    }
     if (pathname === '/api/v1/info') return json(request, response, 200, publicInfo(config));
     let file;
     try { file = await staticFile(root, pathname); }
@@ -162,11 +168,17 @@ export async function createCommunityServer({ publicDirectory = join(here, 'publ
 
 export async function startCommunityServer() {
   const config = loadConfig();
-  const server = await createCommunityServer({ config });
-  await new Promise((resolveListen, reject) => {
-    server.once('error', reject);
-    server.listen(config.port, '0.0.0.0', () => { server.removeListener('error', reject); resolveListen(); });
-  });
+  let registry;
+  try { registry = await createRegistryRuntime(); }
+  catch { console.error('Registry configuration unavailable. Website remains online.'); }
+  let server;
+  try {
+    server = await createCommunityServer({ config, registry });
+    await new Promise((resolveListen, reject) => {
+      server.once('error', reject);
+      server.listen(config.port, '0.0.0.0', () => { server.removeListener('error', reject); resolveListen(); });
+    });
+  } catch (cause) { await registry?.close().catch(() => {}); throw cause; }
   console.log(`FullPanel community listening on port ${server.address().port}`);
   let stopping = false;
   const shutdown = () => {
@@ -174,13 +186,17 @@ export async function startCommunityServer() {
     stopping = true;
     const deadline = setTimeout(() => server.closeAllConnections(), 10000);
     deadline.unref();
-    server.close(() => { clearTimeout(deadline); });
+    server.close(() => { clearTimeout(deadline); void registry?.close().catch(() => {}); });
   };
   process.once('SIGTERM', shutdown); process.once('SIGINT', shutdown);
   server.once('close', () => { process.removeListener('SIGTERM', shutdown); process.removeListener('SIGINT', shutdown); });
   return server;
 }
 
-if (process.argv[1] && pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url) {
+function invokedAsEntryPoint() {
+  try { return !!process.argv[1] && pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url; }
+  catch { return false; }
+}
+if (invokedAsEntryPoint()) {
   startCommunityServer().catch(() => { console.error('FullPanel community startup failed. Check the configured port and public directory.'); process.exitCode = 1; });
 }

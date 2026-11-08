@@ -1,14 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { mkdtemp, mkdir, writeFile, symlink, rm, copyFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, symlink, rm } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createCommunityServer, loadConfig, publicInfo } from './server.mjs';
 
-async function fixture(t, environment = {}) {
+async function fixture(t, environment = {}, registry = null) {
   const directory = await mkdtemp(join(tmpdir(), 'fullpanel-community-')), publicDirectory = join(directory, 'public');
   await mkdir(publicDirectory); await mkdir(join(publicDirectory, 'assets'));
   await writeFile(join(publicDirectory, 'index.html'), '<!doctype html><title>FullPanel</title>');
@@ -17,7 +18,7 @@ async function fixture(t, environment = {}) {
   await writeFile(join(directory, 'secret.txt'), 'private fixture');
   await symlink(join(directory, 'secret.txt'), join(publicDirectory, 'escaped.txt'));
   await symlink(directory, join(publicDirectory, 'linked'));
-  const server = await createCommunityServer({ publicDirectory, config: loadConfig(environment) });
+  const server = await createCommunityServer({ publicDirectory, config: loadConfig(environment), registry });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(async () => { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); await rm(directory, { recursive: true, force: true }); });
   function request(path = '/', { method = 'GET', headers = {}, body } = {}) {
@@ -117,18 +118,41 @@ test('configuration accepts no arbitrary public metadata or unsafe canonical red
 });
 
 test('the standalone process handles SIGTERM with a clean bounded exit', async t => {
-  const directory = await mkdtemp(join(tmpdir(), 'fullpanel-community-process-'));
-  await mkdir(join(directory, 'public'));
-  await writeFile(join(directory, 'public', 'index.html'), '<title>Process fixture</title>');
-  await copyFile(new URL('./server.mjs', import.meta.url), join(directory, 'server.mjs'));
-  const child = spawn(process.execPath, [join(directory, 'server.mjs')], { env: { PATH: process.env.PATH, PORT: '0' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn(process.execPath, [fileURLToPath(new URL('./server.mjs', import.meta.url))], { env: { PATH: process.env.PATH, PORT: '0' }, stdio: ['ignore', 'pipe', 'pipe'] });
   const exited = once(child, 'exit'); let output = '', errors = '';
   child.stdout.on('data', chunk => { output += chunk; }); child.stderr.on('data', chunk => { errors += chunk; });
-  t.after(async () => { if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL'); await exited; await rm(directory, { recursive: true, force: true }); });
+  t.after(async () => { if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL'); await exited; });
   const deadline = Date.now() + 3000;
   while (!output.includes('listening on port') && child.exitCode === null && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
   assert.match(output, /listening on port/, errors);
   child.kill('SIGTERM');
   const result = await Promise.race([exited, new Promise((_, reject) => { const timer = setTimeout(() => reject(new Error('SIGTERM timeout')), 3000); timer.unref(); })]);
   assert.deepEqual(result, [0, null]);
+});
+
+test('registry readiness reports missing and failed storage without taking down the website or leaking errors', async t => {
+  for (const registry of [null, { readiness: async () => ({ ready: false, schemaVersion: null }) }, { readiness: async () => { throw new Error('postgres://private:secret@database/private'); } }]) {
+    const f = await fixture(t, {}, registry);
+    const response = await f.request('/api/ready');
+    assert.equal(response.status, 503);
+    assert.equal(JSON.parse(response.body).error.code, 'REGISTRY_UNAVAILABLE');
+    assert(!response.body.includes('private') && !response.body.includes('secret'));
+    assert.equal(response.headers['cache-control'], 'no-store');
+    assert.equal((await f.request('/')).status, 200);
+    assert.equal((await f.request('/api/health')).status, 200);
+    assert.equal(JSON.parse((await f.request('/api/v1/info')).body).communityDomains.registrationEnabled, false);
+  }
+});
+
+test('public readiness shares database work and reports only readiness, with normal method and HEAD handling', async t => {
+  let calls = 0;
+  const f = await fixture(t, {}, { readiness: async () => { calls++; await new Promise(resolve => setTimeout(resolve, 25)); return { ready: true, schemaVersion: 1, privateDetail: 'must-not-appear' }; } });
+  const responses = await Promise.all(Array.from({ length: 12 }, () => f.request('/api/ready')));
+  assert.equal(calls, 1);
+  for (const response of responses) {
+    assert.equal(response.status, 200);
+    assert.deepEqual(JSON.parse(response.body), { status: 'ready', service: 'fullpanel-community' });
+  }
+  const head = await f.request('/api/ready', { method: 'HEAD' }); assert.equal(head.status, 200); assert.equal(head.body, '');
+  assert.equal((await f.request('/api/ready', { method: 'POST' })).status, 405);
 });

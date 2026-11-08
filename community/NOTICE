@@ -3,6 +3,9 @@ FullPanel community website and API
 The original application code is distributed under the Apache License, Version 2.0.
 See LICENSE and https://github.com/mehdinajeddine/fullpanel.
 
+The PostgreSQL client and its npm dependencies retain their upstream licenses.
+Complete bundled texts are provided in public/licenses/THIRD-PARTY-NOTICES.txt.
+
 The bundled Inter font is distributed under the SIL Open Font License 1.1;
 its copyright and license text are provided in public/licenses/Inter-OFL.txt.
 

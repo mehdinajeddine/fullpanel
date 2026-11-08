@@ -12,7 +12,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test community/server.test.mjs
+      - run: npm ci --prefix community
+      - run: node community/generate-notices.mjs --check
+      - run: npm test --prefix community
+      - run: npm run test:registry --prefix community
   verify:
     runs-on: ubuntu-latest
     steps:

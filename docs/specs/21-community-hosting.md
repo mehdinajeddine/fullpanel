@@ -2,6 +2,10 @@
 
 État au 2026-11-08 : **premier site et API d’information déployés et vérifiés sur l’URL Heroku**, release v4 issue du commit `9ecf22a`. Le domaine personnalisé reste à valider. Ce document décrit le premier hébergement de `community/`. Les preuves de livraison sont consignées séparément dans [VERIFICATION.md](../VERIFICATION.md). Il ne déclare pas livré le broker DNS de [M04](19-community-domains.md).
 
+## État du lot suivant au gel
+
+Le registre PostgreSQL interne, son contrôle `GET /api/ready` et le vérificateur de preuve IPv4 sont implémentés et testés. La migration dédiée a été appliquée à la base Heroku avec TLS vérifié. **Le nouveau code web n’est pas encore redéployé** : le site public reste sur la release v4 de code (v5 de configuration). L’inscription reste désactivée. Voir [l’état de reprise](../COMMUNITY-DELIVERY-STATE.md) pour les étapes restantes et [les preuves](../VERIFICATION.md). Les sections suivantes décrivent le premier lot effectivement hébergé.
+
 ## Périmètre du premier lot
 
 Un site public présente FullPanel, ses capacités réellement disponibles, ses limites et les liens vers le dépôt et la documentation. Le même processus fournit deux endpoints publics de lecture : santé du service et description de ses capacités. Le visiteur ne crée ni compte communautaire, ni identité de serveur, ni domaine.

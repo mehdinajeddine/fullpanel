@@ -1,3 +1,8 @@
 server.test.mjs
+domain-proof.test.mjs
+registry/database.test.mjs
+registry/store.integration.test.mjs
+registry/test-docker.mjs
+registry/README.md
 .gitignore
 README.md
