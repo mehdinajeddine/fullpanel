@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#16264a" />
+    <meta name="description" content="FullPanel est un panneau de contrôle open source pour déployer vos applications, gérer vos bases de données et suivre vos services Docker sur votre propre serveur." />
+    <title>FullPanel — Votre serveur, en toute clarté</title>
+    <link rel="icon" href="/assets/fullpanel-logo.png" type="image/png" />
+    <link rel="preload" href="/assets/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#accueil" aria-label="FullPanel, accueil">
+          <img src="/assets/fullpanel-logo.png" width="40" height="40" alt="" />
+          <span>Full<span>Panel</span></span>
+        </a>
+        <button class="menu-toggle" type="button" aria-controls="navigation" aria-expanded="false" aria-label="Ouvrir la navigation" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+        <nav id="navigation" aria-label="Navigation principale">
+          <a href="#fonctionnalites">Fonctionnalités</a>
+          <a href="#demarrer">Démarrer</a>
+          <a href="#roadmap">La suite</a>
+          <a class="nav-github" href="https://github.com/mehdinajeddine/fullpanel">GitHub <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="contenu">
+      <section class="hero container" id="accueil" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>Le panneau de contrôle open source</p>
+            <h1 id="hero-title">Votre serveur.<br />Tout devient <span>plus clair.</span></h1>
+          </div>
+          <div class="hero-intro">
+            <p>Déployez vos applications, gérez vos bases de données et suivez vos services depuis une seule interface. Sur votre propre serveur.</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#demarrer">Commencer <span aria-hidden="true">↗</span></a>
+              <a class="text-link" href="https://github.com/mehdinajeddine/fullpanel">Explorer le code <span aria-hidden="true">→</span></a>
+            </div>
+            <p class="hero-note">Docker · Auto-hébergé · Licence Apache 2.0</p>
+          </div>
+        </div>
+
+        <figure class="product-preview">
+          <div class="preview-topline">
+            <span class="preview-name"><span class="preview-mark" aria-hidden="true">F</span> Une vue d’ensemble, des actions précises.</span>
+            <span class="demo-label">Capture réelle · données de démo</span>
+          </div>
+          <a class="screenshot-link" href="/assets/dashboard-demo.png" target="_blank" rel="noopener" aria-label="Ouvrir la capture réelle du tableau de bord FullPanel en grand, dans un nouvel onglet">
+            <img class="dashboard-image" src="/assets/dashboard-demo.png" width="1280" height="900" alt="Tableau de bord FullPanel : état des services, ressources, projets et prochaines actions. Les données affichées sont simulées en mode démonstration." fetchpriority="high" />
+            <span class="image-open">Voir en grand <span aria-hidden="true">↗</span></span>
+          </a>
+          <figcaption>L’interface FullPanel aujourd’hui. Les chiffres de cette capture sont des données de démonstration.</figcaption>
+        </figure>
+        <div class="product-principles" aria-label="Les principes FullPanel">
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="7" rx="2" /><rect x="4" y="14" width="16" height="7" rx="2" /><path d="M7 6.5h.01M7 17.5h.01M12 6.5h5M12 17.5h5" /></svg>Vos applications, chez vous</p>
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18" /></svg>Un code ouvert à tous</p>
+          <p><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 10h18M10 10v10" /></svg>Une interface pour agir</p>
+        </div>
+      </section>
+
+      <section class="features section-pad" id="fonctionnalites" aria-labelledby="features-title">
+        <div class="container">
+          <div class="section-heading">
+            <div><p class="eyebrow">Disponible aujourd’hui</p><h2 id="features-title">Moins de dispersion.<br />Plus de visibilité.</h2></div>
+            <p>Du premier déploiement au suivi quotidien, retrouvez l’essentiel au même endroit.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-item">
+              <div class="feature-top"><span class="feature-number">01 / DÉPLOYER</span><svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 23V4m-7 7 7-7 7 7M6 20v8h20v-8" /></svg></div>
+              <h3>Du code à l’application.</h3>
+              <p>Déployez depuis un dépôt Git, une image Docker ou un Dockerfile. Connectez vos dépôts privés avec une clé SSH dédiée.</p>
+              <ul class="feature-points"><li>Clé publique à ajouter au dépôt</li><li>Historique et journaux de déploiement</li><li>Retour à une version applicative sauvegardée</li></ul>
+            </article>
+            <article class="feature-item">
+              <div class="feature-top"><span class="feature-number">02 / COMPRENDRE</span><svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 17h6l4-10 6 19 4-9h6M4 4v24h24" /></svg></div>
+              <h3>Voyez ce qui se passe.</h3>
+              <p>Consultez les états, les logs et les ressources de chaque service. Les mesures indiquent leur fraîcheur ; une donnée absente reste clairement signalée.</p>
+              <ul class="feature-points"><li>CPU, mémoire et compteurs réseau</li><li>Diagnostic des ports réellement à l’écoute</li><li>Domaines et configuration HTTPS</li></ul>
+            </article>
+            <article class="feature-item">
+              <div class="feature-top"><span class="feature-number">03 / CONSERVER</span><svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="7" rx="11" ry="4" /><path d="M5 7v18c0 5 22 5 22 0V7M5 16c0 5 22 5 22 0" /></svg></div>
+              <h3>Vos données ont leur place.</h3>
+              <p>Gérez vos services de bases de données. Planifiez des sauvegardes locales et restaurez-les vers un service compatible, avec une sauvegarde préalable.</p>
+              <div class="engine-list" aria-label="Moteurs pris en charge"><span>PostgreSQL</span><span>MySQL</span><span>MariaDB</span><span>MongoDB</span><span>Redis</span></div>
+            </article>
+            <article class="feature-item">
+              <div class="feature-top"><span class="feature-number">04 / COLLABORER</span><svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="10" r="5" /><path d="M3 28v-4a9 9 0 0 1 18 0v4M23 6a5 5 0 0 1 0 10m2 5c3 1 4 3 4 7" /></svg></div>
+              <h3>Le bon accès, par projet.</h3>
+              <p>Organisez vos applications par projet et attribuez les permissions adaptées. Partagez des variables d’environnement et automatisez vos opérations via l’API.</p>
+              <ul class="feature-points"><li>Accès lecteur ou opérateur</li><li>Variables communes et surcharges par service</li><li>Clés API à portée limitée</li></ul>
+            </article>
+          </div>
+          <aside class="development-note"><span class="note-label">En développement actif</span><p>FullPanel évolue encore. Consultez les capacités vérifiées et les limites actuelles avant de l’utiliser en production.</p><a href="https://github.com/mehdinajeddine/fullpanel/blob/main/docs/VERIFICATION.md">Voir le périmètre actuel <span aria-hidden="true">↗</span></a></aside>
+        </div>
+      </section>
+
+      <section class="getting-started section-pad" id="demarrer" aria-labelledby="start-title">
+        <div class="container start-layout">
+          <div class="start-copy">
+            <p class="eyebrow">À vous de prendre la main</p>
+            <h2 id="start-title">Votre prochain projet<br />commence ici.</h2>
+            <p>Installez FullPanel sur votre serveur Docker, puis créez votre espace de travail.</p>
+            <ol class="start-steps">
+              <li><span aria-hidden="true">1</span><div><h3>Préparez votre serveur</h3><p>Docker Engine et le plugin Compose sont nécessaires pour l’installation.</p></div></li>
+              <li><span aria-hidden="true">2</span><div><h3>Installez FullPanel</h3><p>Clonez le dépôt et lancez le script d’installation fourni.</p></div></li>
+              <li><span aria-hidden="true">3</span><div><h3>Créez votre premier projet</h3><p>Créez le compte propriétaire, ajoutez votre source et déployez votre application.</p></div></li>
+            </ol>
+          </div>
+          <div class="start-guide">
+            <div class="command-card">
+              <div class="command-header"><span>Installation sur votre serveur</span><span class="command-shell">shell</span></div>
+              <pre tabindex="0" aria-label="Commandes d’installation"><code id="install-command">git clone https://github.com/mehdinajeddine/fullpanel.git
+cd fullpanel
+sh scripts/install.sh</code></pre>
+              <div class="command-footer"><span>À exécuter sur le serveur choisi</span><button class="copy-button" type="button" data-copy="install-command" hidden><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V3H3v13h5" /></svg><span>Copier les commandes</span></button></div>
+              <p class="copy-status" role="status" aria-live="polite"></p>
+            </div>
+            <div class="setup-note"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3" /></svg><p>L’interface d’administration reste locale après l’installation. Le guide explique l’accès par tunnel SSH et la configuration des domaines.</p></div>
+            <a class="button button-light" href="https://github.com/mehdinajeddine/fullpanel/blob/main/README.md#install-on-a-server">Suivre le guide d’installation <span aria-hidden="true">↗</span></a>
+            <a class="start-demo-link" href="https://github.com/mehdinajeddine/fullpanel/blob/main/README.md#run-locally">Vous préférez explorer ? Lancez le mode démo en local <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="roadmap section-pad" id="roadmap" aria-labelledby="roadmap-title">
+        <div class="container">
+          <div class="section-heading"><div><p class="eyebrow">La suite se construit avec vous</p><h2 id="roadmap-title">Un cap clair.<br />Un projet ouvert.</h2></div><p>Ces chantiers sont prévus. Ils ne sont pas encore disponibles ; aucun calendrier de livraison n’est annoncé.</p></div>
+          <div class="roadmap-grid">
+            <article><span class="planned-label">Planifié</span><h3>Domaines communautaires</h3><p>Des adresses sous <strong>fullpanel.dev</strong> pour simplifier l’accès aux applications. L’attribution de domaines n’est pas encore ouverte.</p></article>
+            <article><span class="planned-label">Planifié</span><h3>FullPanel Mobile</h3><p>Suivez vos serveurs et services en lecture seule sur iOS et Android, avec un appairage par QR code.</p></article>
+            <article><span class="planned-label">Planifié</span><h3>Migration accompagnée</h3><p>Un assistant pour préparer le transfert de vos services depuis EasyPanel ou Portainer vers FullPanel.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="community-section container" aria-labelledby="community-title">
+        <div><p class="eyebrow">Construisons la suite</p><h2 id="community-title">Une idée, un retour,<br />une contribution ?</h2><p>Le code et les échanges sont sur GitHub. Venez lire, tester, proposer ou partager ce qui vous manque.</p></div>
+        <div class="community-actions"><a class="button button-primary" href="https://github.com/mehdinajeddine/fullpanel">Découvrir le dépôt <span aria-hidden="true">↗</span></a><a class="button button-outline" href="https://github.com/mehdinajeddine/fullpanel/issues">Discuter dans les issues <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-main"><a class="brand" href="#accueil" aria-label="FullPanel, retour en haut"><img src="/assets/fullpanel-logo.png" width="36" height="36" alt="" /><span>Full<span>Panel</span></span></a><p>Votre infrastructure, en bonnes mains.</p><nav aria-label="Liens du projet"><a href="https://github.com/mehdinajeddine/fullpanel/blob/main/README.md">Documentation</a><a href="https://github.com/mehdinajeddine/fullpanel/blob/main/LICENSE">Licence Apache 2.0</a><a href="https://github.com/mehdinajeddine/fullpanel/blob/main/CONTRIBUTING.md">Contribuer</a></nav></div>
+      <div class="container footer-bottom"><p>Un projet open source. Un site sans outil de suivi ni formulaire de collecte.</p><a href="/licenses/Inter-OFL.txt">Licence de la police Inter</a></div>
+    </footer>
+  </body>
+</html>

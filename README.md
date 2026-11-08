@@ -115,7 +115,9 @@ docker compose -f compose.yaml -f compose.public.yaml --profile proxy up -d
 
 Save a Git source such as `git@github.com:team/app.git` or `ssh://git@forge.example.com:2222/team/app.git`. In **Source**, generate a deploy key, copy the public key and add it to that repository's deploy keys with read-only access. FullPanel keeps the private key encrypted and never returns it through the API.
 
-Before deployment, paste the Git server's verified `known_hosts` entry and check its SHA256 fingerprint against the provider's official documentation or your server administrator. For a custom SSH port, the entry must use `[hostname]:port`. FullPanel refuses unverified or changed host keys, ambient SSH agents and host configuration. Private submodules and Git LFS are not supported.
+For exactly `github.com` on port 22, FullPanel automatically uses GitHub's published Ed25519 host key when no manual pin is saved, including for existing deploy keys. Saved manual pins are preserved. The server identity is checked during cloning; this preset does not test the connection or authorize your deploy key with GitHub.
+
+For other hosts, GitHub Enterprise or custom ports, paste the server's verified `known_hosts` entry and check its SHA256 fingerprint against the provider's official documentation or your server administrator. For a custom SSH port, the entry must use `[hostname]:port`. FullPanel enforces strict host-key checking and refuses keys that do not match the configured trust; ambient SSH agents and host configuration are ignored. Private submodules and Git LFS are not supported.
 
 Keys belong to the saved service and exact repository. A repository change removes the credential; changing the branch retains it. After rotating a key, register the new public key before deploying. Removing a key in FullPanel does not remove its public deploy key from the Git provider; revoke that entry there as well.
 
