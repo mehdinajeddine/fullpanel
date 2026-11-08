@@ -7,7 +7,7 @@ export interface DeploymentWebhookDependencies {
   getService(serviceId: string): { id: string } | undefined;
   getTokenHash(serviceId: string): string | undefined;
   /** Persist synchronously before returning; a null value revokes the credential. */
-  setTokenHash(serviceId: string, hash: string | null): void;
+  setTokenHash(serviceId: string, hash: string | null, request?: FastifyRequest): void;
   /** Reuse the same authorization-independent queue and concurrency lock as manual deploy. */
   enqueueDeploy(serviceId: string, trigger: string): Deployment | Promise<Deployment>;
   publicUrl?: string;
@@ -70,7 +70,7 @@ export function registerDeploymentWebhooks(app: FastifyInstance, dependencies: D
     const serviceId = parameter(request);
     requireService(serviceId);
     const token = randomBytes(32).toString('base64url');
-    dependencies.setTokenHash(serviceId, digest(token).toString('hex'));
+    dependencies.setTokenHash(serviceId, digest(token).toString('hex'), request);
     reply.header('Cache-Control', 'no-store');
     return { ...status(serviceId), token };
   });
@@ -78,7 +78,7 @@ export function registerDeploymentWebhooks(app: FastifyInstance, dependencies: D
   app.delete('/api/services/:id/trigger', async request => {
     const serviceId = parameter(request);
     requireService(serviceId);
-    dependencies.setTokenHash(serviceId, null);
+    dependencies.setTokenHash(serviceId, null, request);
     return status(serviceId);
   });
 

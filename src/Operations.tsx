@@ -51,6 +51,7 @@ import {
 } from "./ui";
 import { CreateProject } from "./Projects";
 import BackupSchedules from "./BackupSchedules";
+import { useAccess } from "./Access";
 
 function InstallTemplate({
   template,
@@ -144,6 +145,7 @@ function InstallTemplate({
   );
 }
 export function TemplatesPage() {
+  const access = useAccess();
   const templates = useQuery<Template[]>("/templates");
   const projects = useQuery<Project[]>("/projects");
   const [search, setSearch] = useState("");
@@ -151,6 +153,9 @@ export function TemplatesPage() {
   const [install, setInstall] = useState<Template>();
   const [pendingTemplate, setPendingTemplate] = useState<Template>();
   const [create, setCreate] = useState(false);
+  const availableProjects = (projects.data || []).filter((project) =>
+    access.canOperate(project.id),
+  );
   const categories = [
     "All templates",
     ...new Set(templates.data?.map((t) => t.category) || []),
@@ -234,20 +239,22 @@ export function TemplatesPage() {
                     <ArrowUpRight size={13} />
                   </a>
                 )}
-                <Button
-                  variant="secondary"
-                  disabled={projects.loading || !!projects.error}
-                  onClick={() => {
-                    if (projects.data?.length) setInstall(t);
-                    else {
-                      setPendingTemplate(t);
-                      setCreate(true);
-                    }
-                  }}
-                >
-                  <Plus size={15} />
-                  Use template
-                </Button>
+                {(access.isAdmin || availableProjects.length > 0) && (
+                  <Button
+                    variant="secondary"
+                    disabled={projects.loading || !!projects.error}
+                    onClick={() => {
+                      if (availableProjects.length) setInstall(t);
+                      else {
+                        setPendingTemplate(t);
+                        setCreate(true);
+                      }
+                    }}
+                  >
+                    <Plus size={15} />
+                    Use template
+                  </Button>
+                )}
               </div>
             </article>
           ))}
@@ -263,11 +270,11 @@ export function TemplatesPage() {
       {install && (
         <InstallTemplate
           template={install}
-          projects={projects.data || []}
+          projects={availableProjects}
           close={() => setInstall(undefined)}
         />
       )}
-      {create && (
+      {create && access.isAdmin && (
         <CreateProject
           close={() => setCreate(false)}
           created={(project) => {
@@ -418,6 +425,7 @@ export function DeploymentsPage({ deploymentId }: { deploymentId?: string }) {
   );
 }
 export function DeploymentDetail({ id }: { id: string }) {
+  const access = useAccess();
   const deployment = useQuery<Deployment>(
     `/deployments/${encodeURIComponent(id)}`,
     2500,
@@ -462,20 +470,27 @@ export function DeploymentDetail({ id }: { id: string }) {
             )}
             {d.finishedAt && <span>Finished {date(d.finishedAt)}</span>}
           </div>
-          <Panel
-            title="Build & deployment output"
-            actions={<CopyButton value={d.output} label="Copy output" />}
-          >
-            <pre
-              className="terminal-output"
-              aria-live={d.status === "running" ? "polite" : "off"}
+          {access.isAdmin || access.canOperate(s?.projectId || d.projectId) ? (
+            <Panel
+              title="Build & deployment output"
+              actions={<CopyButton value={d.output} label="Copy output" />}
             >
-              {d.output || "Waiting for the deployment worker…"}
-              {["running", "queued"].includes(d.status) && (
-                <span className="terminal-cursor" />
-              )}
-            </pre>
-          </Panel>
+              <pre
+                className="terminal-output"
+                aria-live={d.status === "running" ? "polite" : "off"}
+              >
+                {d.output || "Waiting for the deployment worker…"}
+                {["running", "queued"].includes(d.status) && (
+                  <span className="terminal-cursor" />
+                )}
+              </pre>
+            </Panel>
+          ) : (
+            <Notice>
+              Deployment output is available to project operators. You can view
+              deployment status and timing here.
+            </Notice>
+          )}
         </>
       ) : deployment.loading ? (
         <Loading />
@@ -486,10 +501,13 @@ export function DeploymentDetail({ id }: { id: string }) {
 export function BackupTable({
   backups,
   services,
+  projectId,
 }: {
   backups: Backup[];
   services?: Service[];
+  projectId?: string;
 }) {
+  const access = useAccess();
   if (!backups.length)
     return (
       <Empty
@@ -534,7 +552,12 @@ export function BackupTable({
                 {b.status === "success" ? bytes(b.sizeBytes) : "—"}
               </td>
               <td>
-                {b.status === "success" ? (
+                {b.status === "success" &&
+                access.canOperate(
+                  projectId ||
+                    services?.find((s) => s.id === b.serviceId)?.projectId ||
+                    b.projectId,
+                ) ? (
                   <a
                     className="download-link"
                     href={`/api/backups/${encodeURIComponent(b.id)}/download`}
@@ -555,6 +578,7 @@ export function BackupTable({
   );
 }
 export function BackupsPage() {
+  const access = useAccess();
   const backups = useQuery<Backup[]>("/backups", 5000);
   const services = useQuery<Service[]>("/services");
   const [selected, setSelected] = useState("");
@@ -585,36 +609,39 @@ export function BackupsPage() {
         location for disaster recovery. Restore is performed manually using the
         exported data.
       </Notice>
-      <div className="backup-action">
-        <div>
-          <h3>Create a backup</h3>
-          <p>Export a database or archive a service’s persistent volumes.</p>
+      {(services.data || []).some((s) => access.canOperate(s.projectId)) && (
+        <div className="backup-action">
+          <div>
+            <h3>Create a backup</h3>
+            <p>Export a database or archive a service’s persistent volumes.</p>
+          </div>
+          <div>
+            <select
+              value={selected}
+              onChange={(e) => setSelected(e.target.value)}
+              aria-label="Service to back up"
+            >
+              <option value="">Choose a service</option>
+              {services.data
+                ?.filter(
+                  (s) =>
+                    access.canOperate(s.projectId) &&
+                    s.kind !== "compose" &&
+                    (s.kind !== "app" || s.mounts.length > 0),
+                )
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+            </select>
+            <Button onClick={run} busy={busy} disabled={!selected}>
+              <Plus size={16} />
+              Run backup
+            </Button>
+          </div>
         </div>
-        <div>
-          <select
-            value={selected}
-            onChange={(e) => setSelected(e.target.value)}
-            aria-label="Service to back up"
-          >
-            <option value="">Choose a service</option>
-            {services.data
-              ?.filter(
-                (s) =>
-                  s.kind !== "compose" &&
-                  (s.kind !== "app" || s.mounts.length > 0),
-              )
-              .map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-          </select>
-          <Button onClick={run} busy={busy} disabled={!selected}>
-            <Plus size={16} />
-            Run backup
-          </Button>
-        </div>
-      </div>
+      )}
       <ErrorBox
         message={backups.error || services.error}
         retry={() => {
@@ -622,7 +649,9 @@ export function BackupsPage() {
           services.reload();
         }}
       />
-      <BackupSchedules services={services.data || []} />
+      {(services.data || []).some((s) => access.canOperate(s.projectId)) && (
+        <BackupSchedules services={services.data || []} />
+      )}
       <Panel
         title="Backup history"
         actions={

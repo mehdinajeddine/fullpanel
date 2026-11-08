@@ -2,11 +2,15 @@ import { randomBytes, randomUUID, createCipheriv, createDecipheriv } from 'node:
 import { mkdirSync, existsSync, readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, chmodSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import type { Activity, Backup, Deployment, Project, Service, Settings, RuntimeMode } from '../shared/types.js';
+import type { Activity, Backup, Deployment, Project, Service, Settings, RuntimeMode, PublicUser, ApiKey } from '../shared/types.js';
 import type { BackupSchedule } from './backup-schedules.js';
+import type { ProxyAuthMap } from '../shared/proxy.js';
+import type { ServiceSourceCredentials } from './source-credentials.js';
 
 export interface Owner { name: string; email: string; hash: string; salt: string }
-export interface State { version: 1; owner?: Owner; sessions: { hash: string; expires: number }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; backupSchedules: BackupSchedule[] }
+export interface UserRecord extends PublicUser { hash: string; salt: string }
+export interface ApiKeyRecord extends ApiKey { hash: string }
+export interface State { version: 1; owner?: Owner; users: UserRecord[]; apiKeys: ApiKeyRecord[]; sessions: { hash: string; expires: number; userId: string }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; deployTokenOwners: Record<string,string>; backupSchedules: BackupSchedule[]; proxyAuth: Record<string,ProxyAuthMap>; sourceCredentials: Record<string,ServiceSourceCredentials> }
 const now = () => new Date().toISOString();
 const activeDirectories = new Set<string>();
 function processIdentity(pid: number): string | undefined {
@@ -59,11 +63,24 @@ export class Store {
       for (const service of this.state.services) if (service.status === 'deploying') { service.status = 'failed'; service.error = 'Deployment interrupted by server restart.'; }
       for (const backup of this.state.backups) if (backup.status === 'running') { backup.status = 'failed'; backup.error = 'Backup interrupted by server restart.'; }
     } else {
-      this.state = { version: 1, sessions: [], projects: [], services: [], deployments: [], backups: [], activity: [], deployTokens: {}, backupSchedules: [], settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
+      this.state = { version: 1, sessions: [], users: [], apiKeys: [], projects: [], services: [], deployments: [], backups: [], activity: [], deployTokens: {}, deployTokenOwners: {}, backupSchedules: [], proxyAuth: {}, sourceCredentials: {}, settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
       if (mode === 'demo') this.seed();
     }
     this.state.deployTokens ||= {};
     this.state.backupSchedules ||= [];
+    this.state.users ||= [];
+    this.state.apiKeys ||= [];
+    this.state.deployTokenOwners ||= {};
+    this.state.proxyAuth ||= {};
+    this.state.sourceCredentials ||= {};
+    // Upgrade the original single-owner state and preserve its valid browser sessions.
+    if (!this.state.users.length && this.state.owner) this.state.users.push({ ...this.state.owner, id: randomUUID(), role: 'owner', memberships: [], disabled: false, createdAt: now(), updatedAt: now() });
+    const ownerId = this.state.users.find(user => user.role === 'owner')?.id;
+    if (ownerId) {
+      for (const session of this.state.sessions) session.userId ||= ownerId;
+      for (const serviceId of Object.keys(this.state.deployTokens)) this.state.deployTokenOwners[serviceId] ||= ownerId;
+    }
+    for (const record of [...this.state.deployments, ...this.state.backups]) record.projectId ||= this.state.services.find(service => service.id === record.serviceId)?.projectId;
     this.save();
     } catch (error) { this.close(); throw error; }
   }
@@ -87,8 +104,8 @@ export class Store {
       throw error;
     }
   }
-  activity(action: string, resource: string, detail?: string) {
-    this.state.activity.unshift({ id: randomUUID(), action, resource, createdAt: now(), ...(detail ? { detail } : {}) });
+  activity(action: string, resource: string, detail?: string, projectId?: string) {
+    this.state.activity.unshift({ id: randomUUID(), action, resource, createdAt: now(), ...(detail ? { detail } : {}), ...(projectId ? { projectId } : {}) });
     this.state.activity = this.state.activity.slice(0, 1000);
   }
   private seed() {

@@ -19,7 +19,9 @@
     "test:e2e": "playwright test",
     "test:docker": "tsx scripts/smoke-docker.ts",
     "test:proxy": "tsx scripts/smoke-proxy.ts",
-    "test:package": "tsx scripts/smoke-package.ts"
+    "test:package": "tsx scripts/smoke-package.ts",
+    "test:credentials": "tsx scripts/smoke-credentials.ts",
+    "test:git": "tsx scripts/smoke-git.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
@@ -27,6 +29,7 @@
     "@fastify/static": "^10.1.10",
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
+    "bcryptjs": "^3.0.3",
     "fastify": "^5.6.2",
     "lucide-react": "^0.468.0",
     "react": "^19.2.0",

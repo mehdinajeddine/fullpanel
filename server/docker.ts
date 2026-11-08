@@ -6,11 +6,14 @@ import { cpus, freemem, totalmem, uptime } from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { parse, stringify } from 'yaml';
 import type { Service, Metrics, ServiceStatus } from '../shared/types.js';
+import type { ProxyAuthMap } from '../shared/proxy.js';
+import { proxyLabels } from './proxy-routing.js';
+import { resolveSourceCredentials, withGitSourceCredentials, withDockerSourceCredentials, normalizeGitRepository, type DeploymentSourceCredentials } from './source-credentials.js';
 
 const LABEL = 'io.harborlight.managed';
 const SERVICE_LABEL = 'io.harborlight.service';
 export type Output = (chunk: string) => void;
-export interface DeployOptions { forceRebuild?: boolean }
+export interface DeployOptions { forceRebuild?: boolean; sourceCredentials?: DeploymentSourceCredentials; proxyAuth?: ProxyAuthMap }
 export interface RuntimeDriver {
   deploy(service: Service, output: Output, options?: DeployOptions): Promise<{ containerId?: string; image?: string; commit?: string }>;
   action(service: Service, action: 'start' | 'stop' | 'restart'): Promise<void>;
@@ -22,17 +25,19 @@ export interface RuntimeDriver {
 }
 
 // Commands are always argument arrays, never interpolated shell commands.
-export function command(binary: string, args: string[], options: { cwd?: string; output?: Output; timeout?: number; destination?: string; env?: NodeJS.ProcessEnv } = {}): Promise<string> {
+export function command(binary: string, args: string[], options: { cwd?: string; output?: Output; timeout?: number; destination?: string; env?: NodeJS.ProcessEnv; input?: string } = {}): Promise<string> {
   return new Promise((resolveCommand, reject) => {
-    const child = spawn(binary, args, { cwd: options.cwd, env: options.env ?? process.env, shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(binary, args, { cwd: options.cwd, env: options.env ?? process.env, shell: false, stdio: [options.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'] });
     let output = '', stderr = '', settled = false, timedOut = false;
     const sink = options.destination ? createWriteStream(options.destination, { flags: 'wx', mode: 0o600 }) : undefined;
     const finish = (error?: Error) => { if (settled) return; settled = true; clearTimeout(timer); error ? reject(error) : resolveCommand(output); };
     const timer = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, options.timeout ?? 30000);
+    child.stdin?.on('error', error => { if ((error as NodeJS.ErrnoException).code !== 'EPIPE') finish(error); });
+    if (options.input !== undefined) child.stdin?.end(options.input);
     sink?.on('error', error => { child.kill('SIGKILL'); finish(error); });
-    if (sink) child.stdout.pipe(sink);
-    else child.stdout.on('data', chunk => { const text = chunk.toString(); output = (output + text).slice(-2_000_000); options.output?.(text); });
-    child.stderr.on('data', chunk => { const text = chunk.toString(); stderr = (stderr + text).slice(-20000); options.output?.(text); });
+    if (sink) child.stdout!.pipe(sink);
+    else child.stdout!.on('data', chunk => { const text = chunk.toString(); output = (output + text).slice(-2_000_000); options.output?.(text); });
+    child.stderr!.on('data', chunk => { const text = chunk.toString(); stderr = (stderr + text).slice(-20000); options.output?.(text); });
     child.on('error', finish);
     child.on('close', code => {
       if (code !== 0) { sink?.destroy(); finish(new Error(timedOut ? `${binary} operation timed out.` : `${binary} failed (${code}): ${stderr.trim().slice(-4000) || 'No error details.'}`)); }
@@ -78,6 +83,7 @@ export class DockerDriver implements RuntimeDriver {
     }
   }
   async deploy(service: Service, output: Output, options: DeployOptions = {}) {
+    const credentials = resolveSourceCredentials(service, options.sourceCredentials);
     for (const value of Object.values(service.env)) if (/[\r\n\0]/.test(value)) throw new Error('Docker environment values must be single-line. Encode multiline secrets before use.');
     if (service.domains.length) await command('docker', ['network', 'inspect', 'harborlight-proxy']);
     await this.network(service);
@@ -90,15 +96,19 @@ export class DockerDriver implements RuntimeDriver {
       if (service.source.type === 'image') {
         if (!image) throw new Error('An image is required.');
         output(`Pulling ${image}\n`);
-        await command('docker', ['pull', image], { output, timeout: 600000 });
+        await withDockerSourceCredentials(image, credentials.registry, command, env => command('docker', ['pull', image!], { env, output: credentials.registry ? undefined : output, timeout: 600000 }));
+        if (credentials.registry) output('Private image authenticated and pulled.\n');
       } else if (service.source.type === 'dockerfile' || service.source.type === 'git') {
         image = `harborlight/${service.id}:${Date.now()}`;
         let context = work, dockerfile = 'Dockerfile';
         if (service.source.type === 'git') {
           const repo = join(work, 'repo');
           output('Cloning source repository…\n');
-          await command('git', ['-c', 'protocol.file.allow=never', '-c', 'protocol.ext.allow=never', 'clone', '--depth', '1', '--single-branch', '--branch', service.source.branch || 'main', '--', service.source.repository!, repo], { timeout: 300000, output, env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_CONFIG_NOSYSTEM: '1' } });
-          commit = (await command('git', ['rev-parse', 'HEAD'], { cwd: repo })).trim();
+          commit = await withGitSourceCredentials(service.source.repository!, credentials.git, async git => {
+            await command('git', [...git.args, 'clone', '--depth', '1', '--single-branch', '--branch', service.source.branch || 'main', '--', git.repository, repo], { cwd: git.cwd, timeout: 300000, output: credentials.git ? undefined : output, env: git.env });
+            await command('git', [...git.args, 'remote', 'set-url', 'origin', normalizeGitRepository(service.source.repository!)], { cwd: repo, env: git.env });
+            return (await command('git', [...git.args, 'rev-parse', 'HEAD'], { cwd: repo, env: git.env })).trim();
+          });
           if (!/^[a-f0-9]{40,64}$/.test(commit)) throw new Error('Git did not return a valid source commit.');
           output(`Source commit: ${commit}\n`);
           const repoReal = await realpath(repo);
@@ -109,7 +119,7 @@ export class DockerDriver implements RuntimeDriver {
           if (!dockerfileReal.startsWith(repoReal + sep)) throw new Error('Dockerfile escapes repository.');
         } else await writeFile(join(work, 'Dockerfile'), service.source.dockerfile!, { mode: 0o600 });
         output('Building image…\n');
-        await command('docker', ['build', '--label', `${LABEL}=true`, ...(commit ? ['--label', `org.opencontainers.image.revision=${commit}`] : []), ...(options.forceRebuild ? ['--no-cache', '--pull'] : []), '-t', image, '-f', join(context, dockerfile), context], { output, timeout: 1800000 });
+        await withDockerSourceCredentials(undefined, undefined, command, env => command('docker', ['build', '--label', `${LABEL}=true`, ...(commit ? ['--label', `org.opencontainers.image.revision=${commit}`] : []), ...(options.forceRebuild ? ['--no-cache', '--pull'] : []), '-t', image!, '-f', join(context, dockerfile), context], { env, output, timeout: 1800000 }));
       } else throw new Error('Choose an image, Git repository or inline Dockerfile for this service.');
       for (const mount of service.mounts) await this.ensureVolume(service, mount.name);
       // Create the candidate and validate its networks before touching the previous runtime.
@@ -123,12 +133,7 @@ export class DockerDriver implements RuntimeDriver {
       for (const port of service.ports) args.push('-p', `${port.published}:${port.target}/${port.protocol}`);
       args.push('--label', `traefik.enable=${service.domains.length > 0}`);
       if (service.domains.length) args.push('--label', 'traefik.docker.network=harborlight-proxy');
-      for (const domain of service.domains) {
-        const route = `hl-${service.id}-${domain.id}`;
-        const rule = `Host(\`${domain.hostname}\`)${domain.path !== '/' ? ` && PathPrefix(\`${domain.path}\`)` : ''}`;
-        args.push('--label', `traefik.http.routers.${route}.rule=${rule}`, '--label', `traefik.http.routers.${route}.entrypoints=${domain.https ? 'websecure' : 'web'}`, '--label', `traefik.http.routers.${route}.service=${route}`, '--label', `traefik.http.services.${route}.loadbalancer.server.port=${domain.port}`);
-        if (domain.https) args.push('--label', `traefik.http.routers.${route}.tls=true`, '--label', `traefik.http.routers.${route}.tls.certresolver=letsencrypt`);
-      }
+      args.push(...proxyLabels(service.domains, service.id, options.proxyAuth));
       args.push(image!);
       if (service.kind === 'redis') args.push('sh', '-c', 'exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"');
       const containerId = (await command('docker', args)).trim();
@@ -168,7 +173,7 @@ export class DockerDriver implements RuntimeDriver {
     for (const name of Object.keys((config.volumes || {}) as object)) await this.ensureVolume(service, name);
     await mkdir(join(this.dataDir, 'compose', service.id), { recursive: true, mode: 0o700 });
     await writeFile(this.composePath(service), stringify(config), { mode: 0o600 });
-    await command('docker', [...this.composeArgs(service), 'up', '-d', '--remove-orphans'], { timeout: 900000, output });
+    await withDockerSourceCredentials(undefined, undefined, command, env => command('docker', [...this.composeArgs(service), 'up', '-d', '--remove-orphans'], { env, timeout: 900000, output }));
     const statuses = await this.statuses();
     if (statuses[service.id] !== 'running') throw new Error('Compose containers are not all running. Check runtime logs.');
     return { image: 'Docker Compose' };

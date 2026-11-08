@@ -36,7 +36,7 @@ try {
   assert.equal((await api('/projects')).length, 0);
   assert.ok((await api('/metrics')).dockerVersion);
   const project = await api('/projects', { name: 'package-check' }); projectId = project.id;
-  const service = await api('/services', { projectId, name: 'web', kind: 'app' }); serviceId = service.id;
+  const service = await api('/services', { projectId, name: 'web', kind: 'app', env: { PACKAGE_SECRET: 'package-fixture-value' } }); serviceId = service.id;
   const deployment = await api(`/services/${serviceId}/deploy`, {});
   let deployed = false;
   for (let attempt = 0; attempt < 60; attempt++) {
@@ -49,6 +49,13 @@ try {
   assert.match(await command('docker', ['exec', `hl-${serviceId}`, 'wget', '-qO-', 'http://127.0.0.1']), /Welcome to nginx/);
   await command('docker', ['exec', containerName, 'docker', 'compose', 'version']);
   await command('docker', ['exec', containerName, 'docker', 'buildx', 'version']);
+  const reader = await api('/users', { name: 'Package Reader', email: 'reader@example.test', password, role: 'member', memberships: [{ projectId, role: 'viewer' }] });
+  const key = await api('/api-keys', { name: 'Package read', projectIds: [projectId], permission: 'read' });
+  const keyRead = await fetch(`${endpoint}/api/services/${serviceId}`, { headers: { Authorization: `Bearer ${key.token}` } });
+  assert.equal(keyRead.status, 200);
+  assert.deepEqual((await keyRead.json()).env, {});
+  const keyWrite = await fetch(`${endpoint}/api/services/${serviceId}/stop`, { method: 'POST', headers: { Authorization: `Bearer ${key.token}` } });
+  assert.equal(keyWrite.status, 403);
   // SIGKILL leaves the persistent writer lock behind; restart must recognize it as stale.
   await command('docker', ['kill', containerName]);
   await command('docker', ['start', containerName]);
@@ -58,7 +65,11 @@ try {
   assert.equal((await api('/auth/session')).authenticated, true);
   assert.equal((await api(`/services/${serviceId}`)).status, 'running');
   assert.equal((await api('/projects'))[0].name, 'package-check');
-  console.log('PASS: built container serves UI, owner auth, real API deployment, Docker plugins, encrypted state and session persistence across hard restart.');
+  assert.equal((await api('/users')).find((user: { id: string }) => user.id === reader.id).memberships[0].role, 'viewer');
+  assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 200);
+  await api(`/api-keys/${key.id}`, undefined, 'DELETE');
+  assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 401);
+  console.log('PASS: built container serves UI, accounts/scoped keys, real API deployment, Docker plugins, encrypted state and session/access persistence across hard restart.');
 } catch (error) {
   if (started) { let output = ''; await command('docker', ['logs', '--tail', '20', containerName], { output: value => { output += value; } }).catch(() => {}); console.error(output); }
   throw error;

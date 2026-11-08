@@ -1,8 +1,12 @@
 import {
+  Children,
+  cloneElement,
   createContext,
+  isValidElement,
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -132,12 +136,53 @@ export function Field({
   children: ReactNode;
   className?: string;
 }) {
+  const id = useId();
+  const hintId = `${id}-hint`;
+  let targetId: string | undefined;
+  const connect = (node: ReactNode): ReactNode => {
+    if (
+      !isValidElement<{
+        id?: string;
+        children?: ReactNode;
+        "aria-describedby"?: string;
+      }>(node)
+    )
+      return node;
+    if (
+      !targetId &&
+      typeof node.type === "string" &&
+      ["input", "select", "textarea"].includes(node.type)
+    ) {
+      targetId = node.props.id || id;
+      return cloneElement(node, {
+        id: targetId,
+        "aria-describedby":
+          [node.props["aria-describedby"], hint ? hintId : undefined]
+            .filter(Boolean)
+            .join(" ") || undefined,
+      });
+    }
+    return node.props.children
+      ? cloneElement(node, {}, Children.map(node.props.children, connect))
+      : node;
+  };
+  const controls = Children.map(children, connect);
   return (
-    <label className={`field ${className}`}>
-      <span className="field-label">{label}</span>
-      {children}
-      {hint && <span className="field-hint">{hint}</span>}
-    </label>
+    <div className={`field ${className}`}>
+      {targetId ? (
+        <label htmlFor={targetId} className="field-label">
+          {label}
+        </label>
+      ) : (
+        <span className="field-label">{label}</span>
+      )}
+      {controls}
+      {hint && (
+        <span id={hintId} className="field-hint">
+          {hint}
+        </span>
+      )}
+    </div>
   );
 }
 export function ErrorBox({
@@ -277,10 +322,11 @@ export function Modal({
 }) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef(document.activeElement as HTMLElement | null);
   const closeRef = useRef(close);
   closeRef.current = close;
-  useEffect(() => {
-    const old = document.activeElement as HTMLElement | null;
+  useLayoutEffect(() => {
+    const old = returnFocusRef.current;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const focusable = () =>
@@ -289,17 +335,17 @@ export function Modal({
           'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]',
         ) || []),
       ].filter((el) => el.offsetParent !== null);
-    const timer = window.setTimeout(
-      () =>
-        (
-          ref.current?.querySelector<HTMLElement>(
-            '[autofocus], input:not([type="hidden"]), select, textarea',
-          ) ||
-          focusable()[0] ||
-          ref.current
-        )?.focus(),
-      20,
-    );
+    // Establish focus before paint, and preserve a child's own autofocus.
+    // A delayed focus would steal text input from someone already editing.
+    if (!ref.current?.contains(document.activeElement)) {
+      (
+        ref.current?.querySelector<HTMLElement>(
+          '[autofocus], input:not([type="hidden"]), select, textarea',
+        ) ||
+        focusable()[0] ||
+        ref.current
+      )?.focus();
+    }
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -313,7 +359,10 @@ export function Modal({
           e.preventDefault();
           return;
         }
-        if (e.shiftKey && document.activeElement === first) {
+        if (!ref.current?.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && document.activeElement === first) {
           e.preventDefault();
           last?.focus();
         } else if (!e.shiftKey && document.activeElement === last) {
@@ -324,10 +373,10 @@ export function Modal({
     };
     document.addEventListener("keydown", key);
     return () => {
-      window.clearTimeout(timer);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", key);
-      old?.focus();
+      if (old?.isConnected) old.focus();
+      else document.getElementById("main-content")?.focus();
     };
   }, []);
   return (

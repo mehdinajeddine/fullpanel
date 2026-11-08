@@ -38,3 +38,5 @@ jobs:
       - run: npm ci
       - run: npm run test:docker
       - run: npm run test:proxy
+      - run: npm run test:credentials
+      - run: npm run test:git

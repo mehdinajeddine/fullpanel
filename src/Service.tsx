@@ -23,7 +23,6 @@ import {
 import type {
   Backup,
   Deployment,
-  Domain,
   Mount,
   Port,
   Project,
@@ -50,6 +49,9 @@ import {
 import { BackupTable, DeploymentTable } from "./Operations";
 import DeploymentTrigger from "./DeploymentTrigger";
 import BackupSchedules from "./BackupSchedules";
+import DomainsEditor, { DomainLink, type RoutingDomain } from "./Domains";
+import SourceCredentials from "./SourceCredentials";
+import { useAccess } from "./Access";
 const tabs = [
   ["overview", "Overview"],
   ["source", "Source"],
@@ -123,6 +125,7 @@ export default function ServicePage({
   id: string;
   tab?: string;
 }) {
+  const access = useAccess();
   const query = useQuery<Service>(`/services/${encodeURIComponent(id)}`, 5000);
   const projects = useQuery<Project[]>("/projects");
   const [busy, setBusy] = useState("");
@@ -157,7 +160,14 @@ export default function ServicePage({
       />
     );
   const project = projects.data?.find((p) => p.id === service.projectId);
-  const active = tabs.some(([t]) => t === tab) ? tab : "overview";
+  const canEdit = access.canOperate(service.projectId);
+  const visibleTabs = tabs.filter(
+    ([name]) => canEdit || !["environment", "logs", "settings"].includes(name),
+  );
+  const active = visibleTabs.some(([t]) => t === tab) ? tab : "overview";
+  const openDomain = ([...service.domains] as RoutingDomain[])
+    .filter((d) => !d.hostname.startsWith("*."))
+    .sort((a, b) => Number(!!b.primary) - Number(!!a.primary))[0];
   return (
     <>
       <div className="service-breadcrumb">
@@ -189,58 +199,79 @@ export default function ServicePage({
           </div>
         </div>
         <div className="service-actions">
-          {["git", "dockerfile"].includes(service.source.type) && (
-            <IconButton
-              label="Rebuild without cache"
-              onClick={() => action("deploy", true)}
-              disabled={!!busy || service.status === "deploying"}
+          {openDomain && (
+            <a
+              className="btn btn-secondary"
+              href={`${openDomain.https ? "https" : "http"}://${openDomain.hostname}${openDomain.path || "/"}`}
+              target="_blank"
+              rel="noreferrer"
             >
-              <Hammer size={17} />
-            </IconButton>
+              Open
+              <ArrowUpRight size={15} />
+            </a>
           )}
-          {service.status === "running" ? (
+          {canEdit && (
             <>
-              <IconButton
-                label="Restart service"
-                onClick={() => action("restart")}
-                disabled={!!busy}
-              >
-                <RefreshCw size={17} />
-              </IconButton>
+              {["git", "dockerfile"].includes(service.source.type) && (
+                <IconButton
+                  label="Rebuild without cache"
+                  onClick={() => action("deploy", true)}
+                  disabled={!!busy || service.status === "deploying"}
+                >
+                  <Hammer size={17} />
+                </IconButton>
+              )}
+              {service.status === "running" ? (
+                <>
+                  <IconButton
+                    label="Restart service"
+                    onClick={() => action("restart")}
+                    disabled={!!busy}
+                  >
+                    <RefreshCw size={17} />
+                  </IconButton>
+                  <Button
+                    variant="secondary"
+                    onClick={() => action("stop")}
+                    busy={busy === "stop"}
+                    disabled={!!busy}
+                  >
+                    <Pause size={15} />
+                    Stop
+                  </Button>
+                </>
+              ) : service.status === "stopped" ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => action("start")}
+                  busy={busy === "start"}
+                  disabled={!!busy}
+                >
+                  <Play size={15} />
+                  Start
+                </Button>
+              ) : null}
               <Button
-                variant="secondary"
-                onClick={() => action("stop")}
-                busy={busy === "stop"}
-                disabled={!!busy}
+                onClick={() => action("deploy")}
+                busy={busy === "deploy"}
+                disabled={!!busy || service.status === "deploying"}
               >
-                <Pause size={15} />
-                Stop
+                <Rocket size={16} />
+                Deploy
               </Button>
             </>
-          ) : service.status === "stopped" ? (
-            <Button
-              variant="secondary"
-              onClick={() => action("start")}
-              busy={busy === "start"}
-              disabled={!!busy}
-            >
-              <Play size={15} />
-              Start
-            </Button>
-          ) : null}
-          <Button
-            onClick={() => action("deploy")}
-            busy={busy === "deploy"}
-            disabled={!!busy || service.status === "deploying"}
-          >
-            <Rocket size={16} />
-            Deploy
-          </Button>
+          )}
         </div>
       </div>
       <ErrorBox message={query.error || service.error || ""} />
+      {!canEdit && (
+        <Notice>
+          You have viewer access to this project. Configuration changes,
+          credentials, and runtime output are available to operators.
+        </Notice>
+      )}
       <nav className="service-tabs" aria-label="Service sections">
-        {tabs.map(([t, label]) => (
+        {visibleTabs.map(([t, label]) => (
           <a
             key={t}
             href={`#/services/${id}/${t}`}
@@ -252,7 +283,8 @@ export default function ServicePage({
         ))}
       </nav>
       <div className="service-tab-content" key={`${id}/${active}`}>
-        {service.deployedAt &&
+        {canEdit &&
+          service.deployedAt &&
           new Date(service.updatedAt).getTime() >
             new Date(service.deployedAt).getTime() && (
             <Notice>
@@ -261,9 +293,12 @@ export default function ServicePage({
             </Notice>
           )}
         {active === "overview" && <ServiceOverview service={service} />}
-        {active === "source" && (
-          <SourceEditor service={service} updated={query.reload} />
-        )}
+        {active === "source" &&
+          (canEdit ? (
+            <SourceEditor service={service} updated={query.reload} />
+          ) : (
+            <ServiceReadView service={service} section="source" />
+          ))}
         {active === "environment" && (
           <EnvironmentEditor service={service} updated={query.reload} />
         )}
@@ -277,12 +312,18 @@ export default function ServicePage({
           ) : (
             <DomainsEditor service={service} updated={query.reload} />
           ))}
-        {active === "storage" && (
-          <StorageEditor service={service} updated={query.reload} />
-        )}
-        {active === "resources" && (
-          <ResourcesEditor service={service} updated={query.reload} />
-        )}
+        {active === "storage" &&
+          (canEdit ? (
+            <StorageEditor service={service} updated={query.reload} />
+          ) : (
+            <ServiceReadView service={service} section="storage" />
+          ))}
+        {active === "resources" &&
+          (canEdit ? (
+            <ResourcesEditor service={service} updated={query.reload} />
+          ) : (
+            <ServiceReadView service={service} section="resources" />
+          ))}
         {active === "deployments" && <ServiceDeployments service={service} />}
         {active === "logs" && <Logs service={service} />}
         {active === "backups" &&
@@ -318,6 +359,7 @@ export default function ServicePage({
   );
 }
 function ServiceOverview({ service }: { service: Service }) {
+  const canEdit = useAccess().canOperate(service.projectId);
   const deployments = useQuery<Deployment[]>(
     `/services/${service.id}/deployments`,
     5000,
@@ -328,7 +370,7 @@ function ServiceOverview({ service }: { service: Service }) {
     `${service.source.type} source`;
   return (
     <>
-      {!["app", "compose"].includes(service.kind) && (
+      {canEdit && !["app", "compose"].includes(service.kind) && (
         <DatabaseConnection service={service} />
       )}
       <div className="service-overview-grid">
@@ -387,29 +429,15 @@ function ServiceOverview({ service }: { service: Service }) {
                 href={`#/services/${service.id}/domains`}
                 className="text-link"
               >
-                Manage
+                {canEdit ? "Manage" : "View"}
                 <ArrowUpRight size={15} />
               </a>
             }
           >
             {service.domains.length ? (
               <div className="domain-links">
-                {service.domains.map((d) => (
-                  <a
-                    key={d.id}
-                    href={`${d.https ? "https" : "http"}://${d.hostname}${d.path || "/"}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Globe2 size={17} />
-                    <span>
-                      {d.hostname}
-                      <small>
-                        {d.https ? "HTTPS" : "HTTP"} · port {d.port}
-                      </small>
-                    </span>
-                    <ArrowUpRight size={16} />
-                  </a>
+                {service.domains.map((domain) => (
+                  <DomainLink key={domain.id} domain={domain} />
                 ))}
               </div>
             ) : (
@@ -417,32 +445,36 @@ function ServiceOverview({ service }: { service: Service }) {
                 <Globe2 size={24} />
                 <p>
                   {["app", "compose"].includes(service.kind)
-                    ? "Add a domain to give your service a public address."
+                    ? canEdit
+                      ? "Add a domain to give your service a public address."
+                      : "No public domains are configured."
                     : "Private by default. Connect from a service in the same project."}
                 </p>
               </div>
             )}
           </Panel>
-          <Panel
-            title="Notes"
-            actions={
-              <a
-                href={`#/services/${service.id}/settings`}
-                className="text-link"
-              >
-                Edit
-                <ArrowUpRight size={15} />
-              </a>
-            }
-          >
-            <p className="service-notes">
-              {service.notes ||
-                "A place for context, reminders, and the little things worth keeping."}
-            </p>
-          </Panel>
+          {canEdit && (
+            <Panel
+              title="Notes"
+              actions={
+                <a
+                  href={`#/services/${service.id}/settings`}
+                  className="text-link"
+                >
+                  {canEdit ? "Edit" : "View"}
+                  <ArrowUpRight size={15} />
+                </a>
+              }
+            >
+              <p className="service-notes">
+                {service.notes ||
+                  "A place for context, reminders, and the little things worth keeping."}
+              </p>
+            </Panel>
+          )}
         </div>
       </div>
-      {service.status === "not-deployed" && (
+      {canEdit && service.status === "not-deployed" && (
         <Notice>
           Configure the source and environment, then select Deploy. Saving
           configuration does not change a running container.
@@ -542,153 +574,167 @@ function SourceEditor({
               description: "Database container image",
             },
           ];
+  const sourceSaved =
+    source.type === service.source.type &&
+    (source.type !== "git" ||
+      source.repository?.trim() === service.source.repository?.trim()) &&
+    (source.type !== "image" ||
+      source.image?.trim() === service.source.image?.trim());
   return (
-    <EditorPanel
-      title="Application source"
-      description="Tell Harborlight where your application comes from."
-      busy={busy}
-      error={error}
-      onSubmit={(e) => {
-        e.preventDefault();
-        void save({ source: cleanSource() });
-      }}
-    >
-      <div className="source-types">
-        {types.map((t) => (
-          <button
-            type="button"
-            key={t.type}
-            onClick={() =>
-              setSource(
-                t.type === "image"
-                  ? { type: "image", image: service.source.image || "" }
-                  : t.type === "git"
-                    ? {
-                        type: "git",
-                        repository: service.source.repository || "",
-                        branch: "main",
-                        context: ".",
-                        dockerfile: "Dockerfile",
-                      }
-                    : t.type === "dockerfile"
+    <>
+      <EditorPanel
+        title="Application source"
+        description="Tell Harborlight where your application comes from."
+        busy={busy}
+        error={error}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void save({ source: cleanSource() });
+        }}
+      >
+        <div className="source-types">
+          {types.map((t) => (
+            <button
+              type="button"
+              key={t.type}
+              onClick={() =>
+                setSource(
+                  t.type === "image"
+                    ? { type: "image", image: service.source.image || "" }
+                    : t.type === "git"
                       ? {
-                          type: "dockerfile",
-                          dockerfile:
-                            service.source.type === "dockerfile"
-                              ? service.source.dockerfile
-                              : "",
+                          type: "git",
+                          repository: service.source.repository || "",
+                          branch: "main",
+                          context: ".",
+                          dockerfile: "Dockerfile",
                         }
-                      : {
-                          type: "compose",
-                          compose: service.source.compose || "",
-                        },
-              )
-            }
-            className={source.type === t.type ? "selected" : ""}
-            aria-pressed={source.type === t.type}
-          >
-            {t.icon}
-            <strong>{t.label}</strong>
-            <small>{t.description}</small>
-          </button>
-        ))}
-      </div>
-      {source.type === "image" && (
-        <Field
-          label="Image"
-          hint="Use a pinned version or digest for reproducible deployments."
-        >
-          <input
-            value={source.image || ""}
-            onChange={(e) => set("image", e.target.value)}
-            placeholder="nginx:1.27-alpine"
-            required
-            className="mono"
-          />
-        </Field>
-      )}
-      {source.type === "git" && (
-        <>
+                      : t.type === "dockerfile"
+                        ? {
+                            type: "dockerfile",
+                            dockerfile:
+                              service.source.type === "dockerfile"
+                                ? service.source.dockerfile
+                                : "",
+                          }
+                        : {
+                            type: "compose",
+                            compose: service.source.compose || "",
+                          },
+                )
+              }
+              className={source.type === t.type ? "selected" : ""}
+              aria-pressed={source.type === t.type}
+            >
+              {t.icon}
+              <strong>{t.label}</strong>
+              <small>{t.description}</small>
+            </button>
+          ))}
+        </div>
+        {source.type === "image" && (
           <Field
-            label="Repository URL"
-            hint="Public HTTPS repositories. Private Git authentication is not yet available."
+            label="Image"
+            hint="Use a pinned version or digest for reproducible deployments."
           >
             <input
-              type="url"
-              value={source.repository || ""}
-              onChange={(e) => set("repository", e.target.value)}
-              placeholder="https://github.com/your-team/your-app.git"
+              value={source.image || ""}
+              onChange={(e) => set("image", e.target.value)}
+              placeholder="nginx:1.27-alpine"
               required
+              className="mono"
             />
           </Field>
-          <div className="form-grid">
-            <Field label="Branch">
+        )}
+        {source.type === "git" && (
+          <>
+            <Field
+              label="Repository URL"
+              hint="HTTPS repositories. Save the source, then add credentials below for private access."
+            >
               <input
-                value={source.branch || ""}
-                onChange={(e) => set("branch", e.target.value)}
-                placeholder="main"
+                type="url"
+                value={source.repository || ""}
+                onChange={(e) => set("repository", e.target.value)}
+                placeholder="https://github.com/your-team/your-app.git"
+                required
               />
             </Field>
-            <Field label="Build context">
+            <div className="form-grid">
+              <Field label="Branch">
+                <input
+                  value={source.branch || ""}
+                  onChange={(e) => set("branch", e.target.value)}
+                  placeholder="main"
+                />
+              </Field>
+              <Field label="Build context">
+                <input
+                  value={source.context || ""}
+                  onChange={(e) => set("context", e.target.value)}
+                  placeholder="."
+                />
+              </Field>
+            </div>
+            <Field label="Dockerfile path">
               <input
-                value={source.context || ""}
-                onChange={(e) => set("context", e.target.value)}
-                placeholder="."
+                value={source.dockerfile || ""}
+                onChange={(e) => set("dockerfile", e.target.value)}
+                placeholder="Dockerfile"
               />
             </Field>
-          </div>
-          <Field label="Dockerfile path">
-            <input
+          </>
+        )}
+        {source.type === "dockerfile" && (
+          <Field
+            label="Dockerfile"
+            hint="Files from a repository are not available in this build context."
+          >
+            <textarea
+              className="code-editor"
+              spellCheck={false}
+              rows={15}
               value={source.dockerfile || ""}
               onChange={(e) => set("dockerfile", e.target.value)}
-              placeholder="Dockerfile"
+              required
+              placeholder={
+                'FROM nginx:1.27-alpine\nRUN echo "Hello, Harborlight" > /usr/share/nginx/html/index.html\nEXPOSE 80'
+              }
             />
           </Field>
-        </>
-      )}
-      {source.type === "dockerfile" && (
-        <Field
-          label="Dockerfile"
-          hint="Files from a repository are not available in this build context."
-        >
-          <textarea
-            className="code-editor"
-            spellCheck={false}
-            rows={15}
-            value={source.dockerfile || ""}
-            onChange={(e) => set("dockerfile", e.target.value)}
-            required
-            placeholder={
-              'FROM nginx:1.27-alpine\nRUN echo "Hello, Harborlight" > /usr/share/nginx/html/index.html\nEXPOSE 80'
-            }
-          />
-        </Field>
-      )}
-      {source.type === "compose" && (
-        <Field
-          label="Compose configuration"
-          hint="Keep secrets in the Environment tab. Persistent volumes remain after service deletion."
-        >
-          <textarea
-            className="code-editor"
-            spellCheck={false}
-            rows={18}
-            value={source.compose || ""}
-            onChange={(e) => set("compose", e.target.value)}
-            required
-            placeholder={
-              'services:\n  web:\n    image: nginx:1.27-alpine\n    ports:\n      - "8080:80"'
-            }
-          />
-        </Field>
-      )}
-      {!["app", "compose"].includes(service.kind) && (
-        <Notice>
-          Changing a database major version may require a data migration. Keep a
-          verified backup before upgrading.
-        </Notice>
-      )}
-    </EditorPanel>
+        )}
+        {source.type === "compose" && (
+          <Field
+            label="Compose configuration"
+            hint="Keep secrets in the Environment tab. Persistent volumes remain after service deletion."
+          >
+            <textarea
+              className="code-editor"
+              spellCheck={false}
+              rows={18}
+              value={source.compose || ""}
+              onChange={(e) => set("compose", e.target.value)}
+              required
+              placeholder={
+                'services:\n  web:\n    image: nginx:1.27-alpine\n    ports:\n      - "8080:80"'
+              }
+            />
+          </Field>
+        )}
+        {!["app", "compose"].includes(service.kind) && (
+          <Notice>
+            Changing a database major version may require a data migration. Keep
+            a verified backup before upgrading.
+          </Notice>
+        )}
+      </EditorPanel>
+      <SourceCredentials
+        key={`${service.source.type}:${service.source.repository || service.source.image || ""}`}
+        service={service}
+        sourceSaved={sourceSaved}
+        updated={updated}
+      />
+    </>
   );
 }
 function EnvironmentEditor({
@@ -804,119 +850,6 @@ function EnvironmentEditor({
       >
         <Plus size={16} />
         Add variable
-      </Button>
-    </EditorPanel>
-  );
-}
-function DomainsEditor({
-  service,
-  updated,
-}: {
-  service: Service;
-  updated: () => void;
-}) {
-  const [domains, setDomains] = useState<Domain[]>(
-    service.domains.map((d) => ({ ...d })),
-  );
-  const { save, busy, error } = useSave(service, updated);
-  const update = (id: string, values: Partial<Domain>) =>
-    setDomains((old) =>
-      old.map((d) => (d.id === id ? { ...d, ...values } : d)),
-    );
-  return (
-    <EditorPanel
-      title="Domains & routing"
-      description="Route HTTP traffic to your service through the configured proxy."
-      busy={busy}
-      error={error}
-      onSubmit={(e) => {
-        e.preventDefault();
-        void save({ domains });
-      }}
-    >
-      <Notice>
-        Point your DNS record at this server and enable the Traefik proxy in
-        your installation. HTTPS requires working DNS and certificate
-        configuration.
-      </Notice>
-      {domains.map((d, i) => (
-        <div className="config-card" key={d.id}>
-          <div className="config-card-heading">
-            <strong>
-              <Globe2 size={16} />
-              Domain {i + 1}
-            </strong>
-            <IconButton
-              label={`Remove domain ${i + 1}`}
-              onClick={() =>
-                setDomains((old) => old.filter((x) => x.id !== d.id))
-              }
-            >
-              <Trash2 size={16} />
-            </IconButton>
-          </div>
-          <Field label={`Hostname ${i + 1}`}>
-            <input
-              value={d.hostname}
-              onChange={(e) => update(d.id, { hostname: e.target.value })}
-              placeholder="app.example.com"
-              required
-            />
-          </Field>
-          <div className="form-grid">
-            <Field label={`Target port ${i + 1}`}>
-              <input
-                type="number"
-                min={1}
-                max={65535}
-                value={d.port}
-                onChange={(e) => update(d.id, { port: Number(e.target.value) })}
-                required
-              />
-            </Field>
-            <Field label={`Path ${i + 1}`}>
-              <input
-                value={d.path}
-                onChange={(e) => update(d.id, { path: e.target.value })}
-                placeholder="/"
-                required
-              />
-            </Field>
-          </div>
-          <label className="checkbox-field">
-            <input
-              type="checkbox"
-              checked={d.https}
-              onChange={(e) => update(d.id, { https: e.target.checked })}
-            />
-            <span>Enable HTTPS with automatic certificates</span>
-          </label>
-        </div>
-      ))}
-      {!domains.length && (
-        <div className="inline-empty">
-          No domains configured. Your service remains accessible inside its
-          project network.
-        </div>
-      )}
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() =>
-          setDomains((old) => [
-            ...old,
-            {
-              id: crypto.randomUUID(),
-              hostname: "",
-              port: 80,
-              path: "/",
-              https: true,
-            },
-          ])
-        }
-      >
-        <Plus size={16} />
-        Add domain
       </Button>
     </EditorPanel>
   );
@@ -1148,6 +1081,7 @@ function ResourcesEditor({
   );
 }
 function ServiceDeployments({ service }: { service: Service }) {
+  const canEdit = useAccess().canOperate(service.projectId);
   const q = useQuery<Deployment[]>(`/services/${service.id}/deployments`, 3000);
   return (
     <>
@@ -1168,7 +1102,7 @@ function ServiceDeployments({ service }: { service: Service }) {
           <DeploymentTable deployments={q.data || []} />
         )}
       </Panel>
-      <DeploymentTrigger serviceId={service.id} />
+      {canEdit && <DeploymentTrigger serviceId={service.id} />}
     </>
   );
 }
@@ -1241,6 +1175,7 @@ function Logs({ service }: { service: Service }) {
   );
 }
 function ServiceBackups({ service }: { service: Service }) {
+  const canEdit = useAccess().canOperate(service.projectId);
   const q = useQuery<Backup[]>(`/services/${service.id}/backups`, 4000);
   const [busy, setBusy] = useState(false);
   const toast = useToast();
@@ -1262,19 +1197,27 @@ function ServiceBackups({ service }: { service: Service }) {
         Backups stay on this server. Download a copy to an independent location
         and verify it before relying on it for recovery.
       </Notice>
-      <BackupSchedules serviceId={service.id} services={[service]} />
+      {canEdit && (
+        <BackupSchedules serviceId={service.id} services={[service]} />
+      )}
       <Panel
         title="Service backups"
         description="Manual snapshots of your persistent data."
         actions={
-          <Button onClick={run} busy={busy}>
-            <Plus size={16} />
-            Run backup
-          </Button>
+          canEdit && (
+            <Button onClick={run} busy={busy}>
+              <Plus size={16} />
+              Run backup
+            </Button>
+          )
         }
       >
         <ErrorBox message={q.error} retry={q.reload} />
-        {q.loading ? <Loading /> : <BackupTable backups={q.data || []} />}
+        {q.loading ? (
+          <Loading />
+        ) : (
+          <BackupTable backups={q.data || []} projectId={service.projectId} />
+        )}
       </Panel>
     </>
   );
@@ -1435,6 +1378,103 @@ function DatabaseConnection({ service }: { service: Service }) {
           existing database’s users.
         </p>
       </div>
+    </Panel>
+  );
+}
+
+function ServiceReadView({
+  service,
+  section,
+}: {
+  service: Service;
+  section: "source" | "storage" | "resources";
+}) {
+  if (section === "source")
+    return (
+      <Panel
+        title="Application source"
+        description="Read-only configuration for this service."
+      >
+        <dl className="property-list">
+          <div>
+            <dt>Source type</dt>
+            <dd>{service.source.type}</dd>
+          </div>
+          {service.source.image && (
+            <div>
+              <dt>Image</dt>
+              <dd>
+                <code>{service.source.image}</code>
+              </dd>
+            </div>
+          )}
+          {service.source.repository && (
+            <div>
+              <dt>Repository</dt>
+              <dd>
+                <code>{service.source.repository}</code>
+              </dd>
+            </div>
+          )}
+          {service.source.branch && (
+            <div>
+              <dt>Branch</dt>
+              <dd>{service.source.branch}</dd>
+            </div>
+          )}
+        </dl>
+        {["dockerfile", "compose"].includes(service.source.type) && (
+          <p className="service-notes">
+            Source contents are available to project operators.
+          </p>
+        )}
+      </Panel>
+    );
+  if (section === "storage")
+    return (
+      <Panel
+        title="Persistent storage"
+        description="Read-only volume configuration."
+      >
+        {service.mounts.length ? (
+          <dl className="property-list">
+            {service.mounts.map((m) => (
+              <div key={m.id}>
+                <dt>{m.name}</dt>
+                <dd>
+                  <code>{m.mountPath}</code>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          <p className="service-notes">No volumes configured.</p>
+        )}
+      </Panel>
+    );
+  return (
+    <Panel
+      title="Resources & networking"
+      description="Read-only runtime limits and published ports."
+    >
+      <dl className="property-list">
+        <div>
+          <dt>CPU limit</dt>
+          <dd>{service.resources.cpu} cores</dd>
+        </div>
+        <div>
+          <dt>Memory limit</dt>
+          <dd>{service.resources.memoryMb} MB</dd>
+        </div>
+        {service.ports.map((p, i) => (
+          <div key={i}>
+            <dt>{p.protocol.toUpperCase()} port</dt>
+            <dd>
+              {p.published} → {p.target}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </Panel>
   );
 }

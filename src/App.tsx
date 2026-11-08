@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Folder,
   HardDrive,
+  KeyRound,
   LayoutDashboard,
   LockKeyhole,
   LogOut,
@@ -23,6 +24,7 @@ import {
   Server,
   Settings2,
   ShieldCheck,
+  Users,
   X,
 } from "lucide-react";
 import type { Project, Service, Session, Settings } from "../shared/types";
@@ -43,6 +45,8 @@ import {
 import Dashboard from "./Dashboard";
 import { ProjectsPage } from "./Projects";
 import ServicePage from "./Service";
+import { AccessProvider, accessFor, useAccess } from "./Access";
+import { AccountsPage, ApiKeysPage } from "./Accounts";
 import {
   ActivityPage,
   BackupsPage,
@@ -260,13 +264,20 @@ const nav = [
   { path: "/activity", label: "Activity", icon: Activity },
 ];
 function CommandPalette({ close }: { close: () => void }) {
+  const access = useAccess();
   const [search, setSearch] = useState("");
   const projects = useQuery<Project[]>("/projects");
   const services = useQuery<Service[]>("/services");
   const q = search.toLowerCase();
   const destinations = [
     ...nav,
-    { path: "/settings", label: "Settings", icon: Settings2 },
+    { path: "/api-keys", label: "API keys", icon: KeyRound },
+    ...(access.isAdmin
+      ? [
+          { path: "/users", label: "Team & access", icon: Users },
+          { path: "/settings", label: "Settings", icon: Settings2 },
+        ]
+      : []),
   ].filter((i) => i.label.toLowerCase().includes(q));
   const filteredProjects = (projects.data || [])
     .filter((p) => p.name.toLowerCase().includes(q))
@@ -352,11 +363,12 @@ function Workspace({
   session: Session;
   onLogout: () => void;
 }) {
+  const access = accessFor(session.user);
   const route = useRoute();
   const [mobile, setMobile] = useState(false);
   const [command, setCommand] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const settings = useQuery<Settings>("/settings");
+  const settings = useQuery<Settings>("/settings", 0, access.isAdmin);
   const toast = useToast();
   useEffect(() => {
     setMobile(false);
@@ -417,7 +429,17 @@ function Workspace({
     content = <DeploymentsPage deploymentId={segments[1]} />;
   else if (page === "backups") content = <BackupsPage />;
   else if (page === "activity") content = <ActivityPage />;
-  else if (page === "settings") content = <SettingsPage />;
+  else if (page === "users") content = <AccountsPage />;
+  else if (page === "api-keys") content = <ApiKeysPage />;
+  else if (page === "settings")
+    content = access.isAdmin ? (
+      <SettingsPage />
+    ) : (
+      <Empty
+        title="Administrator access required"
+        description="Only administrators can configure this server."
+      />
+    );
   else
     content = (
       <Empty
@@ -427,146 +449,178 @@ function Workspace({
       />
     );
   return (
-    <div className="app-shell">
-      <a
-        className="skip-link"
-        href="#main-content"
-        onClick={(e) => {
-          e.preventDefault();
-          document.getElementById("main-content")?.focus();
-        }}
-      >
-        Skip to content
-      </a>
-      {mobile && (
-        <button
-          aria-label="Close navigation"
-          className="sidebar-scrim"
-          onClick={() => setMobile(false)}
-        />
-      )}
-      <aside
-        className={`sidebar ${mobile ? "sidebar-open" : ""}`}
-        aria-label="Main navigation"
-      >
-        <div className="sidebar-brand">
-          <Brand />
-          <IconButton
-            label="Close navigation"
-            className="mobile-close"
+    <AccessProvider user={session.user}>
+      <div className="app-shell">
+        <a
+          className="skip-link"
+          href="#main-content"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById("main-content")?.focus();
+          }}
+        >
+          Skip to content
+        </a>
+        {mobile && (
+          <button
+            aria-label="Close navigation"
+            className="sidebar-scrim"
             onClick={() => setMobile(false)}
-          >
-            <X size={20} />
-          </IconButton>
-        </div>
-        <div className="server-selector">
-          <span className="server-selector-icon">
-            <Server size={18} />
-          </span>
-          <div>
-            <strong>{settings.data?.serverName || "My workspace"}</strong>
-            <small>
-              <i />
-              {session.mode === "demo"
-                ? "Demo environment"
-                : "Self-hosted workspace"}
-            </small>
-          </div>
-        </div>
-        <span className="sidebar-label">WORKSPACE</span>
-        <nav>
-          {nav.map((n) => (
-            <a
-              href={`#${n.path}`}
-              className={`nav-item ${activePath === n.path ? "active" : ""}`}
-              key={n.path}
-              aria-current={activePath === n.path ? "page" : undefined}
+          />
+        )}
+        <aside
+          className={`sidebar ${mobile ? "sidebar-open" : ""}`}
+          aria-label="Main navigation"
+        >
+          <div className="sidebar-brand">
+            <Brand />
+            <IconButton
+              label="Close navigation"
+              className="mobile-close"
+              onClick={() => setMobile(false)}
             >
-              <n.icon size={18} />
-              <span>{n.label}</span>
-              {activePath === n.path && <span className="nav-active-dot" />}
-            </a>
-          ))}
-        </nav>
-        <div className="sidebar-bottom">
-          <a
-            href="#/settings"
-            className={`nav-item ${activePath === "/settings" ? "active" : ""}`}
-            aria-current={activePath === "/settings" ? "page" : undefined}
-          >
-            <Settings2 size={18} />
-            <span>Settings</span>
-          </a>
-          <div className="open-source-note">
-            <span className="open-source-icon">
-              <CodeMark />
-            </span>
-            <p>
-              Yours to build on.<small>Open source. Always yours.</small>
-            </p>
-            <span>↗</span>
+              <X size={20} />
+            </IconButton>
           </div>
-          <div className="sidebar-user">
-            <span className="avatar">
-              {(session.user?.name || "O").slice(0, 1).toUpperCase()}
+          <div className="server-selector">
+            <span className="server-selector-icon">
+              <Server size={18} />
             </span>
             <div>
-              <strong>{session.user?.name || "Owner"}</strong>
-              <small>Workspace owner</small>
+              <strong>{settings.data?.serverName || "My workspace"}</strong>
+              <small>
+                <i />
+                {session.mode === "demo"
+                  ? "Demo environment"
+                  : "Self-hosted workspace"}
+              </small>
             </div>
-            <IconButton label="Sign out" disabled={loggingOut} onClick={logout}>
-              <LogOut size={17} />
-            </IconButton>
           </div>
+          <span className="sidebar-label">WORKSPACE</span>
+          <nav>
+            {nav.map((n) => (
+              <a
+                href={`#${n.path}`}
+                className={`nav-item ${activePath === n.path ? "active" : ""}`}
+                key={n.path}
+                aria-current={activePath === n.path ? "page" : undefined}
+              >
+                <n.icon size={18} />
+                <span>{n.label}</span>
+                {activePath === n.path && <span className="nav-active-dot" />}
+              </a>
+            ))}
+          </nav>
+          <div className="sidebar-bottom">
+            <a
+              href="#/api-keys"
+              className={`nav-item ${activePath === "/api-keys" ? "active" : ""}`}
+              aria-current={activePath === "/api-keys" ? "page" : undefined}
+            >
+              <KeyRound size={18} />
+              <span>API keys</span>
+            </a>
+            {access.isAdmin && (
+              <>
+                <a
+                  href="#/users"
+                  className={`nav-item ${activePath === "/users" ? "active" : ""}`}
+                  aria-current={activePath === "/users" ? "page" : undefined}
+                >
+                  <Users size={18} />
+                  <span>Team & access</span>
+                </a>
+                <a
+                  href="#/settings"
+                  className={`nav-item ${activePath === "/settings" ? "active" : ""}`}
+                  aria-current={activePath === "/settings" ? "page" : undefined}
+                >
+                  <Settings2 size={18} />
+                  <span>Settings</span>
+                </a>
+              </>
+            )}
+            <div className="open-source-note">
+              <span className="open-source-icon">
+                <CodeMark />
+              </span>
+              <p>
+                Yours to build on.<small>Open source. Always yours.</small>
+              </p>
+              <span>↗</span>
+            </div>
+            <div className="sidebar-user">
+              <span className="avatar">
+                {(session.user?.name || "O").slice(0, 1).toUpperCase()}
+              </span>
+              <div>
+                <strong>{session.user?.name || "Owner"}</strong>
+                <small>
+                  {access.user?.role === "owner"
+                    ? "Workspace owner"
+                    : access.user?.role === "admin"
+                      ? "Administrator"
+                      : "Workspace member"}
+                </small>
+              </div>
+              <IconButton
+                label="Sign out"
+                disabled={loggingOut}
+                onClick={logout}
+              >
+                <LogOut size={17} />
+              </IconButton>
+            </div>
+          </div>
+        </aside>
+        <div className="main-shell">
+          <header className="topbar">
+            <div>
+              <IconButton
+                label="Open navigation"
+                className="mobile-menu"
+                onClick={() => setMobile(true)}
+              >
+                <Menu size={20} />
+              </IconButton>
+              <span className="topbar-workspace">Workspace</span>
+              <ChevronRight size={13} />
+              <span>{title}</span>
+            </div>
+            <div>
+              <button
+                className="topbar-search"
+                onClick={() => setCommand(true)}
+                aria-label="Search workspace"
+              >
+                <Search size={16} />
+                <span>Search anything…</span>
+                <kbd>⌘ K</kbd>
+              </button>
+              <span className="topbar-divider" />
+              <span className="version-pill">ALPHA 0.1</span>
+              <span className="topbar-avatar">
+                {(session.user?.name || "O").slice(0, 1).toUpperCase()}
+              </span>
+            </div>
+          </header>
+          {session.mode === "demo" && (
+            <div className="demo-banner">
+              <span>
+                <span className="tiny-dot" />
+                <strong>Demo workspace</strong> Runtime actions and metrics are
+                simulated.
+              </span>
+              <span>Your changes are saved locally.</span>
+            </div>
+          )}
+          <main className="page-content" id="main-content" tabIndex={-1}>
+            {content}
+          </main>
         </div>
-      </aside>
-      <div className="main-shell">
-        <header className="topbar">
-          <div>
-            <IconButton
-              label="Open navigation"
-              className="mobile-menu"
-              onClick={() => setMobile(true)}
-            >
-              <Menu size={20} />
-            </IconButton>
-            <span className="topbar-workspace">Workspace</span>
-            <ChevronRight size={13} />
-            <span>{title}</span>
-          </div>
-          <div>
-            <button
-              className="topbar-search"
-              onClick={() => setCommand(true)}
-              aria-label="Search workspace"
-            >
-              <Search size={16} />
-              <span>Search anything…</span>
-              <kbd>⌘ K</kbd>
-            </button>
-            <span className="topbar-divider" />
-            <span className="version-pill">ALPHA 0.1</span>
-            <span className="topbar-avatar">
-              {(session.user?.name || "O").slice(0, 1).toUpperCase()}
-            </span>
-          </div>
-        </header>
-        {session.mode === "demo" && (
-          <div className="demo-banner">
-            <span>
-              <span className="tiny-dot" />
-              <strong>Demo workspace</strong> Runtime actions and metrics are
-              simulated.
-            </span>
-            <span>Your changes are saved locally.</span>
-          </div>
-        )}
-        <main className="page-content" id="main-content" tabIndex={-1}>
-          {content}
-        </main>
+        {command && <CommandPalette close={() => setCommand(false)} />}
       </div>
-      {command && <CommandPalette close={() => setCommand(false)} />}
-    </div>
+    </AccessProvider>
   );
 }
 function CodeMark() {
@@ -589,11 +643,15 @@ function CodeMark() {
   );
 }
 function AppContent() {
-  const session = useQuery<Session>("/auth/session");
+  const session = useQuery<Session>("/auth/session", 30000);
   useEffect(() => {
     const handle = () => session.reload();
     window.addEventListener("harborlight:unauthorized", handle);
-    return () => window.removeEventListener("harborlight:unauthorized", handle);
+    window.addEventListener("harborlight:identity", handle);
+    return () => {
+      window.removeEventListener("harborlight:unauthorized", handle);
+      window.removeEventListener("harborlight:identity", handle);
+    };
   }, [session.reload]);
   if (session.loading)
     return (

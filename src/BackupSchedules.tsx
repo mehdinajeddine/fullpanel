@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import type { Service } from "../shared/types";
 import { api, patch, post, useQuery } from "./api";
+import { useAccess } from "./Access";
 import {
   Badge,
   Button,
@@ -259,6 +260,7 @@ export default function BackupSchedules({
   serviceId?: string;
   services: Service[];
 }) {
+  const access = useAccess();
   const q = useQuery<BackupSchedule[]>(
     serviceId ? `/services/${serviceId}/backup-schedules` : "/backup-schedules",
     7000,
@@ -268,7 +270,10 @@ export default function BackupSchedules({
   const [busy, setBusy] = useState("");
   const toast = useToast();
   const eligible = services.filter(
-    (s) => s.kind !== "compose" && (s.kind !== "app" || s.mounts.length > 0),
+    (s) =>
+      access.canOperate(s.projectId) &&
+      s.kind !== "compose" &&
+      (s.kind !== "app" || s.mounts.length > 0),
   );
   async function action(s: BackupSchedule, kind: "run" | "toggle" | "delete") {
     setBusy(s.id);
@@ -356,36 +361,41 @@ export default function BackupSchedules({
                     </span>
                   )}
                 </div>
-                <div className="schedule-actions">
-                  <IconButton
-                    label="Run scheduled backup now"
-                    disabled={!!busy || s.lastStatus === "running"}
-                    onClick={() => void action(s, "run")}
-                  >
-                    <Play size={15} />
-                  </IconButton>
-                  <IconButton
-                    label={s.enabled ? "Pause schedule" : "Enable schedule"}
-                    disabled={!!busy}
-                    onClick={() => void action(s, "toggle")}
-                  >
-                    <Power size={15} />
-                  </IconButton>
-                  <IconButton
-                    label="Edit backup schedule"
-                    disabled={!!busy}
-                    onClick={() => setEditing(s)}
-                  >
-                    <Pencil size={15} />
-                  </IconButton>
-                  <IconButton
-                    label="Delete backup schedule"
-                    disabled={!!busy}
-                    onClick={() => setDeleting(s)}
-                  >
-                    <Trash2 size={15} />
-                  </IconButton>
-                </div>
+                {access.canOperate(
+                  services.find((service) => service.id === s.serviceId)
+                    ?.projectId,
+                ) && (
+                  <div className="schedule-actions">
+                    <IconButton
+                      label="Run scheduled backup now"
+                      disabled={!!busy || s.lastStatus === "running"}
+                      onClick={() => void action(s, "run")}
+                    >
+                      <Play size={15} />
+                    </IconButton>
+                    <IconButton
+                      label={s.enabled ? "Pause schedule" : "Enable schedule"}
+                      disabled={!!busy}
+                      onClick={() => void action(s, "toggle")}
+                    >
+                      <Power size={15} />
+                    </IconButton>
+                    <IconButton
+                      label="Edit backup schedule"
+                      disabled={!!busy}
+                      onClick={() => setEditing(s)}
+                    >
+                      <Pencil size={15} />
+                    </IconButton>
+                    <IconButton
+                      label="Delete backup schedule"
+                      disabled={!!busy}
+                      onClick={() => setDeleting(s)}
+                    >
+                      <Trash2 size={15} />
+                    </IconButton>
+                  </div>
+                )}
               </article>
             ))}
           </div>

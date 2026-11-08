@@ -28,7 +28,7 @@ export const post = <T>(path: string, body?: unknown) =>
 export const patch = <T>(path: string, body: unknown) =>
   api<T>(path, { method: "PATCH", body: JSON.stringify(body) });
 export const remove = (path: string) => api<void>(path, { method: "DELETE" });
-export function useQuery<T>(path: string, interval = 0) {
+export function useQuery<T>(path: string, interval = 0, enabled = true) {
   const [data, setData] = useState<T>();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,12 @@ export function useQuery<T>(path: string, interval = 0) {
   const reload = useCallback(() => setRevision((v) => v + 1), []);
   const lastPath = useRef(path);
   useEffect(() => {
+    if (!enabled) {
+      setData(undefined);
+      setLoading(false);
+      setError("");
+      return;
+    }
     const controller = new AbortController();
     let fetching = false;
     if (lastPath.current !== path) {
@@ -69,7 +75,7 @@ export function useQuery<T>(path: string, interval = 0) {
       controller.abort();
       if (timer) window.clearInterval(timer);
     };
-  }, [path, revision, interval]);
+  }, [path, revision, interval, enabled]);
   return { data, error, loading, reload, setData };
 }
 export function navigate(path: string) {

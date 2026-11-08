@@ -26,6 +26,7 @@ export interface BackupSchedule {
 
 export type ScheduledBackup = Backup & { scheduleId?: string };
 export interface BackupScheduleDependencies {
+  filterSchedules?(request: FastifyRequest, schedules: BackupSchedule[]): BackupSchedule[];
   listSchedules(): BackupSchedule[];
   saveSchedules(schedules: BackupSchedule[]): void;
   getService(serviceId: string): Pick<Service, 'id' | 'kind' | 'mounts'> | undefined;
@@ -236,7 +237,7 @@ export class BackupScheduler {
 /** All routes are authenticated by the host application's ordinary /api session hook. */
 export function registerBackupSchedules(app: FastifyInstance, dependencies: BackupScheduleDependencies) {
   const scheduler = new BackupScheduler(dependencies);
-  app.get('/api/backup-schedules', async () => scheduler.list());
+  app.get('/api/backup-schedules', async request => dependencies.filterSchedules?.(request, scheduler.list()) ?? scheduler.list());
   app.get('/api/services/:id/backup-schedules', async request => scheduler.list(parameter(request)));
   app.post('/api/services/:id/backup-schedules', async (request, reply) => reply.status(201).send(scheduler.create(parameter(request), request.body)));
   app.patch('/api/backup-schedules/:id', async request => scheduler.update(parameter(request), request.body));

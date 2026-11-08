@@ -26,6 +26,7 @@ import {
   Panel,
 } from "./ui";
 import { CreateProject } from "./Projects";
+import { useAccess } from "./Access";
 
 function Metric({
   label,
@@ -57,6 +58,7 @@ function Metric({
   );
 }
 export default function Dashboard({ name }: { name?: string }) {
+  const access = useAccess();
   const { data, error, loading, reload } = useQuery<Overview>(
     "/overview",
     8000,
@@ -81,10 +83,12 @@ export default function Dashboard({ name }: { name?: string }) {
         title="A little clarity. A lot of possibility."
         description={`Welcome${name ? `, ${name.split(" ")[0]}` : ""}. Here’s what’s happening with your infrastructure.`}
         actions={
-          <Button onClick={() => setCreate(true)}>
-            <Plus size={17} />
-            New project
-          </Button>
+          access.isAdmin && (
+            <Button onClick={() => setCreate(true)}>
+              <Plus size={17} />
+              New project
+            </Button>
+          )
         }
       />
       <ErrorBox message={error || metrics.error || ""} />
@@ -109,54 +113,80 @@ export default function Dashboard({ name }: { name?: string }) {
           <i /> {metrics.mode === "demo" ? "Demo workspace" : "Live overview"}
         </span>
       </div>
-      <div className="metrics-grid">
-        <Metric
-          label="Runtime CPU"
-          value={
-            metrics.cpuPercent === null
-              ? "—"
-              : `${metrics.cpuPercent.toFixed(1)}%`
-          }
-          detail={
-            metrics.cpuPercent === null
-              ? "Waiting for runtime metrics"
-              : "Current runtime utilization"
-          }
-          percent={metrics.cpuPercent}
-          icon={<Cpu size={17} />}
-        />
-        <Metric
-          label="Runtime memory"
-          value={bytes(metrics.memoryUsedBytes)}
-          detail={`of ${bytes(metrics.memoryTotalBytes)} available`}
-          percent={memoryPercent}
-          icon={<MemoryStick size={17} />}
-        />
-        <Metric
-          label="Disk usage"
-          value={
-            metrics.diskUsedBytes === null ? "—" : bytes(metrics.diskUsedBytes)
-          }
-          detail={
-            metrics.diskTotalBytes
-              ? `of ${bytes(metrics.diskTotalBytes)} total`
-              : "Disk metrics unavailable"
-          }
-          percent={diskPercent}
-          icon={<HardDrive size={17} />}
-        />
-        <Metric
-          label="Running services"
-          value={`${running} / ${services.length}`}
-          detail={
-            services.length
-              ? `${services.filter((s) => s.status === "not-deployed").length} awaiting first deployment`
-              : "Your next idea belongs here"
-          }
-          percent={services.length ? (running / services.length) * 100 : 0}
-          icon={<Layers size={17} />}
-        />
-      </div>
+      {access.isAdmin ? (
+        <div className="metrics-grid">
+          <Metric
+            label="Runtime CPU"
+            value={
+              metrics.cpuPercent === null
+                ? "—"
+                : `${metrics.cpuPercent.toFixed(1)}%`
+            }
+            detail={
+              metrics.cpuPercent === null
+                ? "Waiting for runtime metrics"
+                : "Current runtime utilization"
+            }
+            percent={metrics.cpuPercent}
+            icon={<Cpu size={17} />}
+          />
+          <Metric
+            label="Runtime memory"
+            value={bytes(metrics.memoryUsedBytes)}
+            detail={`of ${bytes(metrics.memoryTotalBytes)} available`}
+            percent={memoryPercent}
+            icon={<MemoryStick size={17} />}
+          />
+          <Metric
+            label="Disk usage"
+            value={
+              metrics.diskUsedBytes === null
+                ? "—"
+                : bytes(metrics.diskUsedBytes)
+            }
+            detail={
+              metrics.diskTotalBytes
+                ? `of ${bytes(metrics.diskTotalBytes)} total`
+                : "Disk metrics unavailable"
+            }
+            percent={diskPercent}
+            icon={<HardDrive size={17} />}
+          />
+          <Metric
+            label="Running services"
+            value={`${running} / ${services.length}`}
+            detail={
+              services.length
+                ? `${services.filter((s) => s.status === "not-deployed").length} awaiting first deployment`
+                : "Your next idea belongs here"
+            }
+            percent={services.length ? (running / services.length) * 100 : 0}
+            icon={<Layers size={17} />}
+          />
+        </div>
+      ) : (
+        <div className="metrics-grid member-metrics">
+          <Metric
+            label="Accessible projects"
+            value={String(projects.length)}
+            detail="Projects shared with your account"
+            icon={<Folder size={17} />}
+          />
+          <Metric
+            label="Running services"
+            value={`${running} / ${services.length}`}
+            detail="Across your accessible projects"
+            icon={<Layers size={17} />}
+            percent={services.length ? (running / services.length) * 100 : 0}
+          />
+          <Metric
+            label="Deployments"
+            value={String(deployments.length)}
+            detail="Recorded in your projects"
+            icon={<Rocket size={17} />}
+          />
+        </div>
+      )}
       <div className="dashboard-grid">
         <div className="dashboard-main">
           <Panel
@@ -207,12 +237,18 @@ export default function Dashboard({ name }: { name?: string }) {
               <Empty
                 icon={<Folder size={26} />}
                 title="Make yourself at home"
-                description="Create a project, add a service, and bring your next idea online."
+                description={
+                  access.isAdmin
+                    ? "Create a project, add a service, and bring your next idea online."
+                    : "Your projects will appear here when an administrator grants you access."
+                }
                 action={
-                  <Button onClick={() => setCreate(true)}>
-                    <Plus size={16} />
-                    Create your first project
-                  </Button>
+                  access.isAdmin && (
+                    <Button onClick={() => setCreate(true)}>
+                      <Plus size={16} />
+                      Create your first project
+                    </Button>
+                  )
                 }
               />
             )}
@@ -326,20 +362,22 @@ export default function Dashboard({ name }: { name?: string }) {
           </Panel>
         </aside>
       </div>
-      <div className="workspace-footer">
-        <span>
-          <Server size={14} />
-          {metrics.dockerVersion
-            ? `Docker ${metrics.dockerVersion}`
-            : "Docker runtime"}
-          <span className="footer-dot">·</span>
-          {metrics.mode === "demo"
-            ? "Simulated runtime"
-            : `${Math.floor(metrics.uptime / 3600)}h host uptime`}
-        </span>
-        <span>Built for what’s next.</span>
-      </div>
-      {create && (
+      {access.isAdmin && (
+        <div className="workspace-footer">
+          <span>
+            <Server size={14} />
+            {metrics.dockerVersion
+              ? `Docker ${metrics.dockerVersion}`
+              : "Docker runtime"}
+            <span className="footer-dot">·</span>
+            {metrics.mode === "demo"
+              ? "Simulated runtime"
+              : `${Math.floor(metrics.uptime / 3600)}h host uptime`}
+          </span>
+          <span>Built for what’s next.</span>
+        </div>
+      )}
+      {create && access.isAdmin && (
         <CreateProject
           close={() => setCreate(false)}
           created={(p) => {

@@ -1,6 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type BrowserContext } from '@playwright/test';
 
 const credentials = { name: 'Harborlight QA', email: 'qa@example.test', password: 'Local-test-password-3472!' };
+let ownerCookies: Awaited<ReturnType<BrowserContext['cookies']>> = [];
 test.describe.serial('Owner workflows', () => {
   test('first owner, authentication, and honest demo dashboard', async ({ page }) => {
     await page.goto('/');
@@ -13,12 +14,12 @@ test.describe.serial('Owner workflows', () => {
     await page.reload();
     await expect(page.getByRole('heading', { name: 'A little clarity. A lot of possibility.' })).toBeVisible();
     await page.screenshot({ path: 'test-results/dashboard-desktop.png', fullPage: true });
+    ownerCookies = await page.context().cookies();
   });
 
   test.beforeEach(async ({ page }, testInfo) => {
     if (testInfo.title.startsWith('first owner')) return;
-    const response = await page.request.post('/api/auth/login', { data: { email: credentials.email, password: credentials.password } });
-    expect(response.ok()).toBeTruthy();
+    await page.context().addCookies(ownerCookies);
   });
 
   test('create project and application, persist configuration, deploy and inspect logs', async ({ page }) => {
@@ -168,5 +169,121 @@ test.describe.serial('Owner workflows', () => {
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.screenshot({ path: 'test-results/settings-dark.png', fullPage: true });
+  });
+
+  test('create a viewer account and enforce its project boundary', async ({ page }) => {
+    const projects = await (await page.request.get('/api/projects')).json();
+    const project = projects.find((item: { name: string }) => item.name === 'acceptance-project');
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    const outside = services.find((item: { projectId: string }) => item.projectId !== project.id);
+    await page.goto('/#/users');
+    await page.getByRole('button', { name: 'Add account', exact: true }).click();
+    const modal = page.getByRole('dialog');
+    await modal.getByLabel('Full name').fill('Project Reader');
+    await modal.getByLabel('Account email').fill('reader@example.test');
+    await modal.getByLabel('Initial password').fill('Viewer-password-for-testing');
+    await modal.getByLabel('acceptance-project', { exact: true }).check();
+    await modal.getByLabel('Access to acceptance-project').selectOption('viewer');
+    await modal.getByRole('button', { name: 'Create account', exact: true }).click();
+    await expect(modal).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Project Reader', exact: true })).toBeVisible();
+    await page.screenshot({ path: 'test-results/team-access.png', fullPage: true });
+    const login = await page.request.post('/api/auth/login', { data: { email: 'reader@example.test', password: 'Viewer-password-for-testing' } });
+    expect(login.ok()).toBeTruthy();
+    await page.goto(`/#/services/${service.id}/overview`);
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'acceptance-web', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Deploy', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Team & access', exact: true })).toHaveCount(0);
+    const detail = await (await page.request.get(`/api/services/${service.id}`)).json();
+    expect(detail.env).toEqual({});
+    expect((await page.request.post(`/api/services/${service.id}/deploy`, { data: {} })).status()).toBe(403);
+    expect((await page.request.get('/api/users')).status()).toBe(403);
+    expect((await page.request.get(`/api/services/${outside.id}`)).status()).toBe(404);
+    expect((await (await page.request.get('/api/projects')).json()).map((item: { id: string }) => item.id)).toEqual([project.id]);
+  });
+
+  test('issue a scoped API key once and revoke it through the UI', async ({ page }) => {
+    await page.goto('/#/api-keys');
+    await page.getByRole('button', { name: 'New API key', exact: true }).click();
+    const modal = page.getByRole('dialog');
+    await modal.getByLabel('Key name').fill('Acceptance read key');
+    await modal.getByLabel('acceptance-project', { exact: true }).check();
+    await modal.getByLabel('Permission', { exact: true }).selectOption('read');
+    await modal.getByRole('button', { name: 'Create API key', exact: true }).click();
+    const token = await page.getByLabel('New API key token').inputValue();
+    expect(token).toMatch(/^hl_[A-Za-z0-9_-]{43}$/);
+    const authorized = await page.request.get('/api/projects', { headers: { Authorization: `Bearer ${token}` } });
+    expect(authorized.ok()).toBeTruthy();
+    expect((await authorized.json()).map((item: { name: string }) => item.name)).toEqual(['acceptance-project']);
+    await page.getByRole('button', { name: 'I’ve saved the key', exact: true }).click();
+    await page.reload();
+    await expect(page.getByLabel('New API key token')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Revoke Acceptance read key', exact: true }).click();
+    await page.getByRole('dialog').getByLabel(/Type.*Acceptance read key/).fill('Acceptance read key');
+    await page.getByRole('dialog').getByRole('button', { name: 'Delete permanently', exact: true }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    expect((await page.request.get('/api/projects', { headers: { Authorization: `Bearer ${token}` } })).status()).toBe(401);
+  });
+
+  test('save advanced routing and rotate a write-only proxy password', async ({ page }) => {
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    await page.goto(`/#/services/${service.id}/domains`);
+    await page.getByRole('button', { name: 'Add domain', exact: true }).click();
+    await page.getByLabel('Hostname 1', { exact: true }).fill('protected.example.test');
+    await page.getByLabel('Path 1', { exact: true }).fill('/app');
+    await page.getByText('Advanced routing', { exact: true }).click();
+    await page.getByLabel('Strip the configured path before forwarding').check();
+    await page.getByLabel('Redirect HTTP requests to HTTPS').check();
+    await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Protect domain', exact: true })).toBeDisabled();
+    await expect(page.getByLabel('Username for protected.example.test')).toBeEnabled();
+    await page.getByLabel('Username for protected.example.test').fill('qa-reader');
+    await page.getByLabel('Password for protected.example.test').fill('Proxy-original-password');
+    await page.getByRole('button', { name: 'Protect domain', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Replace password', exact: true })).toBeVisible();
+    await expect(page.getByLabel('Password for protected.example.test')).toHaveValue('');
+    await page.reload();
+    await expect(page.getByLabel('Hostname 1', { exact: true })).toHaveValue('protected.example.test');
+    await page.getByText('Advanced routing', { exact: true }).click();
+    await expect(page.getByLabel('Strip the configured path before forwarding')).toBeChecked();
+    await expect(page.getByLabel('Redirect HTTP requests to HTTPS')).toBeChecked();
+    await page.getByLabel('Password for protected.example.test').fill('Proxy-rotated-password');
+    await page.getByRole('button', { name: 'Replace password', exact: true }).click();
+    await expect(page.getByLabel('Password for protected.example.test')).toHaveValue('');
+    const saved = await (await page.request.get(`/api/services/${service.id}`)).json();
+    const metadata = await (await page.request.get(`/api/services/${service.id}/domains/${saved.domains[0].id}/auth`)).json();
+    expect(metadata).toEqual({ enabled: true, username: 'qa-reader' });
+    while (await page.getByRole('button', { name: 'Dismiss notification', exact: true }).count()) await page.getByRole('button', { name: 'Dismiss notification', exact: true }).first().click();
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    await page.screenshot({ path: 'test-results/domain-routing.png', fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await expect.poll(async () => { const box = await page.locator('.sidebar').boundingBox(); return Math.round(box ? box.x + box.width : 0); }).toBeLessThanOrEqual(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+    await page.screenshot({ path: 'test-results/domain-routing-mobile.png', fullPage: true });
+  });
+
+  test('save and remove a private image credential without exposing its secret', async ({ page }) => {
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    await page.goto(`/#/services/${service.id}/source`);
+    await page.getByLabel('Registry username').fill('test-registry-user');
+    await page.getByLabel('Registry password or token').fill('Private-registry-test-token');
+    await page.getByRole('button', { name: 'Save credential', exact: true }).click();
+    await expect(page.getByText('Credential stored for test-registry-user', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Registry password or token')).toHaveValue('');
+    await page.reload();
+    await expect(page.getByLabel('Registry password or token')).toHaveValue('');
+    const metadata = await (await page.request.get(`/api/services/${service.id}/source-credentials`)).json();
+    expect(metadata.registry.configured).toBe(true);
+    expect(JSON.stringify(metadata)).not.toContain('Private-registry-test-token');
+    await page.getByRole('button', { name: 'Remove credential', exact: true }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Remove credential', exact: true }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    await expect(page.getByText('Credential stored for test-registry-user', { exact: true })).toHaveCount(0);
   });
 });

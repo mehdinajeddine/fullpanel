@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import type { Project, Service, ServiceKind } from "../shared/types";
 import { navigate, post, patch, remove, slug, useQuery } from "./api";
+import { useAccess } from "./Access";
 import {
   Button,
   ConfirmDelete,
@@ -258,6 +259,7 @@ export function CreateService({
   );
 }
 export function ProjectsPage({ projectId }: { projectId?: string }) {
+  const access = useAccess();
   const projects = useQuery<Project[]>("/projects");
   const services = useQuery<Service[]>(
     projectId
@@ -314,12 +316,12 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
         }
         actions={
           <>
-            {project && (
+            {project && access.isAdmin && (
               <IconButton label="Edit project" onClick={() => setEdit(true)}>
                 <Pencil size={17} />
               </IconButton>
             )}
-            {project && (
+            {project && access.isAdmin && (
               <IconButton
                 label="Delete project"
                 onClick={() => setDeleting(true)}
@@ -327,12 +329,16 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
                 <Trash2 size={17} />
               </IconButton>
             )}
-            <Button
-              onClick={() => (project ? setAddService(true) : setCreate(true))}
-            >
-              <Plus size={17} />
-              {project ? "Add service" : "New project"}
-            </Button>
+            {(project ? access.canOperate(project.id) : access.isAdmin) && (
+              <Button
+                onClick={() =>
+                  project ? setAddService(true) : setCreate(true)
+                }
+              >
+                <Plus size={17} />
+                {project ? "Add service" : "New project"}
+              </Button>
+            )}
           </>
         }
       />
@@ -360,12 +366,18 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
             <Empty
               icon={<Box size={27} />}
               title="A fresh space for your next idea"
-              description="Add your first service to start building this project."
+              description={
+                access.canOperate(project.id)
+                  ? "Add your first service to start building this project."
+                  : "Services will appear here when an operator adds them."
+              }
               action={
-                <Button onClick={() => setAddService(true)}>
-                  <Plus size={16} />
-                  Add service
-                </Button>
+                access.canOperate(project.id) && (
+                  <Button onClick={() => setAddService(true)}>
+                    <Plus size={16} />
+                    Add service
+                  </Button>
+                )
               }
             />
           )}{" "}
@@ -434,19 +446,21 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
                 </button>
               );
             })}
-          <button
-            className="project-card new-project-card"
-            onClick={() => setCreate(true)}
-          >
-            <span>
-              <Plus size={24} />
-            </span>
-            <h3>Create a project</h3>
-            <p>A new home for your applications.</p>
-          </button>
+          {access.isAdmin && (
+            <button
+              className="project-card new-project-card"
+              onClick={() => setCreate(true)}
+            >
+              <span>
+                <Plus size={24} />
+              </span>
+              <h3>Create a project</h3>
+              <p>A new home for your applications.</p>
+            </button>
+          )}
         </div>
       )}
-      {create && (
+      {create && access.isAdmin && (
         <CreateProject
           close={() => setCreate(false)}
           created={(p) => {
@@ -455,21 +469,21 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
           }}
         />
       )}
-      {edit && project && (
+      {edit && project && access.isAdmin && (
         <CreateProject
           project={project}
           close={() => setEdit(false)}
           created={() => projects.reload()}
         />
       )}
-      {addService && project && (
+      {addService && project && access.canOperate(project.id) && (
         <CreateService
           projectId={project.id}
           close={() => setAddService(false)}
           created={services.reload}
         />
       )}
-      {deleting && project && (
+      {deleting && project && access.isAdmin && (
         <ConfirmDelete
           name={project.name}
           description="Only empty projects can be deleted. Remove its services first."

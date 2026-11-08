@@ -60,7 +60,7 @@ test('owner bootstrap, session cookies, CSRF checks and logout protect every pri
 test('server data is encrypted, durable and protected against simultaneous writers', async () => {
   const f = await fixture();
   try {
-    await f.setup(); const project = await f.project(); await f.service(project.id, { env: { PRIVATE_TOKEN: 'super-secret-test-value' } });
+    await f.setup(); const project = await f.project(); const service = await f.service(project.id, { env: { PRIVATE_TOKEN: 'super-secret-test-value' } });
     const encrypted = await readFile(join(f.directory, 'state.enc'));
     assert.equal(encrypted.includes(Buffer.from('super-secret-test-value')), false);
     assert.equal(encrypted.includes(Buffer.from('owner@example.test')), false);
@@ -68,7 +68,7 @@ test('server data is encrypted, durable and protected against simultaneous write
     assert.throws(() => new Store(f.directory), /already open/);
     await f.app.close();
     const reopened = await createApp({ dataDir: f.directory, driver: f.driver });
-    try { const response = await reopened.inject({ method: 'POST', url: '/api/auth/login', payload: { email: 'owner@example.test', password: 'strong-test-password-123' } }); assert.equal(response.statusCode, 200); const authCookie = String(response.headers['set-cookie']).split(';')[0]; assert.equal((await reopened.inject({ url: '/api/services', headers: { cookie: authCookie } })).json()[0].env.PRIVATE_TOKEN, 'super-secret-test-value'); } finally { await reopened.close(); }
+    try { const response = await reopened.inject({ method: 'POST', url: '/api/auth/login', payload: { email: 'owner@example.test', password: 'strong-test-password-123' } }); assert.equal(response.statusCode, 200); const authCookie = String(response.headers['set-cookie']).split(';')[0]; assert.equal((await reopened.inject({ url: `/api/services/${service.id}`, headers: { cookie: authCookie } })).json().env.PRIVATE_TOKEN, 'super-secret-test-value'); } finally { await reopened.close(); }
   } finally { await f.finish(); }
 });
 

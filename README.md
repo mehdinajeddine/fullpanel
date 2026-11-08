@@ -8,9 +8,9 @@ An independent, open-source control panel for applications and databases on your
 
 ![Harborlight dashboard with explicitly labeled demonstration data](docs/images/dashboard.png)
 
-The current release includes projects and services, public image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, environment variables, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, and revocable deployment triggers. The interface supports light and dark themes, mobile layouts, and keyboard search.
+The current release includes projects and services, image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, environment variables, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, and revocable deployment triggers. It also provides accounts with project permissions, scoped API keys and a CLI, private image and HTTPS Git credentials, and proxy password protection, prefix removal, wildcard HTTP routes and HTTPS redirects. The interface supports light and dark themes, mobile layouts, and keyboard search.
 
-Multi-user access, private Git/registries, native GitHub webhooks, offsite storage, restore workflows, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
+Native GitHub webhooks, private build base images, SSH deploy keys, offsite storage, restore workflows, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
 
 ## Run locally
 
@@ -81,6 +81,22 @@ docker compose up -d --build panel
 
 Deleting a service retains its named volumes. Inspect and remove unwanted volumes explicitly after confirming recovery is unnecessary. `docker compose down` stops the panel and optional proxy; it does not stop separately deployed applications. Avoid `down --volumes` unless you intend to remove panel data and certificates.
 
+## People and automation
+
+Use **Team & access** to create administrators or members with viewer/operator access to selected projects. Viewers see status without environment secrets, deployment output, runtime logs or backup downloads. Operators can configure and run workloads in their projects. Treat operators as trusted application administrators, not isolated tenants.
+
+Create a personal key in **API keys**, select its projects and read/write permission, then store the one-time token in your CI secret manager. The CLI reads `HARBORLIGHT_API_KEY` from the environment:
+
+```sh
+export HARBORLIGHT_URL=https://panel.example.com
+# Configure HARBORLIGHT_API_KEY through your shell or CI secret manager.
+node scripts/harborlight.mjs projects
+node scripts/harborlight.mjs services
+node scripts/harborlight.mjs deploy SERVICE_UUID --wait
+```
+
+The CLI prints JSON, refuses HTTP redirects, and exits unsuccessfully when a waited deployment fails. `--help` lists commands. Keys cannot manage accounts, server settings or other keys. Revocation and reduced account permissions take effect on subsequent requests.
+
 ## Development and checks
 
 ```sh
@@ -96,6 +112,8 @@ The browser suite builds and starts an isolated production server in demo mode. 
 ```sh
 npm run test:docker
 npm run test:proxy
+npm run test:credentials
+npm run test:git
 docker build -t harborlight:local .
 npm run test:package
 ```
@@ -105,10 +123,10 @@ These scripts clean up their disposable resources. The CI workflow exercises API
 ## Architecture
 
 - React + TypeScript + Vite, with an original responsive interface.
-- Fastify API; owner authentication and HttpOnly session cookies.
+- Fastify API; per-project access controls, scoped API keys and HttpOnly session cookies.
 - Encrypted, atomically persisted local state for a single server process.
 - Docker CLI subprocesses with explicit argument arrays and managed-resource labels.
-- Traefik integration for host/path routing and Let's Encrypt HTTPS.
+- Traefik integration for host/path routing, bcrypt HTTP authentication and Let's Encrypt HTTPS.
 - A separately selected demo runtime for local exploration and browser testing.
 
 See [API-CONTRACT.md](API-CONTRACT.md), [reference analysis](docs/REFERENCE-ANALYSIS.md), and [security model](SECURITY.md).
