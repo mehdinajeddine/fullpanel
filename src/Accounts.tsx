@@ -138,7 +138,7 @@ function UserEditor({
       description={
         user
           ? "Manage this person’s role and project access."
-          : "Add someone to this Harborlight workspace."
+          : "Add someone to this FullPanel workspace."
       }
       close={() => {
         if (!busy) close();
@@ -172,7 +172,7 @@ function UserEditor({
         {!user && (
           <Field
             label="Initial password"
-            hint="At least 12 characters. Share it securely; Harborlight does not send email invitations."
+            hint="At least 12 characters. Share it securely; FullPanel does not send email invitations."
           >
             <input
               type="password"
@@ -692,7 +692,7 @@ export function ApiKeysPage() {
       {newKey && (
         <Modal
           title="Save your API key"
-          description="This is the only time Harborlight will display the secret."
+          description="This is the only time FullPanel will display the secret."
           close={() => setNewKey(undefined)}
         >
           <Field label="New API key token">

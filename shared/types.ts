@@ -8,6 +8,12 @@ export interface PublicUser { id: string; name: string; email: string; role: Use
 export interface ApiKey { id: string; userId: string; name: string; projectIds: string[]; permission: 'read' | 'write'; prefix: string; createdAt: string; expiresAt: string; lastUsedAt?: string }
 export interface Project { id: string; name: string; description: string; color: string; createdAt: string }
 export interface Source { type: 'image' | 'git' | 'dockerfile' | 'compose'; image?: string; repository?: string; branch?: string; dockerfile?: string; context?: string; compose?: string }
+export interface SourceCredentialStatus {
+  git: { configured: boolean; repository?: string; username?: string; updatedAt?: string };
+  ssh: { configured: boolean; repository?: string; publicKey?: string; fingerprint?: string; knownHosts?: string; hostKeyConfigured?: boolean; hostFingerprints?: string[]; updatedAt?: string; hostKeyUpdatedAt?: string };
+  registry: { configured: boolean; registry?: string; imageRepository?: string; username?: string; updatedAt?: string };
+  capabilities: { gitHttps: boolean; gitSsh: boolean; registryImages: boolean; registryBuilds: boolean };
+}
 export interface Domain { id: string; hostname: string; port: number; https: boolean; path: string; primary?: boolean; upstreamScheme?: 'http' | 'https'; stripPrefix?: boolean; redirectToHttps?: boolean }
 export interface Mount { id: string; name: string; mountPath: string }
 export interface Port { published: number; target: number; protocol: 'tcp' | 'udp' }
@@ -33,3 +39,9 @@ export interface Overview { projects: Project[]; services: Service[]; deployment
 export interface GitHubWebhookStatus { supported: boolean; configured: boolean; enabled: boolean; reason?: string; repository?: string; branch?: string; endpoint: string; events: ['push']; contentType: 'application/json'; secretVisibleOnce: true; createdAt?: string; lastDelivery?: { id: string; receivedAt: string; deploymentId: string } }
 export interface Release { id: string; serviceId: string; projectId: string; deploymentId: string; createdAt: string; image: string; imageId: string; commit?: string; sourceType: Source['type']; trigger: string; rollbackOf?: string; canRollback: boolean; rollbackReason?: string }
 export interface ReleasesResponse { supported: boolean; reason?: string; activeReleaseId?: string; releases: Release[] }
+
+export interface TerminalTarget { id: string; name: string }
+export type TerminalShell = 'sh' | 'bash';
+export interface TerminalCapabilities { supported: boolean; available: boolean; reason?: string; targets: TerminalTarget[]; shells: TerminalShell[]; limits: { idleSeconds: number; lifetimeSeconds: number; maxInputBytes: number } }
+export type TerminalClientFrame = { type: 'open'; target: string; shell: TerminalShell; cols: number; rows: number } | { type: 'input'; data: string } | { type: 'resize'; cols: number; rows: number } | { type: 'close' };
+export type TerminalServerFrame = { type: 'ready'; sessionId: string; target: string; shell: TerminalShell } | { type: 'output'; data: string } | { type: 'exit'; code: number | null; signal?: string } | { type: 'error'; message: string };

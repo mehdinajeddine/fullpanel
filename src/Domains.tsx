@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
   ArrowUpRight,
+  ArrowRight,
   Globe2,
   LockKeyhole,
   Plus,
   Save,
+  Server,
   ShieldCheck,
   Star,
   Trash2,
@@ -21,6 +23,8 @@ import {
   Modal,
   Notice,
   Panel,
+  SetupProgress,
+  hasPendingConfiguration,
   useToast,
 } from "./ui";
 export type RoutingDomain = Domain;
@@ -122,7 +126,12 @@ function DomainAuthentication({
           <LockKeyhole size={15} />
           Password protection
         </h4>
-        {q.data && <Badge status={q.data.enabled ? "enabled" : "disabled"} />}
+        {q.data && (
+          <Badge
+            status={q.data.enabled ? "configured" : "disabled"}
+            label={q.data.enabled ? "Password saved" : "No password"}
+          />
+        )}
       </div>
       {!ready && (
         <p className="form-note">
@@ -246,6 +255,17 @@ export default function DomainsEditor({
             : d,
       ),
     );
+  const hasDraft =
+    domains.length !== service.domains.length ||
+    domains.some(
+      (domain) =>
+        !sameRoute(
+          domain,
+          service.domains.find((saved) => saved.id === domain.id),
+        ),
+    );
+  const applied =
+    !!service.deployedAt && !hasPendingConfiguration(service) && !hasDraft;
   function hostname(id: string, value: string) {
     const wildcard = value.startsWith("*.");
     update(id, {
@@ -280,6 +300,25 @@ export default function DomainsEditor({
     >
       <div className="form-panel">
         <ErrorBox message={error} />
+        {!!domains.length && (
+          <SetupProgress
+            label="Routing configuration progress"
+            steps={[
+              {
+                label: "Save routes",
+                detail: hasDraft ? "Draft changes" : "Configuration saved",
+                state: hasDraft ? "current" : "complete",
+              },
+              {
+                label: "Deploy configuration",
+                detail: applied
+                  ? "Saved configuration applied"
+                  : "Apply with a deployment",
+                state: applied ? "complete" : hasDraft ? "pending" : "current",
+              },
+            ]}
+          />
+        )}
         {canEdit && (
           <Notice>
             Point DNS to this server and enable the Traefik proxy. Save
@@ -304,6 +343,14 @@ export default function DomainsEditor({
                     </span>
                   )}
                 </strong>
+                <Badge
+                  status={
+                    sameRoute(domain, saved) ? "configured" : "pending-changes"
+                  }
+                  label={
+                    sameRoute(domain, saved) ? "Saved route" : "Unsaved route"
+                  }
+                />
                 {canEdit && (
                   <IconButton
                     label={`Remove domain ${i + 1}`}
@@ -315,6 +362,42 @@ export default function DomainsEditor({
                   </IconButton>
                 )}
               </div>
+              <div
+                className="route-path-diagram"
+                aria-label={`Configured route for ${domain.hostname || "new domain"}`}
+              >
+                <div>
+                  <Globe2 size={19} aria-hidden="true" />
+                  <span>
+                    <strong>{domain.hostname || "Set a hostname"}</strong>
+                    <small>
+                      {domain.https ? "HTTPS configured" : "HTTP configured"} ·{" "}
+                      {domain.path || "/"}
+                    </small>
+                  </span>
+                </div>
+                <ArrowRight size={20} aria-hidden="true" />
+                <div>
+                  <Server size={19} aria-hidden="true" />
+                  <span>
+                    <strong>
+                      {service.name}:{domain.port}
+                    </strong>
+                    <small>
+                      {(domain.upstreamScheme || "http").toUpperCase()} upstream
+                      {domain.stripPrefix
+                        ? " · Path stripped"
+                        : " · Path preserved"}
+                    </small>
+                  </span>
+                </div>
+              </div>
+              {domain.https && (
+                <p className="routing-verification-note">
+                  HTTPS is configured. Certificate issuance, validity and DNS
+                  are not verified here.
+                </p>
+              )}
               <fieldset className="plain-fieldset" disabled={!canEdit || busy}>
                 <Field label={`Hostname ${i + 1}`}>
                   <input
@@ -506,7 +589,8 @@ export function DomainLink({ domain }: { domain: RoutingDomain }) {
         {domain.hostname}
         {domain.path !== "/" ? domain.path : ""}
         <small>
-          {domain.https ? "HTTPS" : "HTTP"} · port {domain.port}
+          {domain.https ? "HTTPS configured" : "HTTP configured"} · port{" "}
+          {domain.port}
           {domain.primary ? " · Primary" : ""}
         </small>
       </span>

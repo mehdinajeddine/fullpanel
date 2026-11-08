@@ -3,7 +3,8 @@ import {
   Activity as ActivityIcon,
   ArrowRight,
   ArrowUpRight,
-  Box,
+  CheckCircle2,
+  AlertTriangle,
   ChevronRight,
   Cpu,
   Folder,
@@ -24,6 +25,8 @@ import {
   Loading,
   PageHeader,
   Panel,
+  ServiceStateSummary,
+  hasPendingConfiguration,
 } from "./ui";
 import { CreateProject } from "./Projects";
 import { useAccess } from "./Access";
@@ -48,11 +51,20 @@ function Metric({
         {icon}
       </div>
       <strong className="metric-value">{value}</strong>
-      <div className="metric-track">
-        <span
-          style={{ width: `${Math.max(0, Math.min(100, percent || 0))}%` }}
-        />
-      </div>
+      {typeof percent === "number" && (
+        <div
+          className="metric-track"
+          role="meter"
+          aria-label={label}
+          aria-valuenow={Math.round(Math.max(0, Math.min(100, percent)))}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <span
+            style={{ width: `${Math.max(0, Math.min(100, percent || 0))}%` }}
+          />
+        </div>
+      )}
       <div className="metric-detail">{detail}</div>
     </div>
   );
@@ -69,6 +81,19 @@ export default function Dashboard({ name }: { name?: string }) {
   const { projects, services, deployments, activity, metrics } = data;
   const running = services.filter((s) => s.status === "running").length;
   const failed = services.filter((s) => s.status === "failed").length;
+  const latestDeployment = deployments[0];
+  const nextSteps = services
+    .filter(
+      (service) =>
+        service.status === "failed" ||
+        hasPendingConfiguration(service) ||
+        service.status === "not-deployed",
+    )
+    .sort(
+      (a, b) =>
+        Number(b.status === "failed" || !!b.runtimeUncertain) -
+        Number(a.status === "failed" || !!a.runtimeUncertain),
+    );
   const memoryPercent = metrics.memoryTotalBytes
     ? (metrics.memoryUsedBytes / metrics.memoryTotalBytes) * 100
     : 0;
@@ -80,8 +105,8 @@ export default function Dashboard({ name }: { name?: string }) {
     <>
       <PageHeader
         eyebrow="MISSION CONTROL"
-        title="A little clarity. A lot of possibility."
-        description={`Welcome${name ? `, ${name.split(" ")[0]}` : ""}. Here’s what’s happening with your infrastructure.`}
+        title="Workspace overview"
+        description={`Welcome${name ? `, ${name.split(" ")[0]}` : ""}. Your services, deployment activity and next steps.`}
         actions={
           access.isAdmin && (
             <Button onClick={() => setCreate(true)}>
@@ -94,15 +119,27 @@ export default function Dashboard({ name }: { name?: string }) {
       <ErrorBox message={error || metrics.error || ""} />
       <div className="overview-status">
         <div>
-          <span className={`status-orb ${failed ? "warning" : ""}`} />
+          {failed || metrics.error ? (
+            <AlertTriangle
+              size={18}
+              className="summary-warning"
+              aria-hidden="true"
+            />
+          ) : (
+            <Server
+              size={18}
+              className="summary-runtime-icon"
+              aria-hidden="true"
+            />
+          )}
           <strong>
             {failed
               ? `${failed} ${failed === 1 ? "service needs" : "services need"} attention`
               : metrics.error
                 ? "Runtime needs attention"
                 : running
-                  ? "Your services are in good hands"
-                  : "Ready when you are"}
+                  ? `${running} of ${services.length} services running`
+                  : "No services running"}
           </strong>
           <span className="status-secondary">
             {running} running · {services.length} services · {projects.length}{" "}
@@ -113,6 +150,7 @@ export default function Dashboard({ name }: { name?: string }) {
           <i /> {metrics.mode === "demo" ? "Demo workspace" : "Live overview"}
         </span>
       </div>
+      <ServiceStateSummary services={services} />
       {access.isAdmin ? (
         <div className="metrics-grid">
           <Metric
@@ -153,15 +191,16 @@ export default function Dashboard({ name }: { name?: string }) {
             icon={<HardDrive size={17} />}
           />
           <Metric
-            label="Running services"
-            value={`${running} / ${services.length}`}
-            detail={
-              services.length
-                ? `${services.filter((s) => s.status === "not-deployed").length} awaiting first deployment`
-                : "Your next idea belongs here"
+            label="Latest deployment"
+            value={
+              latestDeployment ? relative(latestDeployment.createdAt) : "—"
             }
-            percent={services.length ? (running / services.length) * 100 : 0}
-            icon={<Layers size={17} />}
+            detail={
+              latestDeployment
+                ? `${services.find((service) => service.id === latestDeployment.serviceId)?.name || "Removed service"} · ${latestDeployment.status}`
+                : "No deployments recorded"
+            }
+            icon={<Rocket size={17} />}
           />
         </div>
       ) : (
@@ -226,7 +265,23 @@ export default function Dashboard({ name }: { name?: string }) {
                         </small>
                       </span>
                       <span className="project-service-count">
-                        {items.length} services
+                        <Badge
+                          status={
+                            items.some((item) => item.status === "failed")
+                              ? "failed"
+                              : "configured"
+                          }
+                          label={
+                            items.some((item) => item.status === "failed")
+                              ? `${items.filter((item) => item.status === "failed").length} failed`
+                              : `${items.filter((item) => item.status === "running").length}/${items.length} running`
+                          }
+                          tone={
+                            items.some((item) => item.status === "failed")
+                              ? "danger"
+                              : "neutral"
+                          }
+                        />
                       </span>
                       <ChevronRight size={16} />
                     </button>
@@ -297,31 +352,59 @@ export default function Dashboard({ name }: { name?: string }) {
           </Panel>
         </div>
         <aside className="dashboard-aside">
-          <div className="launch-card">
-            <div className="launch-card-top">
-              <span className="eyebrow">LESS SETUP, MORE BUILDING</span>
-              <Box size={25} />
-            </div>
-            <h2>
-              A head start
-              <br />
-              for your next idea.
-            </h2>
-            <p>
-              Databases, automation, and tools you love. Start with a ready-made
-              template.
-            </p>
-            <button onClick={() => navigate("/templates")}>
-              Explore templates
-              <ArrowUpRight size={17} />
-            </button>
-            <div className="launch-art" aria-hidden="true">
-              <div />
-              <div />
-              <div />
-              <span>H</span>
-            </div>
-          </div>
+          <Panel
+            title="Next steps"
+            description="Configuration and runtime events to review."
+          >
+            {nextSteps.length ? (
+              <div className="next-step-list">
+                {nextSteps.slice(0, 4).map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => navigate(`/services/${service.id}`)}
+                    className="next-step-item"
+                  >
+                    <span
+                      className={`next-step-icon ${service.status === "failed" ? "needs-attention" : ""}`}
+                    >
+                      {service.status === "failed" ||
+                      service.runtimeUncertain ? (
+                        <AlertTriangle size={18} />
+                      ) : (
+                        <Rocket size={18} />
+                      )}
+                    </span>
+                    <span>
+                      <strong>{service.name}</strong>
+                      <small>
+                        {service.runtimeUncertain
+                          ? "Reconcile interrupted deployment"
+                          : service.status === "failed"
+                            ? "Review the failed operation"
+                            : service.status === "not-deployed"
+                              ? "Prepare the first deployment"
+                              : "Saved changes need deployment"}
+                      </small>
+                    </span>
+                    <ChevronRight size={15} />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="quiet-state next-steps-clear">
+                <CheckCircle2 size={28} />
+                <strong>No pending actions</strong>
+                <p>
+                  No failed services or pending configurations in this view.
+                </p>
+              </div>
+            )}
+            {access.isAdmin && (
+              <a className="panel-footer-link" href="#/templates">
+                Browse application templates <ArrowUpRight size={14} />
+              </a>
+            )}
+          </Panel>
           <Panel
             title="Activity"
             actions={

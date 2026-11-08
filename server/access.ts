@@ -117,8 +117,8 @@ export class AccessControl {
       return;
     }
     if (route.startsWith('/api/services/:id')) {
-      if (route.includes('/trigger') || route.includes('/github-webhook')) this.requireCookie(request);
-      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.includes('/github-webhook') || route.endsWith('/auth') || route.endsWith('/environment');
+      if (route.includes('/trigger') || route.includes('/github-webhook') || route.includes('/terminal')) this.requireCookie(request);
+      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.includes('/github-webhook') || route.includes('/terminal') || route.endsWith('/auth') || route.endsWith('/environment');
       this.requireService(request, params.id || '', sensitiveRead ? 'write' : permission); return;
     }
     if (route === '/api/deployments/:id') {

@@ -14,6 +14,8 @@ import { useAccess } from "./Access";
 import { ProjectEnvironment } from "./Environment";
 import {
   Button,
+  Badge,
+  ServiceStateSummary,
   ConfirmDelete,
   Empty,
   ErrorBox,
@@ -392,43 +394,46 @@ export function ProjectsPage({
             </span>
           </div>
           {project ? (
-            <Panel>
-              {list
-                .filter((s) =>
-                  s.name.toLowerCase().includes(search.toLowerCase()),
-                )
-                .map((s) => (
-                  <ServiceRow key={s.id} service={s} />
-                ))}
-              {!list.length && (
-                <Empty
-                  icon={<Box size={27} />}
-                  title="A fresh space for your next idea"
-                  description={
-                    access.canOperate(project.id)
-                      ? "Add your first service to start building this project."
-                      : "Services will appear here when an operator adds them."
-                  }
-                  action={
-                    access.canOperate(project.id) && (
-                      <Button onClick={() => setAddService(true)}>
-                        <Plus size={16} />
-                        Add service
-                      </Button>
-                    )
-                  }
-                />
-              )}{" "}
-              {!!list.length &&
-                !list.some((s) =>
-                  s.name.toLowerCase().includes(search.toLowerCase()),
-                ) && (
+            <>
+              <ServiceStateSummary services={list} />
+              <Panel>
+                {list
+                  .filter((s) =>
+                    s.name.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((s) => (
+                    <ServiceRow key={s.id} service={s} />
+                  ))}
+                {!list.length && (
                   <Empty
-                    title="No matching services"
-                    description="Try a different service name."
+                    icon={<Box size={27} />}
+                    title="A fresh space for your next idea"
+                    description={
+                      access.canOperate(project.id)
+                        ? "Add your first service to start building this project."
+                        : "Services will appear here when an operator adds them."
+                    }
+                    action={
+                      access.canOperate(project.id) && (
+                        <Button onClick={() => setAddService(true)}>
+                          <Plus size={16} />
+                          Add service
+                        </Button>
+                      )
+                    }
                   />
-                )}
-            </Panel>
+                )}{" "}
+                {!!list.length &&
+                  !list.some((s) =>
+                    s.name.toLowerCase().includes(search.toLowerCase()),
+                  ) && (
+                    <Empty
+                      title="No matching services"
+                      description="Try a different service name."
+                    />
+                  )}
+              </Panel>
+            </>
           ) : (
             <div className="project-grid">
               {projects.data
@@ -478,10 +483,27 @@ export function ProjectsPage({
                           {items.length}{" "}
                           {items.length === 1 ? "service" : "services"}
                         </span>
-                        <span className={running ? "online-label" : "muted"}>
-                          {running > 0 && <i />}
-                          {running} running
-                        </span>
+                        <Badge
+                          status={
+                            items.some((service) => service.status === "failed")
+                              ? "failed"
+                              : running
+                                ? "running"
+                                : "stopped"
+                          }
+                          label={
+                            items.some((service) => service.status === "failed")
+                              ? `${items.filter((service) => service.status === "failed").length} failed`
+                              : `${running} running`
+                          }
+                          tone={
+                            items.some((service) => service.status === "failed")
+                              ? "danger"
+                              : running
+                                ? undefined
+                                : "neutral"
+                          }
+                        />
                       </div>
                     </button>
                   );

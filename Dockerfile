@@ -13,7 +13,7 @@ RUN npm run build
 FROM docker:29-cli AS docker-cli
 
 FROM node:24-alpine AS runtime
-RUN apk add --no-cache git tini ca-certificates
+RUN apk add --no-cache git openssh-client tini ca-certificates
 COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=docker-cli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 WORKDIR /app

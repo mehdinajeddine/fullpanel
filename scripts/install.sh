@@ -1,5 +1,5 @@
 #!/bin/sh
-# Harborlight installer: run from a reviewed checkout of this repository.
+# FullPanel installer: run from a reviewed checkout of this repository.
 set -eu
 
 SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
@@ -13,7 +13,7 @@ fi
 docker info >/dev/null
 docker compose version >/dev/null
 if [ ! -f package-lock.json ] || [ ! -f compose.yaml ]; then
-  echo 'Run the installer from a complete Harborlight source checkout.' >&2
+  echo 'Run the installer from a complete FullPanel source checkout.' >&2
   exit 1
 fi
 if [ ! -f .env ]; then
@@ -21,6 +21,6 @@ if [ ! -f .env ]; then
   cp .env.example .env
 fi
 docker compose up -d --build panel
-echo 'Harborlight is starting on the loopback address (default http://127.0.0.1:3000).'
+echo 'FullPanel is starting on the loopback address (default http://127.0.0.1:3000).'
 echo 'For a remote server, use SSH port forwarding to complete owner setup.'
 echo 'See README.md to configure domains and the optional HTTPS proxy.'

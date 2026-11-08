@@ -64,7 +64,7 @@ class ErrorBoundary extends Component<
     return { error: error.message };
   }
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("Harborlight interface error", error, info.componentStack);
+    console.error("FullPanel interface error", error, info.componentStack);
   }
   render() {
     return this.state.error ? (
@@ -132,25 +132,13 @@ function Auth({
             <div className="orbit orbit-one" />
             <div className="orbit orbit-two" />
             <div className="orbit orbit-three" />
-            <div className="auth-lighthouse">
-              <svg viewBox="0 0 120 150" fill="none">
-                <path
-                  d="M32 131h56L70 53H50l-18 78Z"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-                <path
-                  d="M43 39h34M60 16v10M12 54l20 8M108 54l-20 8M25 140h70M47 84h26M40 111h40"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M54 128v-16h12v16"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-              </svg>
+            <div className="auth-product-mark">
+              <img
+                src="/assets/fullpanel-logo.png"
+                alt=""
+                width="132"
+                height="132"
+              />
             </div>
             <span className="floating-service floating-one">
               <Box size={23} />
@@ -187,8 +175,8 @@ function Auth({
           </h2>
           <p>
             {setup
-              ? "Create the owner account for this Harborlight server."
-              : "Sign in to your Harborlight workspace."}
+              ? "Create the owner account for this FullPanel server."
+              : "Sign in to your FullPanel workspace."}
           </p>
           {session.mode === "demo" && (
             <div className="demo-auth-note">
@@ -250,7 +238,7 @@ function Auth({
             Your server. Your applications. Your data.
           </p>
         </div>
-        <span className="auth-version">HARBORLIGHT / V0.1.0</span>
+        <span className="auth-version">FULLPANEL / V0.1.0</span>
       </main>
     </div>
   );
@@ -583,6 +571,7 @@ function Workspace({
               >
                 <Menu size={20} />
               </IconButton>
+              <span className="mobile-product-brand"><Brand compact /></span>
               <span className="topbar-workspace">Workspace</span>
               <ChevronRight size={13} />
               <span>{title}</span>

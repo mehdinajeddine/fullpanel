@@ -1,0 +1,2560 @@
+{
+  "metadata": {
+    "consulted_on": "2026-11-08",
+    "language": "fr",
+    "scope": "Inventaire des 151 fiches publiques accessibles via les 16 pages du changelog officiel, patches inclus, et trois articles officiels complémentaires. Ne prouve pas la connaissance de correctifs privés ou non publiés.",
+    "source_boundary": "Faits: paraphrases du contenu publié. Exigences et scénarios: propositions originales Harborlight, sans présomption d’implémentation ou de succès.",
+    "main_release_count": 80,
+    "patch_release_count": 71,
+    "year_counts": {
+      "2022": 7,
+      "2023": 32,
+      "2024": 59,
+      "2025": 25,
+      "2026": 28
+    },
+    "rule_count": 70,
+    "version_count": 151,
+    "inaccessible_individual_pages": [],
+    "limitations": [
+      "Les pages indexées du moteur de recherche affichaient parfois149/78/79 versions en cache; la collecte HTTP fraîche a retourné151 fiches, toutesHTTP 200.",
+      "Les annonces vagues de sécurité ne permettent pas de déduire exploit, CVE, impact ou cause racine.",
+      "Les dates sont celles publiées, pas des dates de découverte ou déploiement effectif.",
+      "Les catalogues sont regroupés; aucun inventaire exhaustif de bugs des logiciels tiers ni certification des centaines de modèles n’est revendiqué.",
+      "La disponibilité historique ne prouve pas la disponibilité actuelle: cluster et compression ont connu dépréciation/retrait.",
+      "Aucune reproduction du code propriétaire ni de ses éléments graphiques. Les pagesHTML de travail sont conservées uniquement sous /private/tmp.",
+      "Les tests dérivés sont à rapprocher du registre de preuves Harborlight; documenter une règle ne signifie pas que son scénario a été exécuté."
+    ]
+  },
+  "versions": [
+    {
+      "version": "1.12.3",
+      "date": "2022-10-15",
+      "published_at": "2022-10-15T13:37:14.138Z",
+      "individual_published_at": "2022-10-15T13:37:14.138Z",
+      "url": "https://easypanel.io/changelog/1-12-3-1",
+      "http_status": 200,
+      "html_sha256": "36f21ca5b98fe2803ff7580f6e2c93f21d21c0c6c1c27394e7d40b0299286b3e",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.12.4",
+      "date": "2022-10-31",
+      "published_at": "2022-10-31T15:22:28.659Z",
+      "individual_published_at": "2022-10-31T15:22:28.659Z",
+      "url": "https://easypanel.io/changelog/1-12-4-1",
+      "http_status": 200,
+      "html_sha256": "5e264c00d40bd2744dfc3f69c2ac41fca5fea0738ee507bac0e8f49f8e122c8b",
+      "is_patch": true,
+      "rule_ids": [
+        "H02",
+        "H33",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.12.5",
+      "date": "2022-11-01",
+      "published_at": "2022-11-01T13:12:17.006Z",
+      "individual_published_at": "2022-11-01T13:12:17.006Z",
+      "url": "https://easypanel.io/changelog/1-12-5-1",
+      "http_status": 200,
+      "html_sha256": "02cdcd64e03bb4cd5848485c6e9098672e502e7bdc9c08210298641e74b209e9",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.12.6",
+      "date": "2022-11-05",
+      "published_at": "2022-11-05T12:55:59.206Z",
+      "individual_published_at": "2022-11-05T12:55:59.206Z",
+      "url": "https://easypanel.io/changelog/1-12-6-1",
+      "http_status": 200,
+      "html_sha256": "b770e2914ecf549f66adca63f3f20255fa4556d5d8e657850a7faf51d604f455",
+      "is_patch": true,
+      "rule_ids": [
+        "H03",
+        "H04"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.12.7",
+      "date": "2022-11-05",
+      "published_at": "2022-11-05T16:05:23.131Z",
+      "individual_published_at": "2022-11-05T16:05:23.131Z",
+      "url": "https://easypanel.io/changelog/1-12-7-1",
+      "http_status": 200,
+      "html_sha256": "64b925d0acd3af0982f5ff196b0a1e166035ac615eb81b0e5aa1925e73992af7",
+      "is_patch": true,
+      "rule_ids": [
+        "H02",
+        "H05",
+        "H18"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.12.8",
+      "date": "2022-11-15",
+      "published_at": "2022-11-15T06:59:44.589Z",
+      "individual_published_at": "2022-11-15T06:59:44.589Z",
+      "url": "https://easypanel.io/changelog/1-12-8-1",
+      "http_status": 200,
+      "html_sha256": "aaa5225e14db4d3bd98a7e72578c11ef749ab2192812c9d3035f507753227b53",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.12.9",
+      "date": "2022-12-10",
+      "published_at": "2022-12-10T09:28:59.907Z",
+      "individual_published_at": "2022-12-10T09:28:59.907Z",
+      "url": "https://easypanel.io/changelog/1-12-9-1",
+      "http_status": 200,
+      "html_sha256": "dc81bcddf813b161f0eff45e9a02a29a3654bf9a86139cf0b9d442c307fa814a",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.12.10",
+      "date": "2023-01-02",
+      "published_at": "2023-01-02T19:32:29.528Z",
+      "individual_published_at": "2023-01-02T19:32:29.528Z",
+      "url": "https://easypanel.io/changelog/1-12-10-1",
+      "http_status": 200,
+      "html_sha256": "5fe523d36f6a69acfd5261fe5bc02b90d454058488db896ca4c355287dc08c7b",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.13.0",
+      "date": "2023-01-03",
+      "published_at": "2023-01-03T17:18:18.063Z",
+      "individual_published_at": "2023-01-03T17:18:18.063Z",
+      "url": "https://easypanel.io/changelog/1-13-0-1",
+      "http_status": 200,
+      "html_sha256": "e3cae3eb6ee4e6d58c2cb342f45a0a9c262155f38464b1bea189ffb5eb49b5a0",
+      "is_patch": false,
+      "rule_ids": [
+        "H03",
+        "H05",
+        "H06"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.13.1",
+      "date": "2023-01-08",
+      "published_at": "2023-01-08T15:49:42.642Z",
+      "individual_published_at": "2023-01-08T15:49:42.642Z",
+      "url": "https://easypanel.io/changelog/1-13-1-1",
+      "http_status": 200,
+      "html_sha256": "8a5a6bfc7e55e8ac65744afa5946f301eacc66b61dfb3b3486e65e7da04d68a3",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H14"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.13.2",
+      "date": "2023-01-28",
+      "published_at": "2023-01-28T20:30:03.841Z",
+      "individual_published_at": "2023-01-28T20:30:03.841Z",
+      "url": "https://easypanel.io/changelog/1-13-2-1",
+      "http_status": 200,
+      "html_sha256": "8087e83f875da93912ef35d136ec63d91d7a7c11d86b47408f32372dde3be202",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.14.0",
+      "date": "2023-02-22",
+      "published_at": "2023-02-22T17:56:50.883Z",
+      "individual_published_at": "2023-02-22T17:56:50.883Z",
+      "url": "https://easypanel.io/changelog/1-14-0-1",
+      "http_status": 200,
+      "html_sha256": "08113e8d06b8d0e25c3365d4bbe7a13e2adc9ccc0dbd73749f1975dac12ebaba",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H07"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.0",
+      "date": "2023-03-02",
+      "published_at": "2023-03-02T12:37:37.385Z",
+      "individual_published_at": "2023-03-02T12:37:37.385Z",
+      "url": "https://easypanel.io/changelog/1-15-0-1",
+      "http_status": 200,
+      "html_sha256": "048bb684a4a1dc378aea1d1baef235f266149f3d3cb4a16cc238aba410ec55f0",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H08",
+        "H37",
+        "H38"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.1",
+      "date": "2023-03-07",
+      "published_at": "2023-03-07T16:35:01.063Z",
+      "individual_published_at": "2023-03-07T16:35:01.063Z",
+      "url": "https://easypanel.io/changelog/1-15-1-1",
+      "http_status": 200,
+      "html_sha256": "56e9d81ce3f599785f056201aec18c68fc00351439fb37ad94246539031500cc",
+      "is_patch": true,
+      "rule_ids": [
+        "H05",
+        "H09"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.2",
+      "date": "2023-03-08",
+      "published_at": "2023-03-08T08:44:57.901Z",
+      "individual_published_at": "2023-03-08T08:44:57.901Z",
+      "url": "https://easypanel.io/changelog/1-15-2-1",
+      "http_status": 200,
+      "html_sha256": "b2e8357fcfcb6f27476b019ecd5fafce5002ac36046a51cc122ec0196afb96d9",
+      "is_patch": true,
+      "rule_ids": [
+        "H09"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.3",
+      "date": "2023-03-09",
+      "published_at": "2023-03-09T19:46:07.609Z",
+      "individual_published_at": "2023-03-09T19:46:07.609Z",
+      "url": "https://easypanel.io/changelog/1-15-3-1",
+      "http_status": 200,
+      "html_sha256": "ef1df2c613422efb92e101e2fbcc94a84191376d85762a88ab1355f45fb66124",
+      "is_patch": true,
+      "rule_ids": [
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.4",
+      "date": "2023-03-13",
+      "published_at": "2023-03-13T11:17:39.949Z",
+      "individual_published_at": "2023-03-13T11:17:39.949Z",
+      "url": "https://easypanel.io/changelog/1-15-4-1",
+      "http_status": 200,
+      "html_sha256": "692e2c846302fc57a2fa115578d396ce21f31b1cedec4d9f3b0289cc3805d3ca",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H10"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.15.5",
+      "date": "2023-03-28",
+      "published_at": "2023-03-28T09:31:43.235Z",
+      "individual_published_at": "2023-03-28T09:31:43.235Z",
+      "url": "https://easypanel.io/changelog/1-15-5-1",
+      "http_status": 200,
+      "html_sha256": "9b639ddb2b396a3ff2dea1d54422164e86b2aa195e76fe2e5b1d507dc8241ee4",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.16.0",
+      "date": "2023-04-04",
+      "published_at": "2023-04-04T09:59:45.368Z",
+      "individual_published_at": "2023-04-04T09:59:45.368Z",
+      "url": "https://easypanel.io/changelog/1-16-0-1",
+      "http_status": 200,
+      "html_sha256": "32eda59bee8014e4af7e3ab2636069c559458eacf8a055a621e3cb1e762e00f8",
+      "is_patch": false,
+      "rule_ids": [
+        "H11"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.17.0",
+      "date": "2023-05-07",
+      "published_at": "2023-05-07T08:59:31.995Z",
+      "individual_published_at": "2023-05-07T08:59:31.995Z",
+      "url": "https://easypanel.io/changelog/1-17-0-1",
+      "http_status": 200,
+      "html_sha256": "3427da913a83f1e1948e4b6dd4f042d6251db27aa868a98fed0701abe5a3333f",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H17",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.18.0",
+      "date": "2023-05-27",
+      "published_at": "2023-05-27T12:34:58.725Z",
+      "individual_published_at": "2023-05-27T12:34:58.725Z",
+      "url": "https://easypanel.io/changelog/1-18-0-1",
+      "http_status": 200,
+      "html_sha256": "f63fd92907cda62621693660dfe256acd8fd28365e14d9dfd0bd0bb3a7f01975",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H08",
+        "H12",
+        "H63",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.19.1",
+      "date": "2023-07-04",
+      "published_at": "2023-07-04T18:36:44.047Z",
+      "individual_published_at": "2023-07-04T18:36:44.047Z",
+      "url": "https://easypanel.io/changelog/1-19-1-1",
+      "http_status": 200,
+      "html_sha256": "6117c24bd17dc088d9992d3ac7447618ae96014064743861bd8711bf2c9f739e",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H25",
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.20.1",
+      "date": "2023-07-08",
+      "published_at": "2023-07-08T08:07:39.442Z",
+      "individual_published_at": "2023-07-08T08:07:39.442Z",
+      "url": "https://easypanel.io/changelog/1-20-1-1",
+      "http_status": 200,
+      "html_sha256": "c64ff3767fd2df259c7ca84c70e27329227094c26b75fc09108372619402fcbb",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H10",
+        "H13",
+        "H14"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.21.0",
+      "date": "2023-08-03",
+      "published_at": "2023-08-03T10:16:25.472Z",
+      "individual_published_at": "2023-08-03T10:16:25.472Z",
+      "url": "https://easypanel.io/changelog/1-21-0-1",
+      "http_status": 200,
+      "html_sha256": "97b09e8bd3b4bb37342a93dae5b3eeba3ef1e9243bd39c1876c865e14d2a2926",
+      "is_patch": false,
+      "rule_ids": [
+        "H01",
+        "H12",
+        "H20"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.22.0",
+      "date": "2023-08-09",
+      "published_at": "2023-08-09T16:58:19.865Z",
+      "individual_published_at": "2023-08-09T16:58:19.865Z",
+      "url": "https://easypanel.io/changelog/1-22-0-1",
+      "http_status": 200,
+      "html_sha256": "575c891bf341fb85b22132f44db4b0f426335b424c43fe3632467332bc58b191",
+      "is_patch": false,
+      "rule_ids": [
+        "H01"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.23.0",
+      "date": "2023-09-01",
+      "published_at": "2023-09-01T09:22:48.702Z",
+      "individual_published_at": "2023-09-01T09:22:48.702Z",
+      "url": "https://easypanel.io/changelog/1-23-0-1",
+      "http_status": 200,
+      "html_sha256": "71fde0e8b946bd788420f888c8c7d3a7c4dc84aaf35b0a7dff3ace9c9f37b313",
+      "is_patch": false,
+      "rule_ids": [
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.23.1",
+      "date": "2023-09-04",
+      "published_at": "2023-09-04T10:57:16.158Z",
+      "individual_published_at": "2023-09-04T10:57:16.158Z",
+      "url": "https://easypanel.io/changelog/1-23-1-1",
+      "http_status": 200,
+      "html_sha256": "3a175286a13d47f914a01d9e76e92fcd420f864f2132612f74f53429f05f58d1",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.24.0",
+      "date": "2023-09-29",
+      "published_at": "2023-09-29T12:52:34.195Z",
+      "individual_published_at": "2023-09-29T12:52:34.195Z",
+      "url": "https://easypanel.io/changelog/1-24-0-1",
+      "http_status": 200,
+      "html_sha256": "a227ee44dfd47e52dc5bc491e5fe40cdf977ef4dad5a4814134238833ac872ed",
+      "is_patch": false,
+      "rule_ids": [
+        "H50",
+        "H62",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.24.4",
+      "date": "2023-10-30",
+      "published_at": "2023-10-30T20:28:15.887Z",
+      "individual_published_at": "2023-10-30T20:28:15.887Z",
+      "url": "https://easypanel.io/changelog/1-24-4-1",
+      "http_status": 200,
+      "html_sha256": "adcb47cdd16b127a10567bb2f53605afd4d7ed5989a4ef59b616337a33a542d7",
+      "is_patch": true,
+      "rule_ids": [
+        "H67"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.25.0",
+      "date": "2023-11-13",
+      "published_at": "2023-11-13T10:33:19.746Z",
+      "individual_published_at": "2023-11-13T10:33:19.746Z",
+      "url": "https://easypanel.io/changelog/1-25-0-1",
+      "http_status": 200,
+      "html_sha256": "6e253e32132ccad8adc9b69b10ff5871ec8f68fc3f8111206b04a274f8b5f930",
+      "is_patch": false,
+      "rule_ids": [
+        "H50",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.25.1",
+      "date": "2023-11-13",
+      "published_at": "2023-11-13T18:04:10.725Z",
+      "individual_published_at": "2023-11-13T18:04:10.725Z",
+      "url": "https://easypanel.io/changelog/1-25-1-1",
+      "http_status": 200,
+      "html_sha256": "5e0647d01155a9a91d342b6976906d35e540373ce025f55243960ed635d29ee4",
+      "is_patch": true,
+      "rule_ids": [
+        "H50"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.26.0",
+      "date": "2023-11-17",
+      "published_at": "2023-11-17T14:22:36.312Z",
+      "individual_published_at": "2023-11-17T14:22:36.312Z",
+      "url": "https://easypanel.io/changelog/1-26-0-1",
+      "http_status": 200,
+      "html_sha256": "b487b889af6fd4bcc72fc46505cc98537bea15eabd84269925520bb5aac7adbd",
+      "is_patch": false,
+      "rule_ids": [
+        "H58"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.27.0",
+      "date": "2023-11-25",
+      "published_at": "2023-11-25T13:02:55.495Z",
+      "individual_published_at": "2023-11-25T13:02:55.495Z",
+      "url": "https://easypanel.io/changelog/1-27-0-1",
+      "http_status": 200,
+      "html_sha256": "7f36d66e0b757f423064211762172f07e81f625168e3a25bb735bd05c140a1e3",
+      "is_patch": false,
+      "rule_ids": [
+        "H27",
+        "H59"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.27.1",
+      "date": "2023-11-25",
+      "published_at": "2023-11-25T13:36:16.426Z",
+      "individual_published_at": "2023-11-25T13:36:16.426Z",
+      "url": "https://easypanel.io/changelog/1-27-1-1",
+      "http_status": 200,
+      "html_sha256": "678335634dde9b10cefe9bf146f617f319ddd13b8494af30870f66a61f6aace7",
+      "is_patch": true,
+      "rule_ids": [
+        "H59"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.28.0",
+      "date": "2023-11-27",
+      "published_at": "2023-11-27T22:54:38.188Z",
+      "individual_published_at": "2023-11-27T22:54:38.188Z",
+      "url": "https://easypanel.io/changelog/1-28-0-1",
+      "http_status": 200,
+      "html_sha256": "186e77a17d0a0bf719dccdd307d66798270ca5fa588b0514ab3693bd85b77bbf",
+      "is_patch": false,
+      "rule_ids": [
+        "H14"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.29.0",
+      "date": "2023-11-28",
+      "published_at": "2023-11-28T14:17:08.092Z",
+      "individual_published_at": "2023-11-28T14:17:08.092Z",
+      "url": "https://easypanel.io/changelog/1-29-0-1",
+      "http_status": 200,
+      "html_sha256": "6de45266945289cb8779534c57e3e1db4ae00ba3819db396e6f0470a2424a1fe",
+      "is_patch": false,
+      "rule_ids": [
+        "H01",
+        "H16"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.30.0",
+      "date": "2023-12-19",
+      "published_at": "2023-12-19T15:55:29.592Z",
+      "individual_published_at": "2023-12-19T15:55:29.592Z",
+      "url": "https://easypanel.io/changelog/1-30-0-1",
+      "http_status": 200,
+      "html_sha256": "20a47c1543f5a80830d74635df63caffb20f171a4d9adfeb2757051858abc16a",
+      "is_patch": false,
+      "rule_ids": [
+        "H05",
+        "H16",
+        "H28"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.30.1",
+      "date": "2023-12-19",
+      "published_at": "2023-12-19T20:50:16.344Z",
+      "individual_published_at": "2023-12-19T20:50:16.344Z",
+      "url": "https://easypanel.io/changelog/1-30-1-1",
+      "http_status": 200,
+      "html_sha256": "494122f40b3171d9eb48201b8928d1b0aaf858f05f95e7f9fe0f9d2bbeac855c",
+      "is_patch": true,
+      "rule_ids": [
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.30.2",
+      "date": "2023-12-19",
+      "published_at": "2023-12-19T21:51:42.876Z",
+      "individual_published_at": "2023-12-19T21:51:42.876Z",
+      "url": "https://easypanel.io/changelog/1-30-2-1",
+      "http_status": 200,
+      "html_sha256": "0ed03e6dd3913ab843cd73268975aeb84058b09b798526da4c5c02f94282b594",
+      "is_patch": true,
+      "rule_ids": [
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.31.0",
+      "date": "2024-01-05",
+      "published_at": "2024-01-05T12:42:51.602Z",
+      "individual_published_at": "2024-01-05T12:42:51.602Z",
+      "url": "https://easypanel.io/changelog/1-31-0-1",
+      "http_status": 200,
+      "html_sha256": "3e3de80e4649cc5b73a6778898797428d6c6b93a5de4e721ebc5555c5fe62a55",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H37",
+        "H49"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.31.3",
+      "date": "2024-01-06",
+      "published_at": "2024-01-06T11:08:34.966Z",
+      "individual_published_at": "2024-01-06T11:08:34.966Z",
+      "url": "https://easypanel.io/changelog/1-31-3-1",
+      "http_status": 200,
+      "html_sha256": "2d590d3b5e05e3575b9c8a1fcee60c9350cdf64e37b7c48727110d1fd8e8b91d",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.32.0",
+      "date": "2024-01-25",
+      "published_at": "2024-01-25T16:54:34.735Z",
+      "individual_published_at": "2024-01-25T16:54:34.735Z",
+      "url": "https://easypanel.io/changelog/1-32-0-1",
+      "http_status": 200,
+      "html_sha256": "e63b5c0a6a5948a13a4d92ad3afaed1d01176370d365368d95f7ddc82658d608",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H14",
+        "H20",
+        "H50"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.0",
+      "date": "2024-02-16",
+      "published_at": "2024-02-16T11:29:08.033Z",
+      "individual_published_at": "2024-02-16T11:29:08.033Z",
+      "url": "https://easypanel.io/changelog/1-33-0-1",
+      "http_status": 200,
+      "html_sha256": "7319a94aecec8929487fbb896923231383098f57b78a6e813480184cfd16de4a",
+      "is_patch": false,
+      "rule_ids": [
+        "H02",
+        "H23",
+        "H37",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.1",
+      "date": "2024-02-16",
+      "published_at": "2024-02-16T20:15:11.665Z",
+      "individual_published_at": "2024-02-16T20:15:11.665Z",
+      "url": "https://easypanel.io/changelog/1-33-1-1",
+      "http_status": 200,
+      "html_sha256": "809f604b67ec8513c2c1ca612d3c9fff24f4de9e98e4bc4504640450ef073cee",
+      "is_patch": true,
+      "rule_ids": [
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.2",
+      "date": "2024-02-17",
+      "published_at": "2024-02-17T09:26:22.784Z",
+      "individual_published_at": "2024-02-17T09:26:22.784Z",
+      "url": "https://easypanel.io/changelog/1-33-2-1",
+      "http_status": 200,
+      "html_sha256": "8c230fdf6c2459b944b0513d73f9b89ae5f53f84c0d347f2b1e09cefec030100",
+      "is_patch": true,
+      "rule_ids": [
+        "H29"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.3",
+      "date": "2024-02-17",
+      "published_at": "2024-02-17T11:49:08.055Z",
+      "individual_published_at": "2024-02-17T11:49:08.055Z",
+      "url": "https://easypanel.io/changelog/1-33-3-1",
+      "http_status": 200,
+      "html_sha256": "30d3b2d30e928c5934d7bb7d622c825482d47ce522cee9d43ffd783a330dce01",
+      "is_patch": true,
+      "rule_ids": [
+        "H25"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.4",
+      "date": "2024-02-21",
+      "published_at": "2024-02-21T12:26:51.386Z",
+      "individual_published_at": "2024-02-21T12:26:51.386Z",
+      "url": "https://easypanel.io/changelog/1-33-4-1",
+      "http_status": 200,
+      "html_sha256": "1f015b1e7478d66aae2509721871bb3b60a6554213439a39bbe35658453fc608",
+      "is_patch": true,
+      "rule_ids": [
+        "H02",
+        "H29"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.33.5",
+      "date": "2024-02-28",
+      "published_at": "2024-02-28T23:08:29.263Z",
+      "individual_published_at": "2024-02-28T23:08:29.263Z",
+      "url": "https://easypanel.io/changelog/1-33-5-1",
+      "http_status": 200,
+      "html_sha256": "b767657d0dd4aa7a7a120a8595c5b24a75f99280119a71208dad890037399b2e",
+      "is_patch": true,
+      "rule_ids": [
+        "H19",
+        "H29"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.34.0",
+      "date": "2024-03-11",
+      "published_at": "2024-03-11T11:40:12.857Z",
+      "individual_published_at": "2024-03-11T11:40:12.857Z",
+      "url": "https://easypanel.io/changelog/1-34-0-1",
+      "http_status": 200,
+      "html_sha256": "bd968c35fcaa29c1425eecc075591bdbc5c556d5d589e7f1a53f626024318693",
+      "is_patch": false,
+      "rule_ids": [
+        "H28",
+        "H47",
+        "H48",
+        "H61",
+        "H62",
+        "H63",
+        "H66"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.35.0",
+      "date": "2024-03-20",
+      "published_at": "2024-03-20T16:53:24.719Z",
+      "individual_published_at": "2024-03-20T16:53:24.719Z",
+      "url": "https://easypanel.io/changelog/1-35-0-1",
+      "http_status": 200,
+      "html_sha256": "6c8efa0d3ac5ba0b88e225f9d955592d4b73e94d5cbd8b15cedcccbc0f1d573e",
+      "is_patch": false,
+      "rule_ids": [
+        "H14",
+        "H17",
+        "H26",
+        "H47",
+        "H53",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.36.0",
+      "date": "2024-03-22",
+      "published_at": "2024-03-22T14:38:18.423Z",
+      "individual_published_at": "2024-03-22T14:38:18.423Z",
+      "url": "https://easypanel.io/changelog/1-36-0-1",
+      "http_status": 200,
+      "html_sha256": "47e812eaee1790f6a4f54f217458f4d4f4764ba3f3445ebfe05ddc9027544ec6",
+      "is_patch": false,
+      "rule_ids": [
+        "H14",
+        "H25",
+        "H43",
+        "H70"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.36.1",
+      "date": "2024-03-22",
+      "published_at": "2024-03-22T21:24:53.734Z",
+      "individual_published_at": "2024-03-22T21:24:53.734Z",
+      "url": "https://easypanel.io/changelog/1-36-1-1",
+      "http_status": 200,
+      "html_sha256": "5bc48469cb84e23cbdae01089c2eed11b133a5d4bafd51f0485e65e1c33e5f17",
+      "is_patch": true,
+      "rule_ids": [
+        "H08"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.36.2",
+      "date": "2024-03-26",
+      "published_at": "2024-03-26T13:42:34.511Z",
+      "individual_published_at": "2024-03-26T13:42:34.511Z",
+      "url": "https://easypanel.io/changelog/1-36-2-1",
+      "http_status": 200,
+      "html_sha256": "3eabd70b56c6bbba3648f6985f0a879313d8b3f40212da139b98ecbdf182ebe4",
+      "is_patch": true,
+      "rule_ids": [
+        "H53",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.37.0",
+      "date": "2024-04-04",
+      "published_at": "2024-04-04T17:36:30.083Z",
+      "individual_published_at": "2024-04-04T17:36:30.083Z",
+      "url": "https://easypanel.io/changelog/1-37-0-1",
+      "http_status": 200,
+      "html_sha256": "26d44535d56a9e64e08243bcb620b004787e2417caa7af77b6b3e9c2c2f78dfd",
+      "is_patch": false,
+      "rule_ids": [
+        "H17",
+        "H20",
+        "H21",
+        "H47",
+        "H56"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.37.1",
+      "date": "2024-04-04",
+      "published_at": "2024-04-04T18:55:31.661Z",
+      "individual_published_at": "2024-04-04T18:55:31.661Z",
+      "url": "https://easypanel.io/changelog/1-37-1-1",
+      "http_status": 200,
+      "html_sha256": "52e336fe40411204fb519174bad384ba1f0617b4e1b787223c618ac4eb01e998",
+      "is_patch": true,
+      "rule_ids": [
+        "H15"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.37.2",
+      "date": "2024-04-05",
+      "published_at": "2024-04-05T08:26:11.661Z",
+      "individual_published_at": "2024-04-05T08:26:11.661Z",
+      "url": "https://easypanel.io/changelog/1-37-2-1",
+      "http_status": 200,
+      "html_sha256": "536f73f2a287ae60922338cb59b26226b1d49a9e6546e4cbf18c674f06f9ed7f",
+      "is_patch": true,
+      "rule_ids": [
+        "H20"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.37.3",
+      "date": "2024-04-05",
+      "published_at": "2024-04-05T18:48:35.275Z",
+      "individual_published_at": "2024-04-05T18:48:35.275Z",
+      "url": "https://easypanel.io/changelog/1-37-3-1",
+      "http_status": 200,
+      "html_sha256": "0c97ec564d8cf184bb284c15d4ed835ccbdc45942716905527617b3c7e4968e7",
+      "is_patch": true,
+      "rule_ids": [
+        "H05",
+        "H18",
+        "H22"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.37.4",
+      "date": "2024-04-05",
+      "published_at": "2024-04-05T20:12:19.471Z",
+      "individual_published_at": "2024-04-05T20:12:19.471Z",
+      "url": "https://easypanel.io/changelog/1-37-4-1",
+      "http_status": 200,
+      "html_sha256": "c68ee691d8880a33e8811595e959deb9d28a6977b3c48ec93d1da69b01ee641f",
+      "is_patch": true,
+      "rule_ids": [
+        "H17"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.38.0",
+      "date": "2024-04-12",
+      "published_at": "2024-04-12T08:50:11.811Z",
+      "individual_published_at": "2024-04-12T08:50:11.811Z",
+      "url": "https://easypanel.io/changelog/1-38-0-1",
+      "http_status": 200,
+      "html_sha256": "a591463f26d5961143dd11a3876e7eabb4a7418746c0853e88f5fa06373c3c86",
+      "is_patch": false,
+      "rule_ids": [
+        "H19",
+        "H61"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.38.1",
+      "date": "2024-04-13",
+      "published_at": "2024-04-13T18:52:22.208Z",
+      "individual_published_at": "2024-04-13T18:52:22.208Z",
+      "url": "https://easypanel.io/changelog/1-38-1-1",
+      "http_status": 200,
+      "html_sha256": "a66e2e70f5795a7b4d1816834a0346fe0b7df1506cd711c3d207f0607df5c4f1",
+      "is_patch": true,
+      "rule_ids": [
+        "H19",
+        "H53"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.38.2",
+      "date": "2024-04-16",
+      "published_at": "2024-04-16T21:35:13.212Z",
+      "individual_published_at": "2024-04-16T21:35:13.212Z",
+      "url": "https://easypanel.io/changelog/1-38-2-1",
+      "http_status": 200,
+      "html_sha256": "925c16ca2415db2b67f196ecb95345e8d7069c864f02c9a7741a6dfde0a4e91a",
+      "is_patch": true,
+      "rule_ids": [
+        "H56"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.39.0",
+      "date": "2024-04-26",
+      "published_at": "2024-04-26T20:33:16.547Z",
+      "individual_published_at": "2024-04-26T20:33:16.547Z",
+      "url": "https://easypanel.io/changelog/1-39-0-1",
+      "http_status": 200,
+      "html_sha256": "4c8184d9fc3a4091629b43d036d31b3c4b1fa7efed786b0b781ab198d549d47b",
+      "is_patch": false,
+      "rule_ids": [
+        "H02",
+        "H04",
+        "H18",
+        "H35",
+        "H64",
+        "H66",
+        "H67"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.39.1",
+      "date": "2024-04-27",
+      "published_at": "2024-04-27T15:44:34.711Z",
+      "individual_published_at": "2024-04-27T15:44:34.711Z",
+      "url": "https://easypanel.io/changelog/1-39-1-1",
+      "http_status": 200,
+      "html_sha256": "98045934b69e778c7a89f0961bdf5bd62cfdc85881dad22185aae6b311b18043",
+      "is_patch": true,
+      "rule_ids": [
+        "H66"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.40.0",
+      "date": "2024-05-01",
+      "published_at": "2024-05-01T12:35:17.324Z",
+      "individual_published_at": "2024-05-01T12:35:17.324Z",
+      "url": "https://easypanel.io/changelog/1-40-0-1",
+      "http_status": 200,
+      "html_sha256": "dbf260b1e550e414e432282381072121475662e62d52904b5e076221c1d4b726",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H15",
+        "H18",
+        "H35",
+        "H63",
+        "H64"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.41.0",
+      "date": "2024-06-06",
+      "published_at": "2024-06-06T11:10:42.836Z",
+      "individual_published_at": "2024-06-06T11:10:42.836Z",
+      "url": "https://easypanel.io/changelog/1-41-0-1",
+      "http_status": 200,
+      "html_sha256": "2de802e4442b69effb53b8dacfdbbd10ac4f7b08af772213f2b40e06091c6f56",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H16",
+        "H43",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.42.0",
+      "date": "2024-06-21",
+      "published_at": "2024-06-21T10:17:27.283Z",
+      "individual_published_at": "2024-06-21T10:17:27.283Z",
+      "url": "https://easypanel.io/changelog/1-42-0-1",
+      "http_status": 200,
+      "html_sha256": "c3ed18c0f01701949b244a6c73d4356e3e8a646c382c6510b6777d0d17cc56c6",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H08",
+        "H16",
+        "H21",
+        "H22",
+        "H53",
+        "H67"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.42.1",
+      "date": "2024-06-22",
+      "published_at": "2024-06-22T07:34:06.406Z",
+      "individual_published_at": "2024-06-22T07:34:06.406Z",
+      "url": "https://easypanel.io/changelog/1-42-1-1",
+      "http_status": 200,
+      "html_sha256": "7221973d52991f82ce64b8615af5b371e0b62b7b09bbd8a1b59fa984d3389db9",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H25"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.43.0",
+      "date": "2024-06-25",
+      "published_at": "2024-06-25T12:41:35.981Z",
+      "individual_published_at": "2024-06-25T12:41:35.981Z",
+      "url": "https://easypanel.io/changelog/1-43-0-1",
+      "http_status": 200,
+      "html_sha256": "b6239788308a965af51da9ba2b574cee276b8815e4602fa185950dcc91513281",
+      "is_patch": false,
+      "rule_ids": [
+        "H31"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.44.0",
+      "date": "2024-07-17",
+      "published_at": "2024-07-17T11:23:22.375Z",
+      "individual_published_at": "2024-07-17T11:23:22.375Z",
+      "url": "https://easypanel.io/changelog/1-44-0-1",
+      "http_status": 200,
+      "html_sha256": "c7231e289b3b3f426a477bc43769aa493cc4383bd8e02c6f0569a5991f791cd9",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H26",
+        "H50",
+        "H61"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.44.1",
+      "date": "2024-07-17",
+      "published_at": "2024-07-17T14:08:20.691Z",
+      "individual_published_at": "2024-07-17T14:08:20.691Z",
+      "url": "https://easypanel.io/changelog/1-44-1-1",
+      "http_status": 200,
+      "html_sha256": "88be7fe9cbdce84e760eb2d5c19feb3e9ad437e5ded107660ec6234ea36719c5",
+      "is_patch": true,
+      "rule_ids": [
+        "H05",
+        "H19"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.44.2",
+      "date": "2024-07-19",
+      "published_at": "2024-07-19T08:44:28.322Z",
+      "individual_published_at": "2024-07-19T08:44:28.322Z",
+      "url": "https://easypanel.io/changelog/1-44-2-1",
+      "http_status": 200,
+      "html_sha256": "35e1d69a4f5107e0a341b209be101cae0a739ca2edf419e7815a766d4b8db966",
+      "is_patch": true,
+      "rule_ids": [
+        "H05",
+        "H19",
+        "H47"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.45.0",
+      "date": "2024-07-25",
+      "published_at": "2024-07-25T14:03:20.209Z",
+      "individual_published_at": "2024-07-25T14:03:20.209Z",
+      "url": "https://easypanel.io/changelog/1-45-0-1",
+      "http_status": 200,
+      "html_sha256": "c94c460af9d8c6b23611303bf7782a03d6caed1ccd942aa7bfa7fba41bb023ad",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H43",
+        "H56"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.46.0",
+      "date": "2024-07-30",
+      "published_at": "2024-07-30T09:08:03.818Z",
+      "individual_published_at": "2024-07-30T09:08:03.818Z",
+      "url": "https://easypanel.io/changelog/1-46-0-1",
+      "http_status": 200,
+      "html_sha256": "29545057c21b44243f6edcf3a57962f935ed0fb7c75b2772d26ddce5ddf33429",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H29",
+        "H44"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.47.0",
+      "date": "2024-08-01",
+      "published_at": "2024-08-01T10:25:33.561Z",
+      "individual_published_at": "2024-08-01T10:25:33.561Z",
+      "url": "https://easypanel.io/changelog/1-47-0-1",
+      "http_status": 200,
+      "html_sha256": "188f86c6a2d89a721392804db442a30ab665ffb8bde03529006693e770f4f606",
+      "is_patch": false,
+      "rule_ids": [
+        "H11",
+        "H33"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.47.1",
+      "date": "2024-08-02",
+      "published_at": "2024-08-02T13:49:19.603Z",
+      "individual_published_at": "2024-08-02T13:49:19.603Z",
+      "url": "https://easypanel.io/changelog/1-47-1-1",
+      "http_status": 200,
+      "html_sha256": "bf0b75f1472fc8a1d8c1a2d0e809b6e98b133f0e1836d737397a1d36166b292a",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H10",
+        "H33",
+        "H63",
+        "H68"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.47.2",
+      "date": "2024-08-02",
+      "published_at": "2024-08-02T18:47:56.440Z",
+      "individual_published_at": "2024-08-02T18:47:56.440Z",
+      "url": "https://easypanel.io/changelog/1-47-2-1",
+      "http_status": 200,
+      "html_sha256": "dac3110202db21fa9429122c2f2629e8500156f770d16201ffc1e390f0e06f33",
+      "is_patch": true,
+      "rule_ids": [
+        "H68"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.47.3",
+      "date": "2024-08-05",
+      "published_at": "2024-08-05T11:58:37.202Z",
+      "individual_published_at": "2024-08-05T11:58:37.202Z",
+      "url": "https://easypanel.io/changelog/1-47-3-1",
+      "http_status": 200,
+      "html_sha256": "6b281640fb138f20bf56c682bc785873387eb9c1d852cab7d379b239dfa5c61a",
+      "is_patch": true,
+      "rule_ids": [
+        "H33",
+        "H47"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.47.4",
+      "date": "2024-08-05",
+      "published_at": "2024-08-05T13:34:26.980Z",
+      "individual_published_at": "2024-08-05T13:34:26.980Z",
+      "url": "https://easypanel.io/changelog/1-47-4-1",
+      "http_status": 200,
+      "html_sha256": "3ff4c989cba10977c5a085ce422677678fabe67606164c8ad720ee2fbe45549d",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "1.48.0",
+      "date": "2024-08-16",
+      "published_at": "2024-08-16T12:39:50.767Z",
+      "individual_published_at": "2024-08-16T12:39:50.767Z",
+      "url": "https://easypanel.io/changelog/1-48-0-1",
+      "http_status": 200,
+      "html_sha256": "284f22fabec2a9d42742046397bd5f458bb16d8a9a4bc8ff49c976cb89190ce3",
+      "is_patch": false,
+      "rule_ids": [
+        "H13",
+        "H26",
+        "H28",
+        "H42"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.49.0",
+      "date": "2024-08-30",
+      "published_at": "2024-08-30T09:44:01.749Z",
+      "individual_published_at": "2024-08-30T09:44:01.749Z",
+      "url": "https://easypanel.io/changelog/1-49-0-1",
+      "http_status": 200,
+      "html_sha256": "2c984a621d09fdae57438165430c53ec43b86782775865c01af5f3c4cb5603d3",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H09",
+        "H23",
+        "H24",
+        "H25",
+        "H31",
+        "H33",
+        "H44",
+        "H53",
+        "H56",
+        "H63",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.50.0",
+      "date": "2024-09-02",
+      "published_at": "2024-09-02T16:06:30.163Z",
+      "individual_published_at": "2024-09-02T16:06:30.163Z",
+      "url": "https://easypanel.io/changelog/1-50-0-1",
+      "http_status": 200,
+      "html_sha256": "92513c885ea7c4e712d5dc6a5e10e2b8c40477013f143c15268488afe9899afe",
+      "is_patch": false,
+      "rule_ids": [
+        "H30"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.51.0",
+      "date": "2024-09-03",
+      "published_at": "2024-09-03T14:13:14.685Z",
+      "individual_published_at": "2024-09-03T14:13:14.685Z",
+      "url": "https://easypanel.io/changelog/1-51-0-1",
+      "http_status": 200,
+      "html_sha256": "4667275ad058aed8455f2592891773b808f3385ac4ad0e294c22dd803ef1cc93",
+      "is_patch": false,
+      "rule_ids": [
+        "H24",
+        "H25",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.51.1",
+      "date": "2024-09-13",
+      "published_at": "2024-09-13T08:30:07.078Z",
+      "individual_published_at": "2024-09-13T08:30:07.078Z",
+      "url": "https://easypanel.io/changelog/1-51-1-1",
+      "http_status": 200,
+      "html_sha256": "48a773f28e0edcdd910c72e2e02050abdc4008dc41d8575079bde04d1154738b",
+      "is_patch": true,
+      "rule_ids": [
+        "H04",
+        "H53",
+        "H63",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.52.0",
+      "date": "2024-09-30",
+      "published_at": "2024-09-30T14:53:15.437Z",
+      "individual_published_at": "2024-09-30T14:53:15.437Z",
+      "url": "https://easypanel.io/changelog/1-52-0-1",
+      "http_status": 200,
+      "html_sha256": "065b6fd3f02bde980dea44e232dd9a3655ba9b62c6097c077ffdd24c5619aa25",
+      "is_patch": false,
+      "rule_ids": [
+        "H26",
+        "H39",
+        "H45",
+        "H53"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.53.0",
+      "date": "2024-10-03",
+      "published_at": "2024-10-03T13:48:23.626Z",
+      "individual_published_at": "2024-10-03T13:48:23.626Z",
+      "url": "https://easypanel.io/changelog/1-53-0-1",
+      "http_status": 200,
+      "html_sha256": "59d102b2098d847b71e9ee6678b52777a279924321e18aa593a3a90f16799b9e",
+      "is_patch": false,
+      "rule_ids": [
+        "H45",
+        "H60",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.53.1",
+      "date": "2024-10-04",
+      "published_at": "2024-10-04T13:45:33.615Z",
+      "individual_published_at": "2024-10-04T13:45:33.615Z",
+      "url": "https://easypanel.io/changelog/1-53-1-1",
+      "http_status": 200,
+      "html_sha256": "7b75b9d7d599f28b7aaf0c9d95e41b020364a8501cf64cb4e4f13216ecfde2c9",
+      "is_patch": true,
+      "rule_ids": [
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.54.0",
+      "date": "2024-10-10",
+      "published_at": "2024-10-10T10:29:55.783Z",
+      "individual_published_at": "2024-10-10T10:29:55.783Z",
+      "url": "https://easypanel.io/changelog/1-54-0-1",
+      "http_status": 200,
+      "html_sha256": "74a632a6893d4136274ee6c823c7189c51443840868682c6b83596907895c6ce",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H46",
+        "H55"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.55.0",
+      "date": "2024-10-11",
+      "published_at": "2024-10-11T21:08:35.008Z",
+      "individual_published_at": "2024-10-11T21:08:35.008Z",
+      "url": "https://easypanel.io/changelog/1-55-0-1",
+      "http_status": 200,
+      "html_sha256": "74a68ab9664305b91ca09821b4583961cac7a049d072e3d6c6d2fe7d658f2d48",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H57"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "1.56.0",
+      "date": "2024-10-24",
+      "published_at": "2024-10-24T14:32:19.349Z",
+      "individual_published_at": "2024-10-24T14:32:19.349Z",
+      "url": "https://easypanel.io/changelog/1-56-0-1",
+      "http_status": 200,
+      "html_sha256": "decf477aab9d79f9a914c3b1420d2bd3941761bb50c59b3bab9189cbe82ed4d2",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H45",
+        "H46",
+        "H55",
+        "H56",
+        "H57",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.0.0",
+      "date": "2024-11-07",
+      "published_at": "2024-11-07T16:03:18.388Z",
+      "individual_published_at": "2024-11-07T16:03:18.388Z",
+      "url": "https://easypanel.io/changelog/2-0-0-1",
+      "http_status": 200,
+      "html_sha256": "c6d359439dc54d838e1d5e48d21677865965d5a4434c878c2286f6e64748d854",
+      "is_patch": false,
+      "rule_ids": [
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.1.0",
+      "date": "2024-11-18",
+      "published_at": "2024-11-18T13:41:54.641Z",
+      "individual_published_at": "2024-11-18T13:41:54.641Z",
+      "url": "https://easypanel.io/changelog/2-1-0-1",
+      "http_status": 200,
+      "html_sha256": "bcc387da8838b7c8316a78f8234fc9807cd954a7d5feb02d968d9090d3f06b95",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H16",
+        "H30",
+        "H45",
+        "H62",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.2.0",
+      "date": "2024-12-04",
+      "published_at": "2024-12-04T14:12:54.511Z",
+      "individual_published_at": "2024-12-04T14:12:54.511Z",
+      "url": "https://easypanel.io/changelog/2-2-0-1",
+      "http_status": 200,
+      "html_sha256": "3320ca7825b1f68427f4bb1e1805f3298217b8762978b833ea8c5c60e4548c51",
+      "is_patch": false,
+      "rule_ids": [
+        "H03",
+        "H04",
+        "H10",
+        "H36",
+        "H44",
+        "H45",
+        "H53",
+        "H57",
+        "H59",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.2.1",
+      "date": "2024-12-09",
+      "published_at": "2024-12-09T09:09:44.152Z",
+      "individual_published_at": "2024-12-09T09:09:44.152Z",
+      "url": "https://easypanel.io/changelog/2-2-1-1",
+      "http_status": 200,
+      "html_sha256": "9cc6ebb3202e8cb70f417c50080f73ce283056b49bbf6899f856d5195377f701",
+      "is_patch": true,
+      "rule_ids": [
+        "H36"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.2.2",
+      "date": "2024-12-09",
+      "published_at": "2024-12-09T14:42:21.770Z",
+      "individual_published_at": "2024-12-09T14:42:21.770Z",
+      "url": "https://easypanel.io/changelog/2-2-2-1",
+      "http_status": 200,
+      "html_sha256": "0ab091b182d5cba6ddc729a680ae445a053f71e0904553c6854872b90b08c7fd",
+      "is_patch": true,
+      "rule_ids": [
+        "H57"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.2.3",
+      "date": "2024-12-14",
+      "published_at": "2024-12-14T21:39:01.406Z",
+      "individual_published_at": "2024-12-14T21:39:01.406Z",
+      "url": "https://easypanel.io/changelog/2-2-3-1",
+      "http_status": 200,
+      "html_sha256": "35bb99124d363f078ea47d38c4980ebf1c1ebfad6d034f242b2d621616dd62a7",
+      "is_patch": true,
+      "rule_ids": [
+        "H33"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.3.2",
+      "date": "2024-12-20",
+      "published_at": "2024-12-20T13:27:38.447Z",
+      "individual_published_at": "2024-12-20T13:27:38.447Z",
+      "url": "https://easypanel.io/changelog/2-3-2-1",
+      "http_status": 200,
+      "html_sha256": "115b460f1e7188c29147fba006a9ae616675ae9de63e12597576eb2e7142c29f",
+      "is_patch": true,
+      "rule_ids": [
+        "H13",
+        "H14",
+        "H18",
+        "H29",
+        "H32",
+        "H36"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.3.3",
+      "date": "2024-12-20",
+      "published_at": "2024-12-20T18:59:36.439Z",
+      "individual_published_at": "2024-12-20T18:59:36.439Z",
+      "url": "https://easypanel.io/changelog/2-3-3-1",
+      "http_status": 200,
+      "html_sha256": "ec233e11f52019663e99f83a3fd63e0fc5db6edfff396f2dbb2c0e90212c52f6",
+      "is_patch": true,
+      "rule_ids": [
+        "H32",
+        "H66"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.3.4",
+      "date": "2024-12-23",
+      "published_at": "2024-12-23T16:02:16.190Z",
+      "individual_published_at": "2024-12-23T16:02:16.190Z",
+      "url": "https://easypanel.io/changelog/2-3-4-1",
+      "http_status": 200,
+      "html_sha256": "50de8592ea1085210ee0be227392da8402f17e012e6a3aa7c9446f4f7391e561",
+      "is_patch": true,
+      "rule_ids": [
+        "H45",
+        "H47",
+        "H66"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.4.0",
+      "date": "2025-01-02",
+      "published_at": "2025-01-02T13:07:47.307Z",
+      "individual_published_at": "2025-01-02T13:07:47.307Z",
+      "url": "https://easypanel.io/changelog/2-4-0-1",
+      "http_status": 200,
+      "html_sha256": "9ff73b2fb2a606e3ef9c318c89af17d296cb57f8e8c579a7ba834129b63acb4d",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H32",
+        "H46",
+        "H55",
+        "H67"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.5.0",
+      "date": "2025-01-06",
+      "published_at": "2025-01-06T19:58:05.599Z",
+      "individual_published_at": "2025-01-06T19:58:05.599Z",
+      "url": "https://easypanel.io/changelog/2-5-0-1",
+      "http_status": 200,
+      "html_sha256": "023c834c8a3e2595d7d0649a26fadb20c7fc08b3664edc3a67240d68f291f59d",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.6.0",
+      "date": "2025-01-20",
+      "published_at": "2025-01-20T11:02:08.385Z",
+      "individual_published_at": "2025-01-20T11:02:08.385Z",
+      "url": "https://easypanel.io/changelog/2-6-0-1",
+      "http_status": 200,
+      "html_sha256": "b9f072d8b164e1327e8192f9ad067d41763a7b2de0b32224806ba2ba1caf0783",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H23",
+        "H36",
+        "H41",
+        "H43",
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.7.0",
+      "date": "2025-01-23",
+      "published_at": "2025-01-23T09:26:48.991Z",
+      "individual_published_at": "2025-01-23T09:26:48.991Z",
+      "url": "https://easypanel.io/changelog/2-7-0-1",
+      "http_status": 200,
+      "html_sha256": "7de80e7bf1fad156c1c01404a8f726f39823e8ac944bcbcb43332594b442eced",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H41"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.8.0",
+      "date": "2025-01-30",
+      "published_at": "2025-01-30T14:04:35.764Z",
+      "individual_published_at": "2025-01-30T14:04:35.764Z",
+      "url": "https://easypanel.io/changelog/2-8-0-1",
+      "http_status": 200,
+      "html_sha256": "c1638ee5380397431baa5a521a1f9c1274ac3f36590ce36294be1ec673d8bfd5",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H41",
+        "H48",
+        "H49",
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.9.0",
+      "date": "2025-02-12",
+      "published_at": "2025-02-12T12:30:49.472Z",
+      "individual_published_at": "2025-02-12T12:30:49.472Z",
+      "url": "https://easypanel.io/changelog/2-9-0-1",
+      "http_status": 200,
+      "html_sha256": "dd5aa026e40ff44c24fde74f611b9707b2ccc97a16c1bc74a110fbd088762d80",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H14",
+        "H32",
+        "H45",
+        "H48",
+        "H56",
+        "H58"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.10.0",
+      "date": "2025-02-14",
+      "published_at": "2025-02-14T08:42:03.171Z",
+      "individual_published_at": "2025-02-14T08:42:03.171Z",
+      "url": "https://easypanel.io/changelog/2-10-0-1",
+      "http_status": 200,
+      "html_sha256": "96fbba0c794d317fb1af059fcda4d2b9ad5dd9410648ceae44206983195998f7",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H17",
+        "H50",
+        "H55",
+        "H56"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.11.0",
+      "date": "2025-02-17",
+      "published_at": "2025-02-17T13:29:14.732Z",
+      "individual_published_at": "2025-02-17T13:29:14.732Z",
+      "url": "https://easypanel.io/changelog/2-11-0-1",
+      "http_status": 200,
+      "html_sha256": "c2f7df30ec170b85e01cdc6d8c09c77de1026d9141dcae2701aa4bbaa74fc620",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H32"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.11.1",
+      "date": "2025-02-18",
+      "published_at": "2025-02-18T18:29:41.182Z",
+      "individual_published_at": "2025-02-18T18:29:41.182Z",
+      "url": "https://easypanel.io/changelog/2-11-1-1",
+      "http_status": 200,
+      "html_sha256": "97256214e20cfa2acd8dd855a9fb3456497156a24c1c20d5c7b01441ae5fd1af",
+      "is_patch": true,
+      "rule_ids": [
+        "H16"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.11.2",
+      "date": "2025-02-19",
+      "published_at": "2025-02-19T10:52:57.271Z",
+      "individual_published_at": "2025-02-19T10:52:57.271Z",
+      "url": "https://easypanel.io/changelog/2-11-2-1",
+      "http_status": 200,
+      "html_sha256": "e4c948b02d8a40effd03ea1e576c58ccfe8353b393e021936595c83ae2b19f4a",
+      "is_patch": true,
+      "rule_ids": [
+        "H53"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.12.0",
+      "date": "2025-02-19",
+      "published_at": "2025-02-19T12:41:21.360Z",
+      "individual_published_at": "2025-02-19T12:41:21.360Z",
+      "url": "https://easypanel.io/changelog/2-12-0-1",
+      "http_status": 200,
+      "html_sha256": "164d842038a46d86a069e938a3d7ad7044db3f37b02525918e495b1d6cd0f375",
+      "is_patch": false,
+      "rule_ids": [
+        "H21",
+        "H31",
+        "H41",
+        "H42",
+        "H49"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.12.1",
+      "date": "2025-02-19",
+      "published_at": "2025-02-19T19:43:46.402Z",
+      "individual_published_at": "2025-02-19T19:43:46.402Z",
+      "url": "https://easypanel.io/changelog/2-12-1-1",
+      "http_status": 200,
+      "html_sha256": "a5c4e7e3049aa6e2df45a75c32d778a109ce56595a06b3931ecbf78ee274d2d2",
+      "is_patch": true,
+      "rule_ids": [
+        "H41"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.13.0",
+      "date": "2025-02-26",
+      "published_at": "2025-02-26T18:16:01.042Z",
+      "individual_published_at": "2025-02-26T18:16:01.042Z",
+      "url": "https://easypanel.io/changelog/2-13-0-1",
+      "http_status": 200,
+      "html_sha256": "c49b1ff43f5b84439addbf334e3e7745e5932472598d0b356e3ab826924c721a",
+      "is_patch": false,
+      "rule_ids": [
+        "H60"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.14.0",
+      "date": "2025-03-24",
+      "published_at": "2025-03-24T09:54:18.289Z",
+      "individual_published_at": "2025-03-24T09:54:18.289Z",
+      "url": "https://easypanel.io/changelog/2-14-0-1",
+      "http_status": 200,
+      "html_sha256": "ab2de3c164780fb744081ae9c0c204dd3ced430838e636fc9391105e9892fc33",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H37",
+        "H40"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.15.0",
+      "date": "2025-04-14",
+      "published_at": "2025-04-14T20:24:46.617Z",
+      "individual_published_at": "2025-04-14T20:24:46.617Z",
+      "url": "https://easypanel.io/changelog/2-15-0-1",
+      "http_status": 200,
+      "html_sha256": "6903d11f0329184fabad3ebf25b56f2f8324d7a11dd25c57ab39a80aa01f5da5",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.16.0",
+      "date": "2025-05-14",
+      "published_at": "2025-05-14T10:43:52.071Z",
+      "individual_published_at": "2025-05-14T10:43:52.071Z",
+      "url": "https://easypanel.io/changelog/2-16-0-1",
+      "http_status": 200,
+      "html_sha256": "4f0a32e9ef2dd807c796e056b2108b1b0c36c752408de350c534812bdd943bec",
+      "is_patch": false,
+      "rule_ids": [
+        "H13",
+        "H32",
+        "H34",
+        "H40",
+        "H50",
+        "H69"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.17.0",
+      "date": "2025-05-19",
+      "published_at": "2025-05-19T14:28:18.941Z",
+      "individual_published_at": "2025-05-19T14:28:18.941Z",
+      "url": "https://easypanel.io/changelog/2-17-0-1",
+      "http_status": 200,
+      "html_sha256": "bfc05a52d79d639622fa7f74c6dac213d9bb22687df2497095f27bc9afe0f072",
+      "is_patch": false,
+      "rule_ids": [
+        "H33",
+        "H42",
+        "H51",
+        "H53",
+        "H65",
+        "H69"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.18.0",
+      "date": "2025-05-21",
+      "published_at": "2025-05-21T16:42:45.998Z",
+      "individual_published_at": "2025-05-21T16:42:45.998Z",
+      "url": "https://easypanel.io/changelog/2-18-0-1",
+      "http_status": 200,
+      "html_sha256": "fd86414c52df27db65f82d9614f98571e3c24630e937f85ebf33265a25e41831",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.19.0",
+      "date": "2025-05-23",
+      "published_at": "2025-05-23T12:53:06.410Z",
+      "individual_published_at": "2025-05-23T12:53:06.410Z",
+      "url": "https://easypanel.io/changelog/2-19-0-1",
+      "http_status": 200,
+      "html_sha256": "485288e55e9b864b79e4c1a7a5c473d948b6a00f3f015eacfcd4a6ec072d7616",
+      "is_patch": false,
+      "rule_ids": [
+        "H01",
+        "H51"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.20.0",
+      "date": "2025-06-10",
+      "published_at": "2025-06-10T08:56:38.834Z",
+      "individual_published_at": "2025-06-10T08:56:38.834Z",
+      "url": "https://easypanel.io/changelog/2-20-0-1",
+      "http_status": 200,
+      "html_sha256": "4b405901e743b6113cdc80b46882b6f7c8cb9914850efc25f9a95598a5fece61",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H07",
+        "H36",
+        "H40",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.20.1",
+      "date": "2025-06-10",
+      "published_at": "2025-06-10T13:17:14.300Z",
+      "individual_published_at": "2025-06-10T13:17:14.300Z",
+      "url": "https://easypanel.io/changelog/2-20-1-1",
+      "http_status": 200,
+      "html_sha256": "3cb773a1c504b0acda60fd6233f18c2d280015dd76fb3eea9d194461669d9e16",
+      "is_patch": true,
+      "rule_ids": [
+        "H07"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.21.0",
+      "date": "2025-06-25",
+      "published_at": "2025-06-25T14:26:07.193Z",
+      "individual_published_at": "2025-06-25T14:26:07.193Z",
+      "url": "https://easypanel.io/changelog/2-21-0-1",
+      "http_status": 200,
+      "html_sha256": "e218ad3baf00e28da6fa77dfb207be3cec5653e2b513772b0855609f873baf4f",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.22.0",
+      "date": "2025-08-29",
+      "published_at": "2025-08-29T12:37:15.410Z",
+      "individual_published_at": "2025-08-29T12:37:15.410Z",
+      "url": "https://easypanel.io/changelog/2-22-0-1",
+      "http_status": 200,
+      "html_sha256": "46fef0411d36c39d432a3775880c84e6e7b93a2388b2854856ae1f292ec0e2b5",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.23.0",
+      "date": "2025-10-06",
+      "published_at": "2025-10-06T12:43:06.921Z",
+      "individual_published_at": "2025-10-06T12:43:06.921Z",
+      "url": "https://easypanel.io/changelog/2-23-0-1",
+      "http_status": 200,
+      "html_sha256": "e00c18693b9e99ac6d929c0ee66fa865b574e85a6b4562b4ba0f08f5a9556381",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.24.0",
+      "date": "2025-12-31",
+      "published_at": "2025-12-31T10:59:09.771Z",
+      "individual_published_at": "2025-12-31T10:59:09.771Z",
+      "url": "https://easypanel.io/changelog/2-24-0-1",
+      "http_status": 200,
+      "html_sha256": "69b4072bbe7039ba5065e7a6ad6d4dac378521713d4e1f9d20c9d68a8748838e",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H09",
+        "H56",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.25.0",
+      "date": "2026-02-04",
+      "published_at": "2026-02-04T11:19:29.048Z",
+      "individual_published_at": "2026-02-04T11:19:29.048Z",
+      "url": "https://easypanel.io/changelog/2-25-0",
+      "http_status": 200,
+      "html_sha256": "4c036b57a53cd33dc180382a8434b7444c8573de67e85f87c3b084eca5f5377b",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H05",
+        "H23",
+        "H29",
+        "H31",
+        "H38",
+        "H47",
+        "H52",
+        "H53"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.25.1",
+      "date": "2026-02-04",
+      "published_at": "2026-02-04T13:59:28.343Z",
+      "individual_published_at": "2026-02-04T13:59:28.343Z",
+      "url": "https://easypanel.io/changelog/2-25-1",
+      "http_status": 200,
+      "html_sha256": "cca7370f074e130161b4f646eb0bfdecd859dbf2ab2c753b677a531d23673c0d",
+      "is_patch": true,
+      "rule_ids": [
+        "H52"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.26.0",
+      "date": "2026-02-11",
+      "published_at": "2026-02-11T10:28:06.004Z",
+      "individual_published_at": "2026-02-11T10:28:06.004Z",
+      "url": "https://easypanel.io/changelog/2-26-0",
+      "http_status": 200,
+      "html_sha256": "ad3b46dc730df11bef90e825f1ab020e133595fdd6628aa2557c3e0d56cbb330",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H17",
+        "H32",
+        "H61",
+        "H62"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.26.1",
+      "date": "2026-02-11",
+      "published_at": "2026-02-11T14:03:34.900Z",
+      "individual_published_at": "2026-02-11T14:03:34.900Z",
+      "url": "https://easypanel.io/changelog/2-26-1",
+      "http_status": 200,
+      "html_sha256": "48b78fc77d0b1bec579d1c2ba1ce759542260354f6b37a3d8d0fa9a54c685c9f",
+      "is_patch": true,
+      "rule_ids": [
+        "H17"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.26.2",
+      "date": "2026-02-11",
+      "published_at": "2026-02-11T14:03:51.286Z",
+      "individual_published_at": "2026-02-11T14:03:51.286Z",
+      "url": "https://easypanel.io/changelog/2-26-2",
+      "http_status": 200,
+      "html_sha256": "72a209dad013d209f23cca31a0fb1075dc71cc5424348447192f7119ff3f6812",
+      "is_patch": true,
+      "rule_ids": [
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.26.3",
+      "date": "2026-02-13",
+      "published_at": "2026-02-13T13:54:20.683Z",
+      "individual_published_at": "2026-02-13T13:54:20.683Z",
+      "url": "https://easypanel.io/changelog/2-26-3",
+      "http_status": 200,
+      "html_sha256": "09672a6700a0806cc114eec95ca2ef28d8b13f3086a098480cfd5ecd1cda041b",
+      "is_patch": true,
+      "rule_ids": [
+        "H03",
+        "H17"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.27.0",
+      "date": "2026-03-13",
+      "published_at": "2026-03-13T12:14:11.444Z",
+      "individual_published_at": "2026-03-13T12:14:11.444Z",
+      "url": "https://easypanel.io/changelog/2-27-0",
+      "http_status": 200,
+      "html_sha256": "d5dedb03b18479a1b81abd6b6af22bfd9012b89b95856a594dcd3066da31a7bb",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H48"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.28.0",
+      "date": "2026-03-24",
+      "published_at": "2026-03-24T08:24:35.784Z",
+      "individual_published_at": "2026-03-24T08:24:35.784Z",
+      "url": "https://easypanel.io/changelog/2-28-0",
+      "http_status": 200,
+      "html_sha256": "6a5d63a6bb0f1959c849ceacc2ea98ebe447a021938cc242c33e91f24500e75d",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.29.0",
+      "date": "2026-04-16",
+      "published_at": "2026-04-16T12:16:04.575Z",
+      "individual_published_at": "2026-04-16T12:16:04.575Z",
+      "url": "https://easypanel.io/changelog/2-29-0",
+      "http_status": 200,
+      "html_sha256": "87bbce24dab28dc996c7b71ec569e141e2ff9bd062ca56dca1d7dff4a4689f8e",
+      "is_patch": false,
+      "rule_ids": [
+        "H01",
+        "H63",
+        "H64"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.29.1",
+      "date": "2026-04-16",
+      "published_at": "2026-04-16T15:41:36.238Z",
+      "individual_published_at": "2026-04-16T15:41:36.238Z",
+      "url": "https://easypanel.io/changelog/2-29-1",
+      "http_status": 200,
+      "html_sha256": "8b45b9119dd4c79317192ef33065a3a24fbcce42c43de24367924c16726771a5",
+      "is_patch": true,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.29.2",
+      "date": "2026-04-17",
+      "published_at": "2026-04-17T05:45:53.031Z",
+      "individual_published_at": "2026-04-17T05:45:53.031Z",
+      "url": "https://easypanel.io/changelog/2-29-2",
+      "http_status": 200,
+      "html_sha256": "b478c6bbabeab3108e0bad766767ebbb7513e2fda3c312a6bdd25c3668e7ee18",
+      "is_patch": true,
+      "rule_ids": [
+        "H01",
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.29.3",
+      "date": "2026-04-17",
+      "published_at": "2026-04-17T07:11:52.489Z",
+      "individual_published_at": "2026-04-17T07:11:52.489Z",
+      "url": "https://easypanel.io/changelog/2-29-3",
+      "http_status": 200,
+      "html_sha256": "71cbf6603d8f5890b5ca7ce34e5823c24ed9edb7876ec85061d09d8b4ec6bf73",
+      "is_patch": true,
+      "rule_ids": [
+        "H52"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.29.4",
+      "date": "2026-04-18",
+      "published_at": "2026-04-18T12:19:17.327Z",
+      "individual_published_at": "2026-04-18T12:19:17.327Z",
+      "url": "https://easypanel.io/changelog/2-29-4",
+      "http_status": 200,
+      "html_sha256": "1616c75dc0a36b874388a11a2ec8fdd86d54f74cd83a8dad7914baf78f4dd674",
+      "is_patch": true,
+      "rule_ids": [
+        "H05"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.29.5",
+      "date": "2026-04-18",
+      "published_at": "2026-04-18T18:41:13.872Z",
+      "individual_published_at": "2026-04-18T18:41:13.872Z",
+      "url": "https://easypanel.io/changelog/2-29-5",
+      "http_status": 200,
+      "html_sha256": "5729fc02c9bfbf3317d13eaa385857074662a9e63817f98e83d9fe74d448d2e4",
+      "is_patch": true,
+      "rule_ids": [
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.30.0",
+      "date": "2026-04-22",
+      "published_at": "2026-04-22T08:47:56.060Z",
+      "individual_published_at": "2026-04-22T08:47:56.060Z",
+      "url": "https://easypanel.io/changelog/2-30-0",
+      "http_status": 200,
+      "html_sha256": "6ad9a66b220c0f8d858c79f92a4c028b2adfe75d2d84847c172ff52280942d6a",
+      "is_patch": false,
+      "rule_ids": [
+        "H54"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.30.1",
+      "date": "2026-05-15",
+      "published_at": "2026-05-15T06:43:10.722Z",
+      "individual_published_at": "2026-05-15T06:43:10.722Z",
+      "url": "https://easypanel.io/changelog/2-30-1",
+      "http_status": 200,
+      "html_sha256": "0fabfcca0ff9bcf42742b7e3fc9afd1b2438e23ef834c9dcdbd632b22b4fdb3c",
+      "is_patch": true,
+      "rule_ids": [
+        "H08"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.31.0",
+      "date": "2026-06-05",
+      "published_at": "2026-06-05T09:29:57.115Z",
+      "individual_published_at": "2026-06-05T09:29:57.115Z",
+      "url": "https://easypanel.io/changelog/2-31-0",
+      "http_status": 200,
+      "html_sha256": "e92fac1af9033841e9604642beb2d64fba21946dea9d47c887c2903cb86c7152",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H26",
+        "H27",
+        "H33",
+        "H40",
+        "H53",
+        "H60"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.32.0",
+      "date": "2026-06-22",
+      "published_at": "2026-06-22T08:06:04.352Z",
+      "individual_published_at": "2026-06-22T08:06:04.352Z",
+      "url": "https://easypanel.io/changelog/2-32-0",
+      "http_status": 200,
+      "html_sha256": "4730daca48ab7df342e7f28ab4483df41114e75a79259d66d43de03c8378a4ee",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H28",
+        "H32",
+        "H33",
+        "H39",
+        "H41",
+        "H60",
+        "H63"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.32.1",
+      "date": "2026-07-02",
+      "published_at": "2026-07-02T18:17:33.107Z",
+      "individual_published_at": "2026-07-02T18:17:33.107Z",
+      "url": "https://easypanel.io/changelog/2-32-1",
+      "http_status": 200,
+      "html_sha256": "a21fb0f4af17b13d13feca7da4130201d6ae9ce119fda3a525db67bcfa199c39",
+      "is_patch": true,
+      "rule_ids": [
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.32.2",
+      "date": "2026-07-08",
+      "published_at": "2026-07-08T18:09:55.718Z",
+      "individual_published_at": "2026-07-08T18:09:55.718Z",
+      "url": "https://easypanel.io/changelog/2-32-2",
+      "http_status": 200,
+      "html_sha256": "35dd88df1d3530b348c01f951db7fc4eb3d8de16807194203077d5ce4aa9c14c",
+      "is_patch": true,
+      "rule_ids": [
+        "H07",
+        "H26",
+        "H28",
+        "H33",
+        "H34",
+        "H45",
+        "H63",
+        "H64",
+        "H65"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.33.0",
+      "date": "2026-07-31",
+      "published_at": "2026-07-31T12:51:58.441Z",
+      "individual_published_at": "2026-07-31T12:51:58.441Z",
+      "url": "https://easypanel.io/changelog/2-33-0",
+      "http_status": 200,
+      "html_sha256": "e8b8e44dcc267d64aa68ce3c71e02e575f4b36569bce14c85bf0476560088109",
+      "is_patch": false,
+      "rule_ids": [
+        "H60"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.33.1",
+      "date": "2026-08-03",
+      "published_at": "2026-08-03T12:16:55.271Z",
+      "individual_published_at": "2026-08-03T12:16:55.271Z",
+      "url": "https://easypanel.io/changelog/2-33-1",
+      "http_status": 200,
+      "html_sha256": "55657ae7aea41f93db970268982f69f9810ccb1e32e2bda7ab5d1f71c774699b",
+      "is_patch": true,
+      "rule_ids": [
+        "H60",
+        "H68"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.33.2",
+      "date": "2026-08-21",
+      "published_at": "2026-08-21T00:04:02.112Z",
+      "individual_published_at": "2026-08-21T00:04:02.112Z",
+      "url": "https://easypanel.io/changelog/2-33-2",
+      "http_status": 200,
+      "html_sha256": "eecad839786dbbe4057cfde95d81e9749e53a95b79d9ec70d1d2ea555270d33b",
+      "is_patch": true,
+      "rule_ids": [
+        "H60"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.34.0",
+      "date": "2026-09-10",
+      "published_at": "2026-09-10T10:04:12.674Z",
+      "individual_published_at": "2026-09-10T10:04:12.674Z",
+      "url": "https://easypanel.io/changelog/2-34-0",
+      "http_status": 200,
+      "html_sha256": "4c099cb9b52bad126c735290047297b6c8a1d8c640dc98debed06eade0fdb7f5",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H06",
+        "H60"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.35.0",
+      "date": "2026-09-16",
+      "published_at": "2026-09-16T17:38:28.536Z",
+      "individual_published_at": "2026-09-16T17:38:28.536Z",
+      "url": "https://easypanel.io/changelog/2-35-0",
+      "http_status": 200,
+      "html_sha256": "f99d5703c223364f8decff2d0d9c0528dc6e4e5b4f225a97a2633186fcbf5212",
+      "is_patch": false,
+      "rule_ids": [
+        "H04",
+        "H11",
+        "H53"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.36.0",
+      "date": "2026-09-24",
+      "published_at": "2026-09-24T12:15:34.697Z",
+      "individual_published_at": "2026-09-24T12:15:34.697Z",
+      "url": "https://easypanel.io/changelog/2-36-0",
+      "http_status": 200,
+      "html_sha256": "9ec01e16c90fcf92b5b930ff1954f801dd637d2a48fcb291b0253c7ed5129111",
+      "is_patch": false,
+      "rule_ids": [
+        "H04"
+      ],
+      "coverage": "catalogue uniquement"
+    },
+    {
+      "version": "2.37.0",
+      "date": "2026-10-14",
+      "published_at": "2026-10-14T11:50:29.868Z",
+      "individual_published_at": "2026-10-14T11:50:29.868Z",
+      "url": "https://easypanel.io/changelog/2-37-0",
+      "http_status": 200,
+      "html_sha256": "db5838c22329af5fa30659d49e773afef11e19c8652cd25fba3e048069697005",
+      "is_patch": false,
+      "rule_ids": [
+        "H15"
+      ],
+      "coverage": "règles consolidées"
+    },
+    {
+      "version": "2.38.0",
+      "date": "2026-10-22",
+      "published_at": "2026-10-22T09:01:13.331Z",
+      "individual_published_at": "2026-10-22T09:01:13.331Z",
+      "url": "https://easypanel.io/changelog/2-38-0",
+      "http_status": 200,
+      "html_sha256": "4c1961351170a4640d32939b305e0038f0d434e7e201c8480ed8fccdd972eb8d",
+      "is_patch": false,
+      "rule_ids": [
+        "H22",
+        "H45",
+        "H53",
+        "H57"
+      ],
+      "coverage": "règles consolidées"
+    }
+  ],
+  "additional_official_sources": [
+    {
+      "id": "B2022",
+      "date": "2022-08-12",
+      "version": null,
+      "url": "https://easypanel.io/blog/changelog-august-2022",
+      "title": "Resource Monitoring, New Dashboard, and Other Improvements",
+      "rules": [
+        "H01",
+        "H02",
+        "H14",
+        "H42",
+        "H62"
+      ]
+    },
+    {
+      "id": "B2023-backups",
+      "date": "2023-03-02",
+      "version": null,
+      "url": "https://easypanel.io/blog/database-backups-are-here",
+      "title": "Database backups are here!",
+      "rules": [
+        "H37",
+        "H38",
+        "H41"
+      ]
+    },
+    {
+      "id": "B2023-cluster",
+      "date": "2023-04-04",
+      "version": null,
+      "url": "https://easypanel.io/blog/multi-server-support-beta-release",
+      "title": "Multi-Server Support (Beta)",
+      "rules": [
+        "H11"
+      ]
+    }
+  ],
+  "index_fetches": [
+    {
+      "key": "index-1",
+      "url": "https://easypanel.io/changelog?page=1&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=1&patches=show",
+      "http_status": 200,
+      "sha256": "52ca21cc2f61abb93c974723dea1d027a3df23ebbdc3f001f31429f3354c1e8a"
+    },
+    {
+      "key": "index-2",
+      "url": "https://easypanel.io/changelog?page=2&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=2&patches=show",
+      "http_status": 200,
+      "sha256": "dd9e241c64f2995323653bc2f0f0d30b2d75e01158bf0e2b0ef797678e14573f"
+    },
+    {
+      "key": "index-3",
+      "url": "https://easypanel.io/changelog?page=3&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=3&patches=show",
+      "http_status": 200,
+      "sha256": "d399504affd88c49d64e262e0e40158cb708ab44efca084622ca7a1b74341eee"
+    },
+    {
+      "key": "index-4",
+      "url": "https://easypanel.io/changelog?page=4&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=4&patches=show",
+      "http_status": 200,
+      "sha256": "6358c2b074a16b9230ce3009e0a7ba31a01647540e8e7ff9e7c0397e93f178b6"
+    },
+    {
+      "key": "index-5",
+      "url": "https://easypanel.io/changelog?page=5&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=5&patches=show",
+      "http_status": 200,
+      "sha256": "2df56fb3fd9a08c7d54d7d2a9ab7bbbe069209d9109ca239ed22c876fcc58542"
+    },
+    {
+      "key": "index-6",
+      "url": "https://easypanel.io/changelog?page=6&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=6&patches=show",
+      "http_status": 200,
+      "sha256": "887a11fc16fa70640623f593ff55caeacbe522ef29eb56d37e2e71bac0798a57"
+    },
+    {
+      "key": "index-7",
+      "url": "https://easypanel.io/changelog?page=7&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=7&patches=show",
+      "http_status": 200,
+      "sha256": "545b2ce5cf8cbf20b645f3e200dd54ab9e7fd6a5832c7e9d8cb0c6b4a5ebd022"
+    },
+    {
+      "key": "index-8",
+      "url": "https://easypanel.io/changelog?page=8&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=8&patches=show",
+      "http_status": 200,
+      "sha256": "83b9098f01a5c22f78f6e3a40691bfc71f1e423742e18ccd444f97b888fae132"
+    },
+    {
+      "key": "index-9",
+      "url": "https://easypanel.io/changelog?page=9&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=9&patches=show",
+      "http_status": 200,
+      "sha256": "8999653500a7a2d13339b0eeb11864c7fd2a176d725a5d0a3b3f908d14b01bc1"
+    },
+    {
+      "key": "index-10",
+      "url": "https://easypanel.io/changelog?page=10&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=10&patches=show",
+      "http_status": 200,
+      "sha256": "83a6251a22bbf66919c9dfaf8ec007a6710e0a1ab4a8e7ae14046a61c9e95a24"
+    },
+    {
+      "key": "index-11",
+      "url": "https://easypanel.io/changelog?page=11&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=11&patches=show",
+      "http_status": 200,
+      "sha256": "6e050ca253fd800d011843936019a7a296c7f8181461d9f980f5bd9bcb4c5dec"
+    },
+    {
+      "key": "index-12",
+      "url": "https://easypanel.io/changelog?page=12&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=12&patches=show",
+      "http_status": 200,
+      "sha256": "137aa4c40a8abd09f896ac20c50f39e2079e7ec9723d990af6776089e4983a59"
+    },
+    {
+      "key": "index-13",
+      "url": "https://easypanel.io/changelog?page=13&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=13&patches=show",
+      "http_status": 200,
+      "sha256": "0e9601c1449fe7ed151adcdcc583c3c6e7d51da45df365850f25d953aadffea3"
+    },
+    {
+      "key": "index-14",
+      "url": "https://easypanel.io/changelog?page=14&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=14&patches=show",
+      "http_status": 200,
+      "sha256": "2f292b8b509c71786f7b45cb675a6d37b0683aa1865dffad63aa0b7cd5cc907d"
+    },
+    {
+      "key": "index-15",
+      "url": "https://easypanel.io/changelog?page=15&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=15&patches=show",
+      "http_status": 200,
+      "sha256": "9ba6d8b61fe71b9a5c504bb56c037492b1944c25fdaa3413ea1bc6a80df5ccc8"
+    },
+    {
+      "key": "index-16",
+      "url": "https://easypanel.io/changelog?page=16&patches=show",
+      "final_url": "https://easypanel.io/changelog?page=16&patches=show",
+      "http_status": 200,
+      "sha256": "93cd915eef17b976d54fc8afff90701003d0ac908131be937f35c343f519d90a"
+    }
+  ]
+}

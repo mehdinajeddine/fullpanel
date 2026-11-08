@@ -1,0 +1,5329 @@
+{
+  "metadata": {
+    "consulted_on": "2026-11-08",
+    "language": "fr",
+    "scope": "Inventaire des 151 fiches publiques accessibles via les 16 pages du changelog officiel, patches inclus, et trois articles officiels complémentaires. Ne prouve pas la connaissance de correctifs privés ou non publiés.",
+    "source_boundary": "Faits: paraphrases du contenu publié. Exigences et scénarios: propositions originales Harborlight, sans présomption d’implémentation ou de succès.",
+    "main_release_count": 80,
+    "patch_release_count": 71,
+    "year_counts": {
+      "2022": 7,
+      "2023": 32,
+      "2024": 59,
+      "2025": 25,
+      "2026": 28
+    },
+    "rule_count": 70,
+    "version_count": 151,
+    "inaccessible_individual_pages": [],
+    "limitations": [
+      "Les pages indexées du moteur de recherche affichaient parfois149/78/79 versions en cache; la collecte HTTP fraîche a retourné151 fiches, toutesHTTP 200.",
+      "Les annonces vagues de sécurité ne permettent pas de déduire exploit, CVE, impact ou cause racine.",
+      "Les dates sont celles publiées, pas des dates de découverte ou déploiement effectif.",
+      "Les catalogues sont regroupés; aucun inventaire exhaustif de bugs des logiciels tiers ni certification des centaines de modèles n’est revendiqué.",
+      "La disponibilité historique ne prouve pas la disponibilité actuelle: cluster et compression ont connu dépréciation/retrait.",
+      "Aucune reproduction du code propriétaire ni de ses éléments graphiques. Les pagesHTML de travail sont conservées uniquement sous /private/tmp.",
+      "Les tests dérivés sont à rapprocher du registre de preuves Harborlight; documenter une règle ne signifie pas que son scénario a été exécuté."
+    ]
+  },
+  "releases": [
+    {
+      "version": "1.12.3",
+      "date": "2022-10-15",
+      "url": "https://easypanel.io/changelog/1-12-3-1",
+      "ruleIds": [
+        "H04",
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "36f21ca5b98fe2803ff7580f6e2c93f21d21c0c6c1c27394e7d40b0299286b3e"
+    },
+    {
+      "version": "1.12.4",
+      "date": "2022-10-31",
+      "url": "https://easypanel.io/changelog/1-12-4-1",
+      "ruleIds": [
+        "H02",
+        "H33",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "5e264c00d40bd2744dfc3f69c2ac41fca5fea0738ee507bac0e8f49f8e122c8b"
+    },
+    {
+      "version": "1.12.5",
+      "date": "2022-11-01",
+      "url": "https://easypanel.io/changelog/1-12-5-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "02cdcd64e03bb4cd5848485c6e9098672e502e7bdc9c08210298641e74b209e9"
+    },
+    {
+      "version": "1.12.6",
+      "date": "2022-11-05",
+      "url": "https://easypanel.io/changelog/1-12-6-1",
+      "ruleIds": [
+        "H03",
+        "H04"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b770e2914ecf549f66adca63f3f20255fa4556d5d8e657850a7faf51d604f455"
+    },
+    {
+      "version": "1.12.7",
+      "date": "2022-11-05",
+      "url": "https://easypanel.io/changelog/1-12-7-1",
+      "ruleIds": [
+        "H02",
+        "H05",
+        "H18"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "64b925d0acd3af0982f5ff196b0a1e166035ac615eb81b0e5aa1925e73992af7"
+    },
+    {
+      "version": "1.12.8",
+      "date": "2022-11-15",
+      "url": "https://easypanel.io/changelog/1-12-8-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "aaa5225e14db4d3bd98a7e72578c11ef749ab2192812c9d3035f507753227b53"
+    },
+    {
+      "version": "1.12.9",
+      "date": "2022-12-10",
+      "url": "https://easypanel.io/changelog/1-12-9-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "dc81bcddf813b161f0eff45e9a02a29a3654bf9a86139cf0b9d442c307fa814a"
+    },
+    {
+      "version": "1.12.10",
+      "date": "2023-01-02",
+      "url": "https://easypanel.io/changelog/1-12-10-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "5fe523d36f6a69acfd5261fe5bc02b90d454058488db896ca4c355287dc08c7b"
+    },
+    {
+      "version": "1.13.0",
+      "date": "2023-01-03",
+      "url": "https://easypanel.io/changelog/1-13-0-1",
+      "ruleIds": [
+        "H03",
+        "H05",
+        "H06"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "e3cae3eb6ee4e6d58c2cb342f45a0a9c262155f38464b1bea189ffb5eb49b5a0"
+    },
+    {
+      "version": "1.13.1",
+      "date": "2023-01-08",
+      "url": "https://easypanel.io/changelog/1-13-1-1",
+      "ruleIds": [
+        "H04",
+        "H14"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "8a5a6bfc7e55e8ac65744afa5946f301eacc66b61dfb3b3486e65e7da04d68a3"
+    },
+    {
+      "version": "1.13.2",
+      "date": "2023-01-28",
+      "url": "https://easypanel.io/changelog/1-13-2-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "8087e83f875da93912ef35d136ec63d91d7a7c11d86b47408f32372dde3be202"
+    },
+    {
+      "version": "1.14.0",
+      "date": "2023-02-22",
+      "url": "https://easypanel.io/changelog/1-14-0-1",
+      "ruleIds": [
+        "H04",
+        "H07"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "08113e8d06b8d0e25c3365d4bbe7a13e2adc9ccc0dbd73749f1975dac12ebaba"
+    },
+    {
+      "version": "1.15.0",
+      "date": "2023-03-02",
+      "url": "https://easypanel.io/changelog/1-15-0-1",
+      "ruleIds": [
+        "H04",
+        "H08",
+        "H37",
+        "H38"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "048bb684a4a1dc378aea1d1baef235f266149f3d3cb4a16cc238aba410ec55f0"
+    },
+    {
+      "version": "1.15.1",
+      "date": "2023-03-07",
+      "url": "https://easypanel.io/changelog/1-15-1-1",
+      "ruleIds": [
+        "H05",
+        "H09"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "56e9d81ce3f599785f056201aec18c68fc00351439fb37ad94246539031500cc"
+    },
+    {
+      "version": "1.15.2",
+      "date": "2023-03-08",
+      "url": "https://easypanel.io/changelog/1-15-2-1",
+      "ruleIds": [
+        "H09"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b2e8357fcfcb6f27476b019ecd5fafce5002ac36046a51cc122ec0196afb96d9"
+    },
+    {
+      "version": "1.15.3",
+      "date": "2023-03-09",
+      "url": "https://easypanel.io/changelog/1-15-3-1",
+      "ruleIds": [
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "ef1df2c613422efb92e101e2fbcc94a84191376d85762a88ab1355f45fb66124"
+    },
+    {
+      "version": "1.15.4",
+      "date": "2023-03-13",
+      "url": "https://easypanel.io/changelog/1-15-4-1",
+      "ruleIds": [
+        "H04",
+        "H10"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "692e2c846302fc57a2fa115578d396ce21f31b1cedec4d9f3b0289cc3805d3ca"
+    },
+    {
+      "version": "1.15.5",
+      "date": "2023-03-28",
+      "url": "https://easypanel.io/changelog/1-15-5-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "9b639ddb2b396a3ff2dea1d54422164e86b2aa195e76fe2e5b1d507dc8241ee4"
+    },
+    {
+      "version": "1.16.0",
+      "date": "2023-04-04",
+      "url": "https://easypanel.io/changelog/1-16-0-1",
+      "ruleIds": [
+        "H11"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "32eda59bee8014e4af7e3ab2636069c559458eacf8a055a621e3cb1e762e00f8"
+    },
+    {
+      "version": "1.17.0",
+      "date": "2023-05-07",
+      "url": "https://easypanel.io/changelog/1-17-0-1",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H17",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3427da913a83f1e1948e4b6dd4f042d6251db27aa868a98fed0701abe5a3333f"
+    },
+    {
+      "version": "1.18.0",
+      "date": "2023-05-27",
+      "url": "https://easypanel.io/changelog/1-18-0-1",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H08",
+        "H12",
+        "H63",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "f63fd92907cda62621693660dfe256acd8fd28365e14d9dfd0bd0bb3a7f01975"
+    },
+    {
+      "version": "1.19.1",
+      "date": "2023-07-04",
+      "url": "https://easypanel.io/changelog/1-19-1-1",
+      "ruleIds": [
+        "H04",
+        "H25",
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6117c24bd17dc088d9992d3ac7447618ae96014064743861bd8711bf2c9f739e"
+    },
+    {
+      "version": "1.20.1",
+      "date": "2023-07-08",
+      "url": "https://easypanel.io/changelog/1-20-1-1",
+      "ruleIds": [
+        "H04",
+        "H10",
+        "H13",
+        "H14"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c64ff3767fd2df259c7ca84c70e27329227094c26b75fc09108372619402fcbb"
+    },
+    {
+      "version": "1.21.0",
+      "date": "2023-08-03",
+      "url": "https://easypanel.io/changelog/1-21-0-1",
+      "ruleIds": [
+        "H01",
+        "H12",
+        "H20"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "97b09e8bd3b4bb37342a93dae5b3eeba3ef1e9243bd39c1876c865e14d2a2926"
+    },
+    {
+      "version": "1.22.0",
+      "date": "2023-08-09",
+      "url": "https://easypanel.io/changelog/1-22-0-1",
+      "ruleIds": [
+        "H01"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "575c891bf341fb85b22132f44db4b0f426335b424c43fe3632467332bc58b191"
+    },
+    {
+      "version": "1.23.0",
+      "date": "2023-09-01",
+      "url": "https://easypanel.io/changelog/1-23-0-1",
+      "ruleIds": [
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "71fde0e8b946bd788420f888c8c7d3a7c4dc84aaf35b0a7dff3ace9c9f37b313"
+    },
+    {
+      "version": "1.23.1",
+      "date": "2023-09-04",
+      "url": "https://easypanel.io/changelog/1-23-1-1",
+      "ruleIds": [
+        "H04",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3a175286a13d47f914a01d9e76e92fcd420f864f2132612f74f53429f05f58d1"
+    },
+    {
+      "version": "1.24.0",
+      "date": "2023-09-29",
+      "url": "https://easypanel.io/changelog/1-24-0-1",
+      "ruleIds": [
+        "H50",
+        "H62",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "a227ee44dfd47e52dc5bc491e5fe40cdf977ef4dad5a4814134238833ac872ed"
+    },
+    {
+      "version": "1.24.4",
+      "date": "2023-10-30",
+      "url": "https://easypanel.io/changelog/1-24-4-1",
+      "ruleIds": [
+        "H67"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "adcb47cdd16b127a10567bb2f53605afd4d7ed5989a4ef59b616337a33a542d7"
+    },
+    {
+      "version": "1.25.0",
+      "date": "2023-11-13",
+      "url": "https://easypanel.io/changelog/1-25-0-1",
+      "ruleIds": [
+        "H50",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6e253e32132ccad8adc9b69b10ff5871ec8f68fc3f8111206b04a274f8b5f930"
+    },
+    {
+      "version": "1.25.1",
+      "date": "2023-11-13",
+      "url": "https://easypanel.io/changelog/1-25-1-1",
+      "ruleIds": [
+        "H50"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "5e0647d01155a9a91d342b6976906d35e540373ce025f55243960ed635d29ee4"
+    },
+    {
+      "version": "1.26.0",
+      "date": "2023-11-17",
+      "url": "https://easypanel.io/changelog/1-26-0-1",
+      "ruleIds": [
+        "H58"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b487b889af6fd4bcc72fc46505cc98537bea15eabd84269925520bb5aac7adbd"
+    },
+    {
+      "version": "1.27.0",
+      "date": "2023-11-25",
+      "url": "https://easypanel.io/changelog/1-27-0-1",
+      "ruleIds": [
+        "H27",
+        "H59"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "7f36d66e0b757f423064211762172f07e81f625168e3a25bb735bd05c140a1e3"
+    },
+    {
+      "version": "1.27.1",
+      "date": "2023-11-25",
+      "url": "https://easypanel.io/changelog/1-27-1-1",
+      "ruleIds": [
+        "H59"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "678335634dde9b10cefe9bf146f617f319ddd13b8494af30870f66a61f6aace7"
+    },
+    {
+      "version": "1.28.0",
+      "date": "2023-11-27",
+      "url": "https://easypanel.io/changelog/1-28-0-1",
+      "ruleIds": [
+        "H14"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "186e77a17d0a0bf719dccdd307d66798270ca5fa588b0514ab3693bd85b77bbf"
+    },
+    {
+      "version": "1.29.0",
+      "date": "2023-11-28",
+      "url": "https://easypanel.io/changelog/1-29-0-1",
+      "ruleIds": [
+        "H01",
+        "H16"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6de45266945289cb8779534c57e3e1db4ae00ba3819db396e6f0470a2424a1fe"
+    },
+    {
+      "version": "1.30.0",
+      "date": "2023-12-19",
+      "url": "https://easypanel.io/changelog/1-30-0-1",
+      "ruleIds": [
+        "H05",
+        "H16",
+        "H28"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "20a47c1543f5a80830d74635df63caffb20f171a4d9adfeb2757051858abc16a"
+    },
+    {
+      "version": "1.30.1",
+      "date": "2023-12-19",
+      "url": "https://easypanel.io/changelog/1-30-1-1",
+      "ruleIds": [
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "494122f40b3171d9eb48201b8928d1b0aaf858f05f95e7f9fe0f9d2bbeac855c"
+    },
+    {
+      "version": "1.30.2",
+      "date": "2023-12-19",
+      "url": "https://easypanel.io/changelog/1-30-2-1",
+      "ruleIds": [
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "0ed03e6dd3913ab843cd73268975aeb84058b09b798526da4c5c02f94282b594"
+    },
+    {
+      "version": "1.31.0",
+      "date": "2024-01-05",
+      "url": "https://easypanel.io/changelog/1-31-0-1",
+      "ruleIds": [
+        "H04",
+        "H37",
+        "H49"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3e3de80e4649cc5b73a6778898797428d6c6b93a5de4e721ebc5555c5fe62a55"
+    },
+    {
+      "version": "1.31.3",
+      "date": "2024-01-06",
+      "url": "https://easypanel.io/changelog/1-31-3-1",
+      "ruleIds": [
+        "H04",
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "2d590d3b5e05e3575b9c8a1fcee60c9350cdf64e37b7c48727110d1fd8e8b91d"
+    },
+    {
+      "version": "1.32.0",
+      "date": "2024-01-25",
+      "url": "https://easypanel.io/changelog/1-32-0-1",
+      "ruleIds": [
+        "H04",
+        "H14",
+        "H20",
+        "H50"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "e63b5c0a6a5948a13a4d92ad3afaed1d01176370d365368d95f7ddc82658d608"
+    },
+    {
+      "version": "1.33.0",
+      "date": "2024-02-16",
+      "url": "https://easypanel.io/changelog/1-33-0-1",
+      "ruleIds": [
+        "H02",
+        "H23",
+        "H37",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "7319a94aecec8929487fbb896923231383098f57b78a6e813480184cfd16de4a"
+    },
+    {
+      "version": "1.33.1",
+      "date": "2024-02-16",
+      "url": "https://easypanel.io/changelog/1-33-1-1",
+      "ruleIds": [
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "809f604b67ec8513c2c1ca612d3c9fff24f4de9e98e4bc4504640450ef073cee"
+    },
+    {
+      "version": "1.33.2",
+      "date": "2024-02-17",
+      "url": "https://easypanel.io/changelog/1-33-2-1",
+      "ruleIds": [
+        "H29"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "8c230fdf6c2459b944b0513d73f9b89ae5f53f84c0d347f2b1e09cefec030100"
+    },
+    {
+      "version": "1.33.3",
+      "date": "2024-02-17",
+      "url": "https://easypanel.io/changelog/1-33-3-1",
+      "ruleIds": [
+        "H25"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "30d3b2d30e928c5934d7bb7d622c825482d47ce522cee9d43ffd783a330dce01"
+    },
+    {
+      "version": "1.33.4",
+      "date": "2024-02-21",
+      "url": "https://easypanel.io/changelog/1-33-4-1",
+      "ruleIds": [
+        "H02",
+        "H29"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "1f015b1e7478d66aae2509721871bb3b60a6554213439a39bbe35658453fc608"
+    },
+    {
+      "version": "1.33.5",
+      "date": "2024-02-28",
+      "url": "https://easypanel.io/changelog/1-33-5-1",
+      "ruleIds": [
+        "H19",
+        "H29"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b767657d0dd4aa7a7a120a8595c5b24a75f99280119a71208dad890037399b2e"
+    },
+    {
+      "version": "1.34.0",
+      "date": "2024-03-11",
+      "url": "https://easypanel.io/changelog/1-34-0-1",
+      "ruleIds": [
+        "H28",
+        "H47",
+        "H48",
+        "H61",
+        "H62",
+        "H63",
+        "H66"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "bd968c35fcaa29c1425eecc075591bdbc5c556d5d589e7f1a53f626024318693"
+    },
+    {
+      "version": "1.35.0",
+      "date": "2024-03-20",
+      "url": "https://easypanel.io/changelog/1-35-0-1",
+      "ruleIds": [
+        "H14",
+        "H17",
+        "H26",
+        "H47",
+        "H53",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6c8efa0d3ac5ba0b88e225f9d955592d4b73e94d5cbd8b15cedcccbc0f1d573e"
+    },
+    {
+      "version": "1.36.0",
+      "date": "2024-03-22",
+      "url": "https://easypanel.io/changelog/1-36-0-1",
+      "ruleIds": [
+        "H14",
+        "H25",
+        "H43",
+        "H70"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "47e812eaee1790f6a4f54f217458f4d4f4764ba3f3445ebfe05ddc9027544ec6"
+    },
+    {
+      "version": "1.36.1",
+      "date": "2024-03-22",
+      "url": "https://easypanel.io/changelog/1-36-1-1",
+      "ruleIds": [
+        "H08"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "5bc48469cb84e23cbdae01089c2eed11b133a5d4bafd51f0485e65e1c33e5f17"
+    },
+    {
+      "version": "1.36.2",
+      "date": "2024-03-26",
+      "url": "https://easypanel.io/changelog/1-36-2-1",
+      "ruleIds": [
+        "H53",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3eabd70b56c6bbba3648f6985f0a879313d8b3f40212da139b98ecbdf182ebe4"
+    },
+    {
+      "version": "1.37.0",
+      "date": "2024-04-04",
+      "url": "https://easypanel.io/changelog/1-37-0-1",
+      "ruleIds": [
+        "H17",
+        "H20",
+        "H21",
+        "H47",
+        "H56"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "26d44535d56a9e64e08243bcb620b004787e2417caa7af77b6b3e9c2c2f78dfd"
+    },
+    {
+      "version": "1.37.1",
+      "date": "2024-04-04",
+      "url": "https://easypanel.io/changelog/1-37-1-1",
+      "ruleIds": [
+        "H15"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "52e336fe40411204fb519174bad384ba1f0617b4e1b787223c618ac4eb01e998"
+    },
+    {
+      "version": "1.37.2",
+      "date": "2024-04-05",
+      "url": "https://easypanel.io/changelog/1-37-2-1",
+      "ruleIds": [
+        "H20"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "536f73f2a287ae60922338cb59b26226b1d49a9e6546e4cbf18c674f06f9ed7f"
+    },
+    {
+      "version": "1.37.3",
+      "date": "2024-04-05",
+      "url": "https://easypanel.io/changelog/1-37-3-1",
+      "ruleIds": [
+        "H05",
+        "H18",
+        "H22"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "0c97ec564d8cf184bb284c15d4ed835ccbdc45942716905527617b3c7e4968e7"
+    },
+    {
+      "version": "1.37.4",
+      "date": "2024-04-05",
+      "url": "https://easypanel.io/changelog/1-37-4-1",
+      "ruleIds": [
+        "H17"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c68ee691d8880a33e8811595e959deb9d28a6977b3c48ec93d1da69b01ee641f"
+    },
+    {
+      "version": "1.38.0",
+      "date": "2024-04-12",
+      "url": "https://easypanel.io/changelog/1-38-0-1",
+      "ruleIds": [
+        "H19",
+        "H61"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "a591463f26d5961143dd11a3876e7eabb4a7418746c0853e88f5fa06373c3c86"
+    },
+    {
+      "version": "1.38.1",
+      "date": "2024-04-13",
+      "url": "https://easypanel.io/changelog/1-38-1-1",
+      "ruleIds": [
+        "H19",
+        "H53"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "a66e2e70f5795a7b4d1816834a0346fe0b7df1506cd711c3d207f0607df5c4f1"
+    },
+    {
+      "version": "1.38.2",
+      "date": "2024-04-16",
+      "url": "https://easypanel.io/changelog/1-38-2-1",
+      "ruleIds": [
+        "H56"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "925c16ca2415db2b67f196ecb95345e8d7069c864f02c9a7741a6dfde0a4e91a"
+    },
+    {
+      "version": "1.39.0",
+      "date": "2024-04-26",
+      "url": "https://easypanel.io/changelog/1-39-0-1",
+      "ruleIds": [
+        "H02",
+        "H04",
+        "H18",
+        "H35",
+        "H64",
+        "H66",
+        "H67"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4c8184d9fc3a4091629b43d036d31b3c4b1fa7efed786b0b781ab198d549d47b"
+    },
+    {
+      "version": "1.39.1",
+      "date": "2024-04-27",
+      "url": "https://easypanel.io/changelog/1-39-1-1",
+      "ruleIds": [
+        "H66"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "98045934b69e778c7a89f0961bdf5bd62cfdc85881dad22185aae6b311b18043"
+    },
+    {
+      "version": "1.40.0",
+      "date": "2024-05-01",
+      "url": "https://easypanel.io/changelog/1-40-0-1",
+      "ruleIds": [
+        "H04",
+        "H15",
+        "H18",
+        "H35",
+        "H63",
+        "H64"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "dbf260b1e550e414e432282381072121475662e62d52904b5e076221c1d4b726"
+    },
+    {
+      "version": "1.41.0",
+      "date": "2024-06-06",
+      "url": "https://easypanel.io/changelog/1-41-0-1",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H16",
+        "H43",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "2de802e4442b69effb53b8dacfdbbd10ac4f7b08af772213f2b40e06091c6f56"
+    },
+    {
+      "version": "1.42.0",
+      "date": "2024-06-21",
+      "url": "https://easypanel.io/changelog/1-42-0-1",
+      "ruleIds": [
+        "H04",
+        "H08",
+        "H16",
+        "H21",
+        "H22",
+        "H53",
+        "H67"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c3ed18c0f01701949b244a6c73d4356e3e8a646c382c6510b6777d0d17cc56c6"
+    },
+    {
+      "version": "1.42.1",
+      "date": "2024-06-22",
+      "url": "https://easypanel.io/changelog/1-42-1-1",
+      "ruleIds": [
+        "H04",
+        "H25"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "7221973d52991f82ce64b8615af5b371e0b62b7b09bbd8a1b59fa984d3389db9"
+    },
+    {
+      "version": "1.43.0",
+      "date": "2024-06-25",
+      "url": "https://easypanel.io/changelog/1-43-0-1",
+      "ruleIds": [
+        "H31"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b6239788308a965af51da9ba2b574cee276b8815e4602fa185950dcc91513281"
+    },
+    {
+      "version": "1.44.0",
+      "date": "2024-07-17",
+      "url": "https://easypanel.io/changelog/1-44-0-1",
+      "ruleIds": [
+        "H04",
+        "H26",
+        "H50",
+        "H61"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c7231e289b3b3f426a477bc43769aa493cc4383bd8e02c6f0569a5991f791cd9"
+    },
+    {
+      "version": "1.44.1",
+      "date": "2024-07-17",
+      "url": "https://easypanel.io/changelog/1-44-1-1",
+      "ruleIds": [
+        "H05",
+        "H19"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "88be7fe9cbdce84e760eb2d5c19feb3e9ad437e5ded107660ec6234ea36719c5"
+    },
+    {
+      "version": "1.44.2",
+      "date": "2024-07-19",
+      "url": "https://easypanel.io/changelog/1-44-2-1",
+      "ruleIds": [
+        "H05",
+        "H19",
+        "H47"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "35e1d69a4f5107e0a341b209be101cae0a739ca2edf419e7815a766d4b8db966"
+    },
+    {
+      "version": "1.45.0",
+      "date": "2024-07-25",
+      "url": "https://easypanel.io/changelog/1-45-0-1",
+      "ruleIds": [
+        "H04",
+        "H43",
+        "H56"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c94c460af9d8c6b23611303bf7782a03d6caed1ccd942aa7bfa7fba41bb023ad"
+    },
+    {
+      "version": "1.46.0",
+      "date": "2024-07-30",
+      "url": "https://easypanel.io/changelog/1-46-0-1",
+      "ruleIds": [
+        "H04",
+        "H29",
+        "H44"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "29545057c21b44243f6edcf3a57962f935ed0fb7c75b2772d26ddce5ddf33429"
+    },
+    {
+      "version": "1.47.0",
+      "date": "2024-08-01",
+      "url": "https://easypanel.io/changelog/1-47-0-1",
+      "ruleIds": [
+        "H11",
+        "H33"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "188f86c6a2d89a721392804db442a30ab665ffb8bde03529006693e770f4f606"
+    },
+    {
+      "version": "1.47.1",
+      "date": "2024-08-02",
+      "url": "https://easypanel.io/changelog/1-47-1-1",
+      "ruleIds": [
+        "H04",
+        "H10",
+        "H33",
+        "H63",
+        "H68"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "bf0b75f1472fc8a1d8c1a2d0e809b6e98b133f0e1836d737397a1d36166b292a"
+    },
+    {
+      "version": "1.47.2",
+      "date": "2024-08-02",
+      "url": "https://easypanel.io/changelog/1-47-2-1",
+      "ruleIds": [
+        "H68"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "dac3110202db21fa9429122c2f2629e8500156f770d16201ffc1e390f0e06f33"
+    },
+    {
+      "version": "1.47.3",
+      "date": "2024-08-05",
+      "url": "https://easypanel.io/changelog/1-47-3-1",
+      "ruleIds": [
+        "H33",
+        "H47"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6b281640fb138f20bf56c682bc785873387eb9c1d852cab7d379b239dfa5c61a"
+    },
+    {
+      "version": "1.47.4",
+      "date": "2024-08-05",
+      "url": "https://easypanel.io/changelog/1-47-4-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "3ff4c989cba10977c5a085ce422677678fabe67606164c8ad720ee2fbe45549d"
+    },
+    {
+      "version": "1.48.0",
+      "date": "2024-08-16",
+      "url": "https://easypanel.io/changelog/1-48-0-1",
+      "ruleIds": [
+        "H13",
+        "H26",
+        "H28",
+        "H42"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "284f22fabec2a9d42742046397bd5f458bb16d8a9a4bc8ff49c976cb89190ce3"
+    },
+    {
+      "version": "1.49.0",
+      "date": "2024-08-30",
+      "url": "https://easypanel.io/changelog/1-49-0-1",
+      "ruleIds": [
+        "H04",
+        "H09",
+        "H23",
+        "H24",
+        "H25",
+        "H31",
+        "H33",
+        "H44",
+        "H53",
+        "H56",
+        "H63",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "2c984a621d09fdae57438165430c53ec43b86782775865c01af5f3c4cb5603d3"
+    },
+    {
+      "version": "1.50.0",
+      "date": "2024-09-02",
+      "url": "https://easypanel.io/changelog/1-50-0-1",
+      "ruleIds": [
+        "H30"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "92513c885ea7c4e712d5dc6a5e10e2b8c40477013f143c15268488afe9899afe"
+    },
+    {
+      "version": "1.51.0",
+      "date": "2024-09-03",
+      "url": "https://easypanel.io/changelog/1-51-0-1",
+      "ruleIds": [
+        "H24",
+        "H25",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4667275ad058aed8455f2592891773b808f3385ac4ad0e294c22dd803ef1cc93"
+    },
+    {
+      "version": "1.51.1",
+      "date": "2024-09-13",
+      "url": "https://easypanel.io/changelog/1-51-1-1",
+      "ruleIds": [
+        "H04",
+        "H53",
+        "H63",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "48a773f28e0edcdd910c72e2e02050abdc4008dc41d8575079bde04d1154738b"
+    },
+    {
+      "version": "1.52.0",
+      "date": "2024-09-30",
+      "url": "https://easypanel.io/changelog/1-52-0-1",
+      "ruleIds": [
+        "H26",
+        "H39",
+        "H45",
+        "H53"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "065b6fd3f02bde980dea44e232dd9a3655ba9b62c6097c077ffdd24c5619aa25"
+    },
+    {
+      "version": "1.53.0",
+      "date": "2024-10-03",
+      "url": "https://easypanel.io/changelog/1-53-0-1",
+      "ruleIds": [
+        "H45",
+        "H60",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "59d102b2098d847b71e9ee6678b52777a279924321e18aa593a3a90f16799b9e"
+    },
+    {
+      "version": "1.53.1",
+      "date": "2024-10-04",
+      "url": "https://easypanel.io/changelog/1-53-1-1",
+      "ruleIds": [
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "7b75b9d7d599f28b7aaf0c9d95e41b020364a8501cf64cb4e4f13216ecfde2c9"
+    },
+    {
+      "version": "1.54.0",
+      "date": "2024-10-10",
+      "url": "https://easypanel.io/changelog/1-54-0-1",
+      "ruleIds": [
+        "H04",
+        "H46",
+        "H55"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "74a632a6893d4136274ee6c823c7189c51443840868682c6b83596907895c6ce"
+    },
+    {
+      "version": "1.55.0",
+      "date": "2024-10-11",
+      "url": "https://easypanel.io/changelog/1-55-0-1",
+      "ruleIds": [
+        "H04",
+        "H57"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "74a68ab9664305b91ca09821b4583961cac7a049d072e3d6c6d2fe7d658f2d48"
+    },
+    {
+      "version": "1.56.0",
+      "date": "2024-10-24",
+      "url": "https://easypanel.io/changelog/1-56-0-1",
+      "ruleIds": [
+        "H04",
+        "H45",
+        "H46",
+        "H55",
+        "H56",
+        "H57",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "decf477aab9d79f9a914c3b1420d2bd3941761bb50c59b3bab9189cbe82ed4d2"
+    },
+    {
+      "version": "2.0.0",
+      "date": "2024-11-07",
+      "url": "https://easypanel.io/changelog/2-0-0-1",
+      "ruleIds": [
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c6d359439dc54d838e1d5e48d21677865965d5a4434c878c2286f6e64748d854"
+    },
+    {
+      "version": "2.1.0",
+      "date": "2024-11-18",
+      "url": "https://easypanel.io/changelog/2-1-0-1",
+      "ruleIds": [
+        "H04",
+        "H16",
+        "H30",
+        "H45",
+        "H62",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "bcc387da8838b7c8316a78f8234fc9807cd954a7d5feb02d968d9090d3f06b95"
+    },
+    {
+      "version": "2.2.0",
+      "date": "2024-12-04",
+      "url": "https://easypanel.io/changelog/2-2-0-1",
+      "ruleIds": [
+        "H03",
+        "H04",
+        "H10",
+        "H36",
+        "H44",
+        "H45",
+        "H53",
+        "H57",
+        "H59",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3320ca7825b1f68427f4bb1e1805f3298217b8762978b833ea8c5c60e4548c51"
+    },
+    {
+      "version": "2.2.1",
+      "date": "2024-12-09",
+      "url": "https://easypanel.io/changelog/2-2-1-1",
+      "ruleIds": [
+        "H36"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "9cc6ebb3202e8cb70f417c50080f73ce283056b49bbf6899f856d5195377f701"
+    },
+    {
+      "version": "2.2.2",
+      "date": "2024-12-09",
+      "url": "https://easypanel.io/changelog/2-2-2-1",
+      "ruleIds": [
+        "H57"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "0ab091b182d5cba6ddc729a680ae445a053f71e0904553c6854872b90b08c7fd"
+    },
+    {
+      "version": "2.2.3",
+      "date": "2024-12-14",
+      "url": "https://easypanel.io/changelog/2-2-3-1",
+      "ruleIds": [
+        "H33"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "35bb99124d363f078ea47d38c4980ebf1c1ebfad6d034f242b2d621616dd62a7"
+    },
+    {
+      "version": "2.3.2",
+      "date": "2024-12-20",
+      "url": "https://easypanel.io/changelog/2-3-2-1",
+      "ruleIds": [
+        "H13",
+        "H14",
+        "H18",
+        "H29",
+        "H32",
+        "H36"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "115b460f1e7188c29147fba006a9ae616675ae9de63e12597576eb2e7142c29f"
+    },
+    {
+      "version": "2.3.3",
+      "date": "2024-12-20",
+      "url": "https://easypanel.io/changelog/2-3-3-1",
+      "ruleIds": [
+        "H32",
+        "H66"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "ec233e11f52019663e99f83a3fd63e0fc5db6edfff396f2dbb2c0e90212c52f6"
+    },
+    {
+      "version": "2.3.4",
+      "date": "2024-12-23",
+      "url": "https://easypanel.io/changelog/2-3-4-1",
+      "ruleIds": [
+        "H45",
+        "H47",
+        "H66"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "50de8592ea1085210ee0be227392da8402f17e012e6a3aa7c9446f4f7391e561"
+    },
+    {
+      "version": "2.4.0",
+      "date": "2025-01-02",
+      "url": "https://easypanel.io/changelog/2-4-0-1",
+      "ruleIds": [
+        "H04",
+        "H32",
+        "H46",
+        "H55",
+        "H67"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "9ff73b2fb2a606e3ef9c318c89af17d296cb57f8e8c579a7ba834129b63acb4d"
+    },
+    {
+      "version": "2.5.0",
+      "date": "2025-01-06",
+      "url": "https://easypanel.io/changelog/2-5-0-1",
+      "ruleIds": [
+        "H04",
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "023c834c8a3e2595d7d0649a26fadb20c7fc08b3664edc3a67240d68f291f59d"
+    },
+    {
+      "version": "2.6.0",
+      "date": "2025-01-20",
+      "url": "https://easypanel.io/changelog/2-6-0-1",
+      "ruleIds": [
+        "H04",
+        "H23",
+        "H36",
+        "H41",
+        "H43",
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b9f072d8b164e1327e8192f9ad067d41763a7b2de0b32224806ba2ba1caf0783"
+    },
+    {
+      "version": "2.7.0",
+      "date": "2025-01-23",
+      "url": "https://easypanel.io/changelog/2-7-0-1",
+      "ruleIds": [
+        "H04",
+        "H41"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "7de80e7bf1fad156c1c01404a8f726f39823e8ac944bcbcb43332594b442eced"
+    },
+    {
+      "version": "2.8.0",
+      "date": "2025-01-30",
+      "url": "https://easypanel.io/changelog/2-8-0-1",
+      "ruleIds": [
+        "H04",
+        "H41",
+        "H48",
+        "H49",
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c1638ee5380397431baa5a521a1f9c1274ac3f36590ce36294be1ec673d8bfd5"
+    },
+    {
+      "version": "2.9.0",
+      "date": "2025-02-12",
+      "url": "https://easypanel.io/changelog/2-9-0-1",
+      "ruleIds": [
+        "H04",
+        "H14",
+        "H32",
+        "H45",
+        "H48",
+        "H56",
+        "H58"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "dd5aa026e40ff44c24fde74f611b9707b2ccc97a16c1bc74a110fbd088762d80"
+    },
+    {
+      "version": "2.10.0",
+      "date": "2025-02-14",
+      "url": "https://easypanel.io/changelog/2-10-0-1",
+      "ruleIds": [
+        "H04",
+        "H17",
+        "H50",
+        "H55",
+        "H56"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "96fbba0c794d317fb1af059fcda4d2b9ad5dd9410648ceae44206983195998f7"
+    },
+    {
+      "version": "2.11.0",
+      "date": "2025-02-17",
+      "url": "https://easypanel.io/changelog/2-11-0-1",
+      "ruleIds": [
+        "H04",
+        "H32"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c2f7df30ec170b85e01cdc6d8c09c77de1026d9141dcae2701aa4bbaa74fc620"
+    },
+    {
+      "version": "2.11.1",
+      "date": "2025-02-18",
+      "url": "https://easypanel.io/changelog/2-11-1-1",
+      "ruleIds": [
+        "H16"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "97256214e20cfa2acd8dd855a9fb3456497156a24c1c20d5c7b01441ae5fd1af"
+    },
+    {
+      "version": "2.11.2",
+      "date": "2025-02-19",
+      "url": "https://easypanel.io/changelog/2-11-2-1",
+      "ruleIds": [
+        "H53"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "e4c948b02d8a40effd03ea1e576c58ccfe8353b393e021936595c83ae2b19f4a"
+    },
+    {
+      "version": "2.12.0",
+      "date": "2025-02-19",
+      "url": "https://easypanel.io/changelog/2-12-0-1",
+      "ruleIds": [
+        "H21",
+        "H31",
+        "H41",
+        "H42",
+        "H49"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "164d842038a46d86a069e938a3d7ad7044db3f37b02525918e495b1d6cd0f375"
+    },
+    {
+      "version": "2.12.1",
+      "date": "2025-02-19",
+      "url": "https://easypanel.io/changelog/2-12-1-1",
+      "ruleIds": [
+        "H41"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "a5c4e7e3049aa6e2df45a75c32d778a109ce56595a06b3931ecbf78ee274d2d2"
+    },
+    {
+      "version": "2.13.0",
+      "date": "2025-02-26",
+      "url": "https://easypanel.io/changelog/2-13-0-1",
+      "ruleIds": [
+        "H60"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "c49b1ff43f5b84439addbf334e3e7745e5932472598d0b356e3ab826924c721a"
+    },
+    {
+      "version": "2.14.0",
+      "date": "2025-03-24",
+      "url": "https://easypanel.io/changelog/2-14-0-1",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H37",
+        "H40"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "ab2de3c164780fb744081ae9c0c204dd3ced430838e636fc9391105e9892fc33"
+    },
+    {
+      "version": "2.15.0",
+      "date": "2025-04-14",
+      "url": "https://easypanel.io/changelog/2-15-0-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "6903d11f0329184fabad3ebf25b56f2f8324d7a11dd25c57ab39a80aa01f5da5"
+    },
+    {
+      "version": "2.16.0",
+      "date": "2025-05-14",
+      "url": "https://easypanel.io/changelog/2-16-0-1",
+      "ruleIds": [
+        "H13",
+        "H32",
+        "H34",
+        "H40",
+        "H50",
+        "H69"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4f0a32e9ef2dd807c796e056b2108b1b0c36c752408de350c534812bdd943bec"
+    },
+    {
+      "version": "2.17.0",
+      "date": "2025-05-19",
+      "url": "https://easypanel.io/changelog/2-17-0-1",
+      "ruleIds": [
+        "H33",
+        "H42",
+        "H51",
+        "H53",
+        "H65",
+        "H69"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "bfc05a52d79d639622fa7f74c6dac213d9bb22687df2497095f27bc9afe0f072"
+    },
+    {
+      "version": "2.18.0",
+      "date": "2025-05-21",
+      "url": "https://easypanel.io/changelog/2-18-0-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "fd86414c52df27db65f82d9614f98571e3c24630e937f85ebf33265a25e41831"
+    },
+    {
+      "version": "2.19.0",
+      "date": "2025-05-23",
+      "url": "https://easypanel.io/changelog/2-19-0-1",
+      "ruleIds": [
+        "H01",
+        "H51"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "485288e55e9b864b79e4c1a7a5c473d948b6a00f3f015eacfcd4a6ec072d7616"
+    },
+    {
+      "version": "2.20.0",
+      "date": "2025-06-10",
+      "url": "https://easypanel.io/changelog/2-20-0-1",
+      "ruleIds": [
+        "H04",
+        "H07",
+        "H36",
+        "H40",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4b405901e743b6113cdc80b46882b6f7c8cb9914850efc25f9a95598a5fece61"
+    },
+    {
+      "version": "2.20.1",
+      "date": "2025-06-10",
+      "url": "https://easypanel.io/changelog/2-20-1-1",
+      "ruleIds": [
+        "H07"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "3cb773a1c504b0acda60fd6233f18c2d280015dd76fb3eea9d194461669d9e16"
+    },
+    {
+      "version": "2.21.0",
+      "date": "2025-06-25",
+      "url": "https://easypanel.io/changelog/2-21-0-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "e218ad3baf00e28da6fa77dfb207be3cec5653e2b513772b0855609f873baf4f"
+    },
+    {
+      "version": "2.22.0",
+      "date": "2025-08-29",
+      "url": "https://easypanel.io/changelog/2-22-0-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "46fef0411d36c39d432a3775880c84e6e7b93a2388b2854856ae1f292ec0e2b5"
+    },
+    {
+      "version": "2.23.0",
+      "date": "2025-10-06",
+      "url": "https://easypanel.io/changelog/2-23-0-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "e00c18693b9e99ac6d929c0ee66fa865b574e85a6b4562b4ba0f08f5a9556381"
+    },
+    {
+      "version": "2.24.0",
+      "date": "2025-12-31",
+      "url": "https://easypanel.io/changelog/2-24-0-1",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H09",
+        "H56",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "69b4072bbe7039ba5065e7a6ad6d4dac378521713d4e1f9d20c9d68a8748838e"
+    },
+    {
+      "version": "2.25.0",
+      "date": "2026-02-04",
+      "url": "https://easypanel.io/changelog/2-25-0",
+      "ruleIds": [
+        "H04",
+        "H05",
+        "H23",
+        "H29",
+        "H31",
+        "H38",
+        "H47",
+        "H52",
+        "H53"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4c036b57a53cd33dc180382a8434b7444c8573de67e85f87c3b084eca5f5377b"
+    },
+    {
+      "version": "2.25.1",
+      "date": "2026-02-04",
+      "url": "https://easypanel.io/changelog/2-25-1",
+      "ruleIds": [
+        "H52"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "cca7370f074e130161b4f646eb0bfdecd859dbf2ab2c753b677a531d23673c0d"
+    },
+    {
+      "version": "2.26.0",
+      "date": "2026-02-11",
+      "url": "https://easypanel.io/changelog/2-26-0",
+      "ruleIds": [
+        "H04",
+        "H17",
+        "H32",
+        "H61",
+        "H62"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "ad3b46dc730df11bef90e825f1ab020e133595fdd6628aa2557c3e0d56cbb330"
+    },
+    {
+      "version": "2.26.1",
+      "date": "2026-02-11",
+      "url": "https://easypanel.io/changelog/2-26-1",
+      "ruleIds": [
+        "H17"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "48b78fc77d0b1bec579d1c2ba1ce759542260354f6b37a3d8d0fa9a54c685c9f"
+    },
+    {
+      "version": "2.26.2",
+      "date": "2026-02-11",
+      "url": "https://easypanel.io/changelog/2-26-2",
+      "ruleIds": [
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "72a209dad013d209f23cca31a0fb1075dc71cc5424348447192f7119ff3f6812"
+    },
+    {
+      "version": "2.26.3",
+      "date": "2026-02-13",
+      "url": "https://easypanel.io/changelog/2-26-3",
+      "ruleIds": [
+        "H03",
+        "H17"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "09672a6700a0806cc114eec95ca2ef28d8b13f3086a098480cfd5ecd1cda041b"
+    },
+    {
+      "version": "2.27.0",
+      "date": "2026-03-13",
+      "url": "https://easypanel.io/changelog/2-27-0",
+      "ruleIds": [
+        "H04",
+        "H48"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "d5dedb03b18479a1b81abd6b6af22bfd9012b89b95856a594dcd3066da31a7bb"
+    },
+    {
+      "version": "2.28.0",
+      "date": "2026-03-24",
+      "url": "https://easypanel.io/changelog/2-28-0",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "6a5d63a6bb0f1959c849ceacc2ea98ebe447a021938cc242c33e91f24500e75d"
+    },
+    {
+      "version": "2.29.0",
+      "date": "2026-04-16",
+      "url": "https://easypanel.io/changelog/2-29-0",
+      "ruleIds": [
+        "H01",
+        "H63",
+        "H64"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "87bbce24dab28dc996c7b71ec569e141e2ff9bd062ca56dca1d7dff4a4689f8e"
+    },
+    {
+      "version": "2.29.1",
+      "date": "2026-04-16",
+      "url": "https://easypanel.io/changelog/2-29-1",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "8b45b9119dd4c79317192ef33065a3a24fbcce42c43de24367924c16726771a5"
+    },
+    {
+      "version": "2.29.2",
+      "date": "2026-04-17",
+      "url": "https://easypanel.io/changelog/2-29-2",
+      "ruleIds": [
+        "H01",
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "b478c6bbabeab3108e0bad766767ebbb7513e2fda3c312a6bdd25c3668e7ee18"
+    },
+    {
+      "version": "2.29.3",
+      "date": "2026-04-17",
+      "url": "https://easypanel.io/changelog/2-29-3",
+      "ruleIds": [
+        "H52"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "71cbf6603d8f5890b5ca7ce34e5823c24ed9edb7876ec85061d09d8b4ec6bf73"
+    },
+    {
+      "version": "2.29.4",
+      "date": "2026-04-18",
+      "url": "https://easypanel.io/changelog/2-29-4",
+      "ruleIds": [
+        "H05"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "1616c75dc0a36b874388a11a2ec8fdd86d54f74cd83a8dad7914baf78f4dd674"
+    },
+    {
+      "version": "2.29.5",
+      "date": "2026-04-18",
+      "url": "https://easypanel.io/changelog/2-29-5",
+      "ruleIds": [
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "5729fc02c9bfbf3317d13eaa385857074662a9e63817f98e83d9fe74d448d2e4"
+    },
+    {
+      "version": "2.30.0",
+      "date": "2026-04-22",
+      "url": "https://easypanel.io/changelog/2-30-0",
+      "ruleIds": [
+        "H54"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "6ad9a66b220c0f8d858c79f92a4c028b2adfe75d2d84847c172ff52280942d6a"
+    },
+    {
+      "version": "2.30.1",
+      "date": "2026-05-15",
+      "url": "https://easypanel.io/changelog/2-30-1",
+      "ruleIds": [
+        "H08"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "0fabfcca0ff9bcf42742b7e3fc9afd1b2438e23ef834c9dcdbd632b22b4fdb3c"
+    },
+    {
+      "version": "2.31.0",
+      "date": "2026-06-05",
+      "url": "https://easypanel.io/changelog/2-31-0",
+      "ruleIds": [
+        "H04",
+        "H26",
+        "H27",
+        "H33",
+        "H40",
+        "H53",
+        "H60"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "e92fac1af9033841e9604642beb2d64fba21946dea9d47c887c2903cb86c7152"
+    },
+    {
+      "version": "2.32.0",
+      "date": "2026-06-22",
+      "url": "https://easypanel.io/changelog/2-32-0",
+      "ruleIds": [
+        "H04",
+        "H28",
+        "H32",
+        "H33",
+        "H39",
+        "H41",
+        "H60",
+        "H63"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4730daca48ab7df342e7f28ab4483df41114e75a79259d66d43de03c8378a4ee"
+    },
+    {
+      "version": "2.32.1",
+      "date": "2026-07-02",
+      "url": "https://easypanel.io/changelog/2-32-1",
+      "ruleIds": [
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "a21fb0f4af17b13d13feca7da4130201d6ae9ce119fda3a525db67bcfa199c39"
+    },
+    {
+      "version": "2.32.2",
+      "date": "2026-07-08",
+      "url": "https://easypanel.io/changelog/2-32-2",
+      "ruleIds": [
+        "H07",
+        "H26",
+        "H28",
+        "H33",
+        "H34",
+        "H45",
+        "H63",
+        "H64",
+        "H65"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "35dd88df1d3530b348c01f951db7fc4eb3d8de16807194203077d5ce4aa9c14c"
+    },
+    {
+      "version": "2.33.0",
+      "date": "2026-07-31",
+      "url": "https://easypanel.io/changelog/2-33-0",
+      "ruleIds": [
+        "H60"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "e8b8e44dcc267d64aa68ce3c71e02e575f4b36569bce14c85bf0476560088109"
+    },
+    {
+      "version": "2.33.1",
+      "date": "2026-08-03",
+      "url": "https://easypanel.io/changelog/2-33-1",
+      "ruleIds": [
+        "H60",
+        "H68"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "55657ae7aea41f93db970268982f69f9810ccb1e32e2bda7ab5d1f71c774699b"
+    },
+    {
+      "version": "2.33.2",
+      "date": "2026-08-21",
+      "url": "https://easypanel.io/changelog/2-33-2",
+      "ruleIds": [
+        "H60"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "eecad839786dbbe4057cfde95d81e9749e53a95b79d9ec70d1d2ea555270d33b"
+    },
+    {
+      "version": "2.34.0",
+      "date": "2026-09-10",
+      "url": "https://easypanel.io/changelog/2-34-0",
+      "ruleIds": [
+        "H04",
+        "H06",
+        "H60"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4c099cb9b52bad126c735290047297b6c8a1d8c640dc98debed06eade0fdb7f5"
+    },
+    {
+      "version": "2.35.0",
+      "date": "2026-09-16",
+      "url": "https://easypanel.io/changelog/2-35-0",
+      "ruleIds": [
+        "H04",
+        "H11",
+        "H53"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "f99d5703c223364f8decff2d0d9c0528dc6e4e5b4f225a97a2633186fcbf5212"
+    },
+    {
+      "version": "2.36.0",
+      "date": "2026-09-24",
+      "url": "https://easypanel.io/changelog/2-36-0",
+      "ruleIds": [
+        "H04"
+      ],
+      "classification": "catalogue uniquement",
+      "httpStatus": 200,
+      "htmlSha256": "9ec01e16c90fcf92b5b930ff1954f801dd637d2a48fcb291b0253c7ed5129111"
+    },
+    {
+      "version": "2.37.0",
+      "date": "2026-10-14",
+      "url": "https://easypanel.io/changelog/2-37-0",
+      "ruleIds": [
+        "H15"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "db5838c22329af5fa30659d49e773afef11e19c8652cd25fba3e048069697005"
+    },
+    {
+      "version": "2.38.0",
+      "date": "2026-10-22",
+      "url": "https://easypanel.io/changelog/2-38-0",
+      "ruleIds": [
+        "H22",
+        "H45",
+        "H53",
+        "H57"
+      ],
+      "classification": "règles consolidées",
+      "httpStatus": 200,
+      "htmlSha256": "4c1961351170a4640d32939b305e0038f0d434e7e201c8480ed8fccdd972eb8d"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "H01",
+      "title": "Mesures explicites et historique de supervision",
+      "priority": "P1",
+      "observedFact": "Les publications ajoutent supervision réseau, historique, analyse disque puis métriques et journaux avancés; plusieurs défauts de mesure ou affichage sont corrigés.",
+      "requirement": "Identifier origine, unité, périmètre et instant de chaque mesure; borner la rétention et distinguer hôte, moteur Docker et service.",
+      "test": [
+        "Comparer CPU/mémoire/réseau à une charge connue puis interrompre Docker: afficher une mesure indisponible, jamais zéro inventé.",
+        "Redémarrer le panneau et vérifier limites de rétention et distinction disque des volumes, images et journaux."
+      ],
+      "featureIds": [
+        "R17",
+        "R18",
+        "S01"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        },
+        {
+          "version": "1.22.0",
+          "date": "2023-08-09",
+          "url": "https://easypanel.io/changelog/1-22-0-1"
+        },
+        {
+          "version": "1.29.0",
+          "date": "2023-11-28",
+          "url": "https://easypanel.io/changelog/1-29-0-1"
+        },
+        {
+          "version": "2.19.0",
+          "date": "2025-05-23",
+          "url": "https://easypanel.io/changelog/2-19-0-1"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.29.2",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-2"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "État réel et actions distinctes du déploiement",
+      "priority": "P0",
+      "observedFact": "L’indicateur des services arrêtés est ajouté; un correctif empêche de reconstruire une application lors de son arrêt.",
+      "requirement": "Dériver l’état du runtime canonique; start/stop/restart ne doivent pas lancer de clone ou build.",
+      "test": [
+        "Arrêter une app et interdire toute commande build/pull dans le fixture.",
+        "Laisser un ancien conteneur arrêté à côté du conteneur actif; celui-ci reste affiché running, tandis qu’un enfant Compose arrêté affecte sa stack."
+      ],
+      "featureIds": [
+        "F04",
+        "A15"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.33.4",
+          "date": "2024-02-21",
+          "url": "https://easypanel.io/changelog/1-33-4-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "Environnement de projet, valeurs vides et substitutions",
+      "priority": "P0",
+      "observedFact": "L’héritage de variables apparaît en 2022; plusieurs variables Nixpacks, valeurs vides et substitution du nom d’hôte sont ensuite corrigées.",
+      "requirement": "Définir une précédence stable, conserver les valeurs vides et littérales, séparer configuration enregistrée et effective. Toute interpolation doit être explicitement activée.",
+      "test": [
+        "Projet A=parent et service A=vide: le runtime reçoit vide après déploiement, jamais avant.",
+        "Vérifier espaces, dollar, égal, Unicode et plusieurs variables; le projet voisin ne reçoit aucune valeur."
+      ],
+      "featureIds": [
+        "F05",
+        "R01",
+        "A12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.6",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-6-1"
+        },
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.26.3",
+          "date": "2026-02-13",
+          "url": "https://easypanel.io/changelog/2-26-3"
+        }
+      ]
+    },
+    {
+      "id": "H04",
+      "title": "Catalogue et modèles reproductibles",
+      "priority": "P1",
+      "observedFact": "De nombreuses versions ajoutent ou actualisent des modèles; certaines corrigent images, noms de services, domaines, variables, liens ou initialisation.",
+      "requirement": "Maintenir un catalogue original versionné avec schéma validé, références d’images explicites, dépendances, secrets générés et tests de démarrage; regrouper les ajouts éditoriaux sans prétendre tester tous les logiciels tiers.",
+      "test": [
+        "Instancier chaque modèle déclaré vérifié dans un projet neuf, contrôler URL, ports, comptes et persistance.",
+        "Rejeter une dépendance manquante; conserver un diagnostic et un nettoyage limité aux ressources créées."
+      ],
+      "featureIds": [
+        "C06",
+        "C07"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.36.0",
+          "date": "2026-09-24",
+          "url": "https://easypanel.io/changelog/2-36-0"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.29.1",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-1"
+        },
+        {
+          "version": "2.28.0",
+          "date": "2026-03-24",
+          "url": "https://easypanel.io/changelog/2-28-0"
+        },
+        {
+          "version": "2.27.0",
+          "date": "2026-03-13",
+          "url": "https://easypanel.io/changelog/2-27-0"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.23.0",
+          "date": "2025-10-06",
+          "url": "https://easypanel.io/changelog/2-23-0-1"
+        },
+        {
+          "version": "2.22.0",
+          "date": "2025-08-29",
+          "url": "https://easypanel.io/changelog/2-22-0-1"
+        },
+        {
+          "version": "2.21.0",
+          "date": "2025-06-25",
+          "url": "https://easypanel.io/changelog/2-21-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.18.0",
+          "date": "2025-05-21",
+          "url": "https://easypanel.io/changelog/2-18-0-1"
+        },
+        {
+          "version": "2.15.0",
+          "date": "2025-04-14",
+          "url": "https://easypanel.io/changelog/2-15-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.11.0",
+          "date": "2025-02-17",
+          "url": "https://easypanel.io/changelog/2-11-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.7.0",
+          "date": "2025-01-23",
+          "url": "https://easypanel.io/changelog/2-7-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.5.0",
+          "date": "2025-01-06",
+          "url": "https://easypanel.io/changelog/2-5-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "1.55.0",
+          "date": "2024-10-11",
+          "url": "https://easypanel.io/changelog/1-55-0-1"
+        },
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.47.4",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-4-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "1.42.1",
+          "date": "2024-06-22",
+          "url": "https://easypanel.io/changelog/1-42-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.31.3",
+          "date": "2024-01-06",
+          "url": "https://easypanel.io/changelog/1-31-3-1"
+        },
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "1.23.1",
+          "date": "2023-09-04",
+          "url": "https://easypanel.io/changelog/1-23-1-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.15.5",
+          "date": "2023-03-28",
+          "url": "https://easypanel.io/changelog/1-15-5-1"
+        },
+        {
+          "version": "1.15.4",
+          "date": "2023-03-13",
+          "url": "https://easypanel.io/changelog/1-15-4-1"
+        },
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.14.0",
+          "date": "2023-02-22",
+          "url": "https://easypanel.io/changelog/1-14-0-1"
+        },
+        {
+          "version": "1.13.2",
+          "date": "2023-01-28",
+          "url": "https://easypanel.io/changelog/1-13-2-1"
+        },
+        {
+          "version": "1.13.1",
+          "date": "2023-01-08",
+          "url": "https://easypanel.io/changelog/1-13-1-1"
+        },
+        {
+          "version": "1.12.10",
+          "date": "2023-01-02",
+          "url": "https://easypanel.io/changelog/1-12-10-1"
+        },
+        {
+          "version": "1.12.9",
+          "date": "2022-12-10",
+          "url": "https://easypanel.io/changelog/1-12-9-1"
+        },
+        {
+          "version": "1.12.8",
+          "date": "2022-11-15",
+          "url": "https://easypanel.io/changelog/1-12-8-1"
+        },
+        {
+          "version": "1.12.6",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-6-1"
+        },
+        {
+          "version": "1.12.5",
+          "date": "2022-11-01",
+          "url": "https://easypanel.io/changelog/1-12-5-1"
+        },
+        {
+          "version": "1.12.3",
+          "date": "2022-10-15",
+          "url": "https://easypanel.io/changelog/1-12-3-1"
+        }
+      ]
+    },
+    {
+      "id": "H05",
+      "title": "Versions de builders et compatibilité des langages",
+      "priority": "P2",
+      "observedFact": "Nixpacks, Buildpacks et leurs outils évoluent régulièrement; les versions sélectionnables et Railpack arrivent plus tard, avec des correctifs réseau/langage.",
+      "requirement": "Épingler chaque builder et publier sa matrice de compatibilité; exposer overrides et erreurs. Une option non implémentée doit rester indisponible.",
+      "test": [
+        "Pour chaque builder supporté, construire une fixture de langage et enregistrer sa version.",
+        "Changer de version ou simuler DNS indisponible: produire un échec utile, sans remplacer l’application active."
+      ],
+      "featureIds": [
+        "A09",
+        "A10",
+        "A11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.3",
+          "date": "2022-10-15",
+          "url": "https://easypanel.io/changelog/1-12-3-1"
+        },
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "1.15.1",
+          "date": "2023-03-07",
+          "url": "https://easypanel.io/changelog/1-15-1-1"
+        },
+        {
+          "version": "1.15.3",
+          "date": "2023-03-09",
+          "url": "https://easypanel.io/changelog/1-15-3-1"
+        },
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.31.3",
+          "date": "2024-01-06",
+          "url": "https://easypanel.io/changelog/1-31-3-1"
+        },
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.44.1",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-1-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        },
+        {
+          "version": "2.5.0",
+          "date": "2025-01-06",
+          "url": "https://easypanel.io/changelog/2-5-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.29.2",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-2"
+        },
+        {
+          "version": "2.29.4",
+          "date": "2026-04-18",
+          "url": "https://easypanel.io/changelog/2-29-4"
+        }
+      ]
+    },
+    {
+      "id": "H06",
+      "title": "Images de bases épinglées et changements de version",
+      "priority": "P0",
+      "observedFact": "Un correctif remplace latest par une version statique pour les bases; PostgreSQL 18 devient ensuite une version prise en charge et le défaut.",
+      "requirement": "Séparer version proposée, version configurée et digest exécuté; ne pas transformer une mise à jour du catalogue en migration automatique des données.",
+      "test": [
+        "Créer une base sur une version puis changer le défaut du catalogue: la base existante reste inchangée.",
+        "Refuser la restauration entre versions incompatibles avant de modifier le runtime."
+      ],
+      "featureIds": [
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D05",
+        "A01"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        }
+      ]
+    },
+    {
+      "id": "H07",
+      "title": "Autorisation par projet, y compris collections",
+      "priority": "P0",
+      "observedFact": "Le multi-utilisateur commence en 2023; les publications de 2025–2026 corrigent droits non-admin, visibilité des domaines et contrôles de projet. Le détail des vulnérabilités n’est pas publié.",
+      "requirement": "Appliquer l’autorisation côté serveur aux listes et actions, avec refus par défaut et filtrage des métadonnées, journaux, fichiers et domaines.",
+      "test": [
+        "Un membre du projet A tente IDs, listes globales et routes encodées du projet B: aucun contenu n’est révélé.",
+        "Révoquer le rôle pendant une session et vérifier l’effet immédiat sur toutes les interfaces."
+      ],
+      "featureIds": [
+        "S02",
+        "F10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.14.0",
+          "date": "2023-02-22",
+          "url": "https://easypanel.io/changelog/1-14-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.20.1",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-1-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H08",
+      "title": "Authentification forte, déconnexion et récupération",
+      "priority": "P0",
+      "observedFact": "La double authentification est annoncée en bêta; des correctifs touchent ensuite sa reprise après logout et plusieurs réinitialisations de mot de passe.",
+      "requirement": "Spécifier séparément connexion, second facteur, récupération, expiration et révocation. Ne pas déduire d’un historique de correctifs une 2FA déjà présente dans Harborlight.",
+      "test": [
+        "Avec 2FA activée, logout puis nouveau login impose à nouveau le second facteur.",
+        "Un lien de récupération expiré ou réutilisé est refusé et une modification de mot de passe invalide les sessions prévues par la politique."
+      ],
+      "featureIds": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.36.1",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.30.1",
+          "date": "2026-05-15",
+          "url": "https://easypanel.io/changelog/2-30-1"
+        }
+      ]
+    },
+    {
+      "id": "H09",
+      "title": "Git privé et clés SSH",
+      "priority": "P1",
+      "observedFact": "Le support Git par clé SSH est suivi d’un patch; la génération des clés Compose et l’aide aux tokens GitHub évoluent aussi.",
+      "requirement": "Garder les secrets liés au dépôt exact; vérifier identité serveur et révocation. Distinguer explicitement HTTPS-token supporté, SSH et GitHub OAuth non supportés.",
+      "test": [
+        "Un secret du dépôt A ne doit jamais partir au dépôt B ni après redirection.",
+        "Rotation et révocation font échouer l’ancien accès; une option SSH indisponible ne peut produire un faux succès."
+      ],
+      "featureIds": [
+        "A04"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.15.1",
+          "date": "2023-03-07",
+          "url": "https://easypanel.io/changelog/1-15-1-1"
+        },
+        {
+          "version": "1.15.2",
+          "date": "2023-03-08",
+          "url": "https://easypanel.io/changelog/1-15-2-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H10",
+      "title": "Schémas de modèles et identité du projet cible",
+      "priority": "P1",
+      "observedFact": "Les schémas gagnent des variables de projet/service/domaine, puis sont simplifiés et acceptent des sources Git.",
+      "requirement": "Valider un schéma déclaratif original; résoudre les références dans le projet cible sans accepter un projectId ou chemin arbitraire du document importé.",
+      "test": [
+        "Importer le même modèle dans deux projets et vérifier noms, secrets et URLs indépendants.",
+        "Un schéma visant un autre projet ou contenant un cycle de dépendance est refusé sans création partielle silencieuse."
+      ],
+      "featureIds": [
+        "C06",
+        "C07",
+        "F03"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.15.4",
+          "date": "2023-03-13",
+          "url": "https://easypanel.io/changelog/1-15-4-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H11",
+      "title": "Frontière cluster, données locales et modes réseau",
+      "priority": "P2",
+      "observedFact": "Le multi-serveur bêta est annoncé en 2023, puis le cluster est déprécié en 2024 pour instabilité; une option Swarm DNSRR apparaît en 2026. Ces annonces ne prouvent pas une disponibilité continue du cluster.",
+      "requirement": "Documenter le moteur réellement supporté et la localisation des données. Ne promettre ni HA ni répartition multi-nœuds sans reprise vérifiée.",
+      "test": [
+        "Retirer un worker dans une fixture future: seul un service stateless admissible peut être replanifié.",
+        "Vérifier DNS et routage pour chaque endpoint mode; le mode standalone actuel ne lance jamais swarm init/leave."
+      ],
+      "featureIds": [
+        "S09",
+        "R13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.16.0",
+          "date": "2023-04-04",
+          "url": "https://easypanel.io/changelog/1-16-0-1"
+        },
+        {
+          "version": "1.47.0",
+          "date": "2024-08-01",
+          "url": "https://easypanel.io/changelog/1-47-0-1"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": null,
+          "date": "2023-04-04",
+          "url": "https://easypanel.io/blog/multi-server-support-beta-release",
+          "title": "Multi-Server Support (Beta)"
+        }
+      ]
+    },
+    {
+      "id": "H12",
+      "title": "Unicité des domaines et validation canonique",
+      "priority": "P0",
+      "observedFact": "L’utilisation d’un domaine dans plusieurs services est empêchée; la validation des doublons est ensuite corrigée.",
+      "requirement": "Normaliser hostname/IDN/casse et évaluer conflits de routes exactes, wildcard et chemins sans exposer l’identité des autres projets.",
+      "test": [
+        "Deux requêtes concurrentes réclament le même host/path: une seule réussit.",
+        "Tester casse, point final et wildcard; un refus inter-projet ne révèle pas son propriétaire."
+      ],
+      "featureIds": [
+        "R06",
+        "R09",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H13",
+      "title": "Cible du domaine, chemin et protocole amont",
+      "priority": "P1",
+      "observedFact": "Les domaines peuvent choisir port et chemin; les ports internes sont affichés, le protocole amont et les URL externes sont ajoutés plus tard.",
+      "requirement": "Représenter explicitement service/conteneur, port, chemin et HTTP/HTTPS amont; valider URL externe et certificat sans désactiver TLS.",
+      "test": [
+        "Router deux chemins vers deux ports et vérifier la frontière /api versus /apix.",
+        "Un mauvais certificat amont ou port absent donne une erreur observable; aucune base n’est exposée implicitement."
+      ],
+      "featureIds": [
+        "R06",
+        "R09",
+        "C05"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H14",
+      "title": "Middleware, redirections et maintenance",
+      "priority": "P1",
+      "observedFact": "Les publications ajoutent configuration Traefik, redirections, maintenance et gestion de middlewares; des défauts de redirection et basic auth sont corrigés.",
+      "requirement": "Composer les règles dans un ordre défini, tester activation/désactivation, borner les redirections et protéger les configurations administratives.",
+      "test": [
+        "Tester basic auth juste/fausse, changement de secret, maintenance puis retour normal.",
+        "Une redirection de chemin fonctionne sans domaine source auxiliaire et ne crée pas de boucle."
+      ],
+      "featureIds": [
+        "R10",
+        "R11",
+        "R12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.13.1",
+          "date": "2023-01-08",
+          "url": "https://easypanel.io/changelog/1-13-1-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.28.0",
+          "date": "2023-11-27",
+          "url": "https://easypanel.io/changelog/1-28-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H15",
+      "title": "Proxy de confiance et exposition volontaire",
+      "priority": "P0",
+      "observedFact": "Un problème avec le proxy Cloudflare est corrigé; Traefik cesse d’exposer les conteneurs par défaut; une liste de proxies de confiance est ajoutée.",
+      "requirement": "Publier uniquement des routes explicites et n’accepter les en-têtes forwarded que depuis des réseaux de confiance configurés.",
+      "test": [
+        "Un conteneur sans domaine reste inaccessible via le proxy.",
+        "Un client direct falsifie X-Forwarded-For/Proto: cela ne contourne ni origine, limites ni journal d’identité."
+      ],
+      "featureIds": [
+        "R06",
+        "R11",
+        "S10",
+        "F09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.37.1",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-1-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.37.0",
+          "date": "2026-10-14",
+          "url": "https://easypanel.io/changelog/2-37-0"
+        }
+      ]
+    },
+    {
+      "id": "H16",
+      "title": "Certificats et priorité des routes wildcard",
+      "priority": "P0",
+      "observedFact": "La gestion de certificats et les wildcards apparaissent; provisioning SSL, documentation de certificat personnalisé et priorité des wildcards sont corrigés.",
+      "requirement": "Séparer émission, renouvellement, import et sélection de route; une route exacte doit gagner sur un wildcard. Le test HTTP ne vaut pas preuve ACME.",
+      "test": [
+        "Sur un domaine de test réel, émettre puis renouveler en environnement ACME staging et vérifier la chaîne.",
+        "Tester host exact et wildcard concurrents, certificat expiré et indisponibilité de l’autorité sans perdre l’accès de secours."
+      ],
+      "featureIds": [
+        "R07",
+        "R09",
+        "S10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.29.0",
+          "date": "2023-11-28",
+          "url": "https://easypanel.io/changelog/1-29-0-1"
+        },
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.11.1",
+          "date": "2025-02-18",
+          "url": "https://easypanel.io/changelog/2-11-1-1"
+        }
+      ]
+    },
+    {
+      "id": "H17",
+      "title": "Domaine du panneau et URL générée",
+      "priority": "P1",
+      "observedFact": "Rafraîchissement IP, URL générée et domaine personnalisé évoluent; plusieurs patches corrigent IP, accès direct et domaine du panneau.",
+      "requirement": "Traiter tout changement d’adresse comme une transition explicite avec URL canonique, contrôle d’origine et accès de récupération.",
+      "test": [
+        "Changer le domaine généré: seules les nouvelles routes prévues changent, les personnalisées restent intactes.",
+        "Un domaine panneau invalide ne supprime pas le chemin de récupération local."
+      ],
+      "featureIds": [
+        "R08",
+        "S10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.37.4",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-4-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.26.1",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-1"
+        },
+        {
+          "version": "2.26.3",
+          "date": "2026-02-13",
+          "url": "https://easypanel.io/changelog/2-26-3"
+        }
+      ]
+    },
+    {
+      "id": "H18",
+      "title": "Ports TCP/UDP, collisions et retrait",
+      "priority": "P0",
+      "observedFact": "Le support UDP, la vérification des collisions et le retrait de ports sont ajoutés ou corrigés; une action retire ensuite tous les ports.",
+      "requirement": "Valider protocole, port hôte/cible et conflit avant remplacement; le retrait doit fermer réellement l’écoute externe.",
+      "test": [
+        "Publier un port, vérifier une connexion authentifiée, le retirer et constater le refus TCP.",
+        "Tester conflit occupé et paire TCP/UDP; l’ancien runtime reste fonctionnel en cas d’échec."
+      ],
+      "featureIds": [
+        "R05",
+        "D08"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        }
+      ]
+    },
+    {
+      "id": "H19",
+      "title": "Réseaux de projet et résolution interne",
+      "priority": "P1",
+      "observedFact": "Les alias internes et réseaux par projet apparaissent; des correctifs touchent Docker, Nixpacks et le réseau Box.",
+      "requirement": "Créer des réseaux nommés et possédés par le projet; distinguer réseau du build, runtime et proxy, et ne pas rejoindre un réseau tiers.",
+      "test": [
+        "Deux services du même projet résolvent leurs alias; un autre projet ne reçoit pas automatiquement l’accès.",
+        "Échec de création réseau ou DNS build: pas de remplacement destructeur du runtime existant."
+      ],
+      "featureIds": [
+        "F03",
+        "C07",
+        "S09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.33.5",
+          "date": "2024-02-28",
+          "url": "https://easypanel.io/changelog/1-33-5-1"
+        },
+        {
+          "version": "1.38.0",
+          "date": "2024-04-12",
+          "url": "https://easypanel.io/changelog/1-38-0-1"
+        },
+        {
+          "version": "1.38.1",
+          "date": "2024-04-13",
+          "url": "https://easypanel.io/changelog/1-38-1-1"
+        },
+        {
+          "version": "1.44.1",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-1-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        }
+      ]
+    },
+    {
+      "id": "H20",
+      "title": "Commande, identité Unix, PID1 et processus enfants",
+      "priority": "P1",
+      "observedFact": "Les commandes personnalisées de bases et groupes Unix des services sont ajoutés; la récupération des enfants et les applications exigeant PID1 sont ensuite corrigées.",
+      "requirement": "Définir init, signal d’arrêt et délai de terminaison sans imposer un wrapper incompatible; borner les processus orphelins. Définir commande et UID/GID/groupes appliqués, et vérifier leur compatibilité avec les volumes gérés.",
+      "test": [
+        "Une fixture qui intercepte SIGTERM écrit son marqueur et termine proprement.",
+        "Une fixture qui exige PID1 fonctionne avec le mode approprié; les enfants ne survivent pas à la fin du conteneur.",
+        "Exécuter une commande avec UID/GID/groupes configurés; vérifier identité et écriture uniquement dans les volumes autorisés."
+      ],
+      "featureIds": [
+        "R14",
+        "A15"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.37.2",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-2-1"
+        },
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H21",
+      "title": "Image disponible avant remplacement",
+      "priority": "P0",
+      "observedFact": "Le déploiement attend désormais la fin du pull; des erreurs Docker pull et image introuvable sont corrigées.",
+      "requirement": "Résoudre l’image en ID immuable avant création du candidat et conserver l’ancien runtime en cas d’échec du pull ou de création.",
+      "test": [
+        "Retirer l’accès registry ou déplacer le tag pendant la préparation: ne pas arrêter l’ancienne app.",
+        "Rollback sans image locale échoue avant toute mutation et ne déclenche aucun pull implicite."
+      ],
+      "featureIds": [
+        "A01",
+        "A17",
+        "A18",
+        "A02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H22",
+      "title": "Reconstruction forcée vérifiable",
+      "priority": "P1",
+      "observedFact": "L’invalidation du cache est améliorée; le webhook puis Box/WordPress reçoivent une reconstruction forcée.",
+      "requirement": "Définir si rebuild invalide cache, actualise bases et recrée le runtime; journaliser ce choix et protéger les secrets de build.",
+      "test": [
+        "Une instruction RUN marquée est réexécutée en mode forcé.",
+        "Un échec du nouveau build laisse l’ancienne app disponible et ne prétend pas avoir appliqué les mises à jour de sécurité."
+      ],
+      "featureIds": [
+        "A14",
+        "C08",
+        "C11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H23",
+      "title": "Branche Git, force push et répertoire propre",
+      "priority": "P0",
+      "observedFact": "Des correctifs concernent la branche d’auto-déploiement, le changement de branche, les modifications locales et les force push.",
+      "requirement": "Utiliser un workspace isolé et une révision explicite; définir le traitement d’un SHA réécrit ou devenu inaccessible.",
+      "test": [
+        "Déployer A, changer de branche puis force-push B: le commit exécuté est exactement celui attendu.",
+        "Un événement d’une autre branche ou un workspace sale ne modifie pas la source sélectionnée."
+      ],
+      "featureIds": [
+        "A03",
+        "A05"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H24",
+      "title": "Références Git et traçabilité du commit",
+      "priority": "P0",
+      "observedFact": "Le commit Git devient disponible au runtime puis au build; les refs autres que branches sont rétablies.",
+      "requirement": "Enregistrer commit demandé, commit cloné, révision OCI et imageID; annoncer précisément branches/tags/SHA supportés.",
+      "test": [
+        "Déplacer un tag après build puis inspecter l’image active: son SHA reste le précédent exact.",
+        "Le journal et le label OCI concordent après redémarrage du serveur."
+      ],
+      "featureIds": [
+        "A03",
+        "A13",
+        "A17"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H25",
+      "title": "Webhooks de déploiement et répétitions",
+      "priority": "P0",
+      "observedFact": "Plusieurs versions corrigent les webhooks app/Compose et l’auto-déploiement GitHub; une publication précise le comportement force deploy.",
+      "requirement": "Authentifier le corps brut, filtrer dépôt et branche, borner/dédupliquer les livraisons et utiliser la même exclusion mutuelle que l’UI.",
+      "test": [
+        "Signature invalide, dépôt incorrect, suppression de branche et replay ne créent aucun job.",
+        "Un refus busy peut être retenté; rotation, révocation et changement de source invalident l’ancienne autorité."
+      ],
+      "featureIds": [
+        "A05",
+        "A16",
+        "A18"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.33.3",
+          "date": "2024-02-17",
+          "url": "https://easypanel.io/changelog/1-33-3-1"
+        },
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "1.42.1",
+          "date": "2024-06-22",
+          "url": "https://easypanel.io/changelog/1-42-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H26",
+      "title": "Erreurs Git utiles et dépôts volumineux",
+      "priority": "P1",
+      "observedFact": "Les erreurs Git/GitHub deviennent plus explicites; la sélection dépôt/branche et le téléchargement des gros dépôts sont améliorés.",
+      "requirement": "Différencier refus d’accès, ref absente, réseau et taille, sans divulguer token ou dépôt hors périmètre; paginer les sélecteurs.",
+      "test": [
+        "Simuler chaque catégorie d’échec et vérifier message/action de reprise.",
+        "Cloner une fixture volumineuse avec budgets mémoire/temps, annulation et cleanup; aucune URL contenant secret ne finit dans les logs."
+      ],
+      "featureIds": [
+        "A03",
+        "A04",
+        "A05"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H27",
+      "title": "Fichier environnement injecté au build",
+      "priority": "P1",
+      "observedFact": "Un fichier .env peut être créé avant le build, puis son nom et chemin deviennent configurables.",
+      "requirement": "Séparer variables de build/runtime et secrets; restreindre le chemin au workspace et décider explicitement si le fichier entre dans une couche image.",
+      "test": [
+        "Tester sous-répertoire autorisé et noms avec espaces; refuser chemins absolus, symlink et parent.",
+        "Inspecter historique/couches d’une fixture à secret: aucun secret déclaré éphémère ne doit persister."
+      ],
+      "featureIds": [
+        "R01",
+        "A08",
+        "A10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.27.0",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        }
+      ]
+    },
+    {
+      "id": "H28",
+      "title": "Archives source, plateformes et bornes",
+      "priority": "P0",
+      "observedFact": "Les uploads ZIP puis de multiples formats sont ajoutés; Windows, entrées de répertoire ZIP et validation des sources font l’objet de correctifs.",
+      "requirement": "Annoncer les formats acceptés; valider chemins, liens, fichiers spéciaux, tailles compressées/décompressées et quotas avant construction.",
+      "test": [
+        "Accepter une archive avec répertoires terminés par slash et fichiers Unicode.",
+        "Refuser ../, chemin Windows absolu, lien sortant, archive-bombe et fichier trop grand avant toute extraction hors workspace."
+      ],
+      "featureIds": [
+        "A06",
+        "F10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H29",
+      "title": "Terminal conteneur : shell, dimensions et fermeture",
+      "priority": "P0",
+      "observedFact": "Plusieurs correctifs portent sur console navigateur, absence de bash, largeur des lignes et redimensionnement.",
+      "requirement": "Choisir un shell disponible, transmettre les dimensions PTY, vérifier le conteneur exact et fermer la session à la déconnexion/révocation.",
+      "test": [
+        "Sur Alpine sans bash, ouvrir sh, envoyer Unicode/Ctrl-C et vérifier stty après resize.",
+        "Déconnecter ou retirer le rôle: aucun exec interactif orphelin ne reste actif."
+      ],
+      "featureIds": [
+        "R16",
+        "F10",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.33.2",
+          "date": "2024-02-17",
+          "url": "https://easypanel.io/changelog/1-33-2-1"
+        },
+        {
+          "version": "1.33.4",
+          "date": "2024-02-21",
+          "url": "https://easypanel.io/changelog/1-33-4-1"
+        },
+        {
+          "version": "1.33.5",
+          "date": "2024-02-28",
+          "url": "https://easypanel.io/changelog/1-33-5-1"
+        },
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H30",
+      "title": "Console hôte et redémarrage séparés",
+      "priority": "P2",
+      "observedFact": "Une console et un bouton reboot hôte sont ajoutés; le bouton de fermeture est corrigé ensuite.",
+      "requirement": "Séparer les droits d’administration hôte de ceux du terminal de service; rendre indisponible l’action hôte tant que son périmètre n’est pas implémenté.",
+      "test": [
+        "Un opérateur projet ne peut ouvrir la console hôte.",
+        "Une fermeture coupe le transport; reboot exige une confirmation et un journal indépendant de la disponibilité du panneau."
+      ],
+      "featureIds": [
+        "R16",
+        "S01",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.50.0",
+          "date": "2024-09-02",
+          "url": "https://easypanel.io/changelog/1-50-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H31",
+      "title": "Annulation, concurrence et interruption",
+      "priority": "P0",
+      "observedFact": "L’annulation des builds est ajoutée; le dernier déploiement peut annuler les précédents, les actions sont arrêtées au redémarrage, puis une course d’annulation est corrigée.",
+      "requirement": "Définir une machine d’états durable; annuler un job ne doit ni tuer un autre job ni annoncer succès avant finalisation.",
+      "test": [
+        "Déclencher finish et cancel simultanément mille fois dans un test contrôlé: un seul état terminal cohérent.",
+        "SIGKILL aux frontières du journal puis redémarrer: l’action reste interrompue ou réconciliée, jamais faussement réussie."
+      ],
+      "featureIds": [
+        "A18",
+        "C13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.43.0",
+          "date": "2024-06-25",
+          "url": "https://easypanel.io/changelog/1-43-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H32",
+      "title": "Journal global, acteur, fuseau et identité stable",
+      "priority": "P0",
+      "observedFact": "Les actions gagnent vue globale, acteur et origine; des bugs affectent installation neuve, fuseau horaire et historique après renommage.",
+      "requirement": "Persister UUID, acteur, source UI/API/système, timestamps UTC et état; l’affichage local ne modifie pas les données. Journaliser les changements sans valeurs secrètes.",
+      "test": [
+        "Créer sur une installation vierge, changer de fuseau puis renommer le service: ordre, identité et liens historiques restent corrects.",
+        "Job planifié et requête API conservent des origines distinctes après restart."
+      ],
+      "featureIds": [
+        "A13",
+        "F11",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.3.3",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-3-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.11.0",
+          "date": "2025-02-17",
+          "url": "https://easypanel.io/changelog/2-11-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        }
+      ]
+    },
+    {
+      "id": "H33",
+      "title": "Journaux : ordre, répétitions, fluidité et taille",
+      "priority": "P1",
+      "observedFact": "Les publications corrigent défilement, ordre, largeur, répétition et modales des logs; elles ajoutent rotation et logs par service Compose.",
+      "requirement": "Définir curseur/reprise, limites de rétention et séparation stderr/stdout; éviter doublons de transport sans supprimer de vraies lignes identiques.",
+      "test": [
+        "Une fixture émet deux lignes identiques légitimes et subit une reconnexion: deux lignes, pas une ni quatre.",
+        "Débit élevé, pause, filtre, mobile et rotation restent utilisables sans mémoire non bornée."
+      ],
+      "featureIds": [
+        "R15",
+        "R18",
+        "A13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.47.0",
+          "date": "2024-08-01",
+          "url": "https://easypanel.io/changelog/1-47-0-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.47.3",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-3-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.2.3",
+          "date": "2024-12-14",
+          "url": "https://easypanel.io/changelog/2-2-3-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H34",
+      "title": "Révélation et propagation contrôlée des secrets",
+      "priority": "P0",
+      "observedFact": "Un défaut de révélation de mot de passe est corrigé; des durcissements touchent plus tard les journaux et actions WordPress. Aucun mécanisme détaillé n’est publié.",
+      "requirement": "Révéler un secret seulement sur action autorisée, ne jamais le placer dans inventaires ou traces; redacter aussi les anciens secrets appliqués.",
+      "test": [
+        "Tester viewer/opérateur/admin sur réponses, logs et erreurs.",
+        "Émettre un secret en fragments et changer ensuite le secret: les fragments reconstitués et les anciennes valeurs restent masqués."
+      ],
+      "featureIds": [
+        "F10",
+        "D06",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H35",
+      "title": "Rotation de mot de passe native",
+      "priority": "P0",
+      "observedFact": "Le changement de mot de passe de base est introduit puis corrigé dans la version suivante.",
+      "requirement": "Changer le compte dans le moteur avant de valider sa configuration; prévoir compensation si la persistance échoue.",
+      "test": [
+        "Sur une base déjà remplie, l’ancien secret échoue et le nouveau se connecte depuis un client réseau indépendant.",
+        "Échec en cours de rotation: un état récupérable décrit la réalité du moteur, pas seulement son environnement."
+      ],
+      "featureIds": [
+        "D07",
+        "D06"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H36",
+      "title": "Noms, utilisateurs et configuration native des bases",
+      "priority": "P1",
+      "observedFact": "Des noms/utilisateurs personnalisés et configurations MySQL/MariaDB sont ajoutés; noms affichés et clients PostgreSQL personnalisés sont corrigés.",
+      "requirement": "Utiliser le profil réellement appliqué, encoder les URI, valider identifiants sans interpolation shell/SQL et refuser les topologies non prises en charge.",
+      "test": [
+        "Noms autorisés avec ponctuation et secret réservé URI: le client utilise les bons paramètres.",
+        "Une chaîne de connexion injectée comme nom ou un data_directory hors volume géré est refusé avant sauvegarde/restauration."
+      ],
+      "featureIds": [
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D06",
+        "D09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.2.1",
+          "date": "2024-12-09",
+          "url": "https://easypanel.io/changelog/2-2-1-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H37",
+      "title": "Périmètre exact des dumps et restauration",
+      "priority": "P0",
+      "observedFact": "Les sauvegardes bêta précèdent la restauration; 1.31.0 limite le dump à la base par défaut, puis la sélection et les sauvegardes multiples évoluent.",
+      "requirement": "Versionner format et périmètre; distinguer dump mono-base, instance complète, utilisateurs et rôles. Harborlight choisit explicitement ses propres formats.",
+      "test": [
+        "Créer deux bases et comptes distincts, restaurer et vérifier exactement le périmètre annoncé.",
+        "Pour un dump d’instance, vérifier adoption des comptes source, refus anciens comptes cible et absence de perte des volumes précédents."
+      ],
+      "featureIds": [
+        "D10",
+        "D13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H38",
+      "title": "Planification et rétention des sauvegardes",
+      "priority": "P1",
+      "observedFact": "Les sauvegardes programmées sont annoncées en 2023; la purge est alors future. Des réglages de rétention arrivent en 2026.",
+      "requirement": "Rendre fuseau, prochain passage, reprise après redémarrage et rétention explicites; ne supprimer que les fichiers attribués à ce service/job.",
+      "test": [
+        "Avec horloge contrôlée, redémarrer après trois échéances: pas de tempête de rattrapage.",
+        "Busy/échec ne supprime pas la dernière copie valide; tester fichiers manquants, symlinks et changement de configuration."
+      ],
+      "featureIds": [
+        "D11",
+        "D12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H39",
+      "title": "Grandes sauvegardes et MySQL GTID",
+      "priority": "P0",
+      "observedFact": "Deux correctifs distincts concernent grandes bases et sauvegardes MySQL avec GTID actif.",
+      "requirement": "Streamer les dumps vers un fichier durable et borner la mémoire; définir les options GTID pour le périmètre importé.",
+      "test": [
+        "Sauvegarder/restaurer une fixture dépassant le budget mémoire du processus puis vérifier des lignes en début/fin.",
+        "Sur MySQL GTID activé, valider import, utilisateurs et absence de mutation de la source; le test MySQL standard seul ne couvre pas GTID."
+      ],
+      "featureIds": [
+        "D02",
+        "D10",
+        "D13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        }
+      ]
+    },
+    {
+      "id": "H40",
+      "title": "Chemins et noms de sauvegarde",
+      "priority": "P0",
+      "observedFact": "Validation des chemins, acceptation des points, nom de base et nommage des copies manuelles évoluent par corrections successives.",
+      "requirement": "Conserver les noms légitimes tout en refusant traversée et liens; séparer nom d’affichage, nom natif et identifiant fichier interne.",
+      "test": [
+        "Accepter backup.2026-11-08.sql dans le répertoire prévu; refuser ../, symlink et caractères de contrôle.",
+        "Deux copies de même titre conservent des identifiants distincts et un téléchargement autorisé."
+      ],
+      "featureIds": [
+        "D10",
+        "D12",
+        "D15"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        }
+      ]
+    },
+    {
+      "id": "H41",
+      "title": "Stockage distant, OAuth et sauvegardes de volumes",
+      "priority": "P1",
+      "observedFact": "Des fournisseurs locaux/FTP/SFTP/Dropbox/Drive puis sauvegardes de volumes sont ajoutés; OAuth Drive et S3 volumes sont corrigés; classes S3 et R2 suivent.",
+      "requirement": "Modéliser upload, vérification, téléchargement, refresh et révocation séparément; une copie locale réussie ne signifie pas upload réussi.",
+      "test": [
+        "Avec bucket S3 test et fournisseur OAuth simulant expiration, vérifier upload/download/checksum et refresh unique.",
+        "Une destination invalide reste supprimable; rétention ne touche aucun objet extérieur au préfixe attribué."
+      ],
+      "featureIds": [
+        "D14",
+        "D16",
+        "D17",
+        "D18"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.7.0",
+          "date": "2025-01-23",
+          "url": "https://easypanel.io/changelog/2-7-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.12.1",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-1-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H42",
+      "title": "Persistance et permissions des volumes",
+      "priority": "P0",
+      "observedFact": "La persistance de fichiers Compose dans le dépôt est améliorée; les sauvegardes de volumes et leurs permissions font l’objet d’évolutions.",
+      "requirement": "Séparer source reconstruite et données persistantes; conserver UID/GID/modes et gérer explicitement liens et chemins non supportés.",
+      "test": [
+        "Réécrire le dépôt puis déployer: la donnée utilisateur reste présente.",
+        "Restaurer un fichier Unicode UID123/GID234/mode0640 et vérifier contenu et droits; un lien non supporté provoque un refus explicite."
+      ],
+      "featureIds": [
+        "R02",
+        "R03",
+        "D14",
+        "C02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H43",
+      "title": "Clients de bases : compte personnalisé et nettoyage",
+      "priority": "P1",
+      "observedFact": "Des clients web natifs puis DbGate sont ajoutés; pgAdmin oublié lors d’une suppression et clients PostgreSQL avec utilisateurs personnalisés sont corrigés.",
+      "requirement": "Lier le client web au service exact, à ses identifiants appliqués et à une autorisation; fermer ses routes lors de la désactivation/suppression.",
+      "test": [
+        "Ouvrir le client sur un utilisateur personnalisé puis révoquer l’accès.",
+        "Supprimer la base selon la politique annoncée: aucun client web orphelin ni URL encore accessible ne subsiste."
+      ],
+      "featureIds": [
+        "D09",
+        "F08",
+        "S02"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H44",
+      "title": "Compose : source, build et diagnostic par enfant",
+      "priority": "P1",
+      "observedFact": "Le service Compose natif apporte source inline/Git, domaines, logs et console; des logs individuels et build au déploiement suivent.",
+      "requirement": "Annoncer le sous-ensemble YAML supporté, préserver les chemins relatifs et adresser chaque enfant sans confondre la stack avec ses conteneurs.",
+      "test": [
+        "Une stack à deux enfants conserve ses volumes après stop/start/redeploy.",
+        "Rejeter clairement un bind hôte ou option non supportée; une erreur d’un enfant est identifiée dans son propre journal."
+      ],
+      "featureIds": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H45",
+      "title": "WordPress : initialisation et opérations natives",
+      "priority": "P2",
+      "observedFact": "WordPress natif arrive avec des correctifs d’installation de plugin, base existante, image et création; ses actions sont ensuite durcies.",
+      "requirement": "Implémenter WordPress comme workflow vérifié avec base privée et commandes natives autorisées, sans déclarer ce support à partir d’un simple modèle Docker.",
+      "test": [
+        "Installer avec base neuve puis existante; vérifier navigateur, médias, plugin et mise à jour.",
+        "Un membre hors projet ne peut lancer une action; l’échec d’upgrade garde un chemin de récupération."
+      ],
+      "featureIds": [
+        "C08",
+        "C09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H46",
+      "title": "Import/export WordPress et charge importante",
+      "priority": "P2",
+      "observedFact": "Les snapshots de services sont ajoutés; limites et performances d’import/export WordPress évoluent, puis les noms importés sont validés.",
+      "requirement": "Distinguer contenu, base et configuration; prévisualiser cible et migrations d’URL, borner l’archive et vérifier le résultat avant adoption.",
+      "test": [
+        "Importer une fixture avec médias volumineux et URL d’origine; vérifier liens et données après bascule.",
+        "Nom cible invalide ou archive corrompue: pas de remplacement partiel ni fuite de secrets."
+      ],
+      "featureIds": [
+        "C10",
+        "D13",
+        "F08"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H47",
+      "title": "Box : modules, IDE et processus",
+      "priority": "P2",
+      "observedFact": "Box bêta introduit IDE et modules; extensions PHP, identité Git, réseau et versions Node évoluent ensuite.",
+      "requirement": "Décrire une matrice de modules réellement supportés, identité du processus, accès IDE et stockage persistant; garder le reste explicitement indisponible.",
+      "test": [
+        "Déployer une fixture par module déclaré et vérifier processus, redémarrage et workspace.",
+        "IDE désactivé ou token révoqué: accès refusé; une extension incompatible échoue avant bascule."
+      ],
+      "featureIds": [
+        "C11",
+        "C12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        },
+        {
+          "version": "1.47.3",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-3-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H48",
+      "title": "Scripts nommés, cron et déclencheurs",
+      "priority": "P1",
+      "observedFact": "Box inclut scripts/cron; les routes de scripts évoluent, puis les applications obtiennent un CRUD de scripts nommés.",
+      "requirement": "Exécuter uniquement dans le service autorisé avec limites, journal, annulation et politique de chevauchement; définir fuseau et sémantique HTTP.",
+      "test": [
+        "Deux échéances chevauchées respectent la politique documentée sans lancer deux jobs silencieux.",
+        "Exécution API, manuelle et planifiée conservent acteur/origine et code de sortie; arrêt coupe le bon processus."
+      ],
+      "featureIds": [
+        "C13",
+        "R16",
+        "A18"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.27.0",
+          "date": "2026-03-13",
+          "url": "https://easypanel.io/changelog/2-27-0"
+        }
+      ]
+    },
+    {
+      "id": "H49",
+      "title": "Budgets de build et builders distants",
+      "priority": "P2",
+      "observedFact": "La priorité CPU des builds est expérimentée, puis des builders avec limites et un guide distant sont introduits.",
+      "requirement": "Allouer CPU/mémoire et accès réseau du build séparément du runtime; ne pas exposer le socket ou les services du projet sans choix explicite.",
+      "test": [
+        "Un build dépassant son budget ne rend pas le panneau indisponible.",
+        "Builder distant perdu: le job échoue ou reprend selon politique, sans déployer une image non vérifiée."
+      ],
+      "featureIds": [
+        "S08",
+        "R04",
+        "A08"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H50",
+      "title": "Nettoyage Docker ciblé et prévisualisé",
+      "priority": "P0",
+      "observedFact": "Le nettoyage images/builders et sa planification évoluent; plusieurs correctifs touchent valeurs par défaut et images devenues introuvables.",
+      "requirement": "Prévisualiser les objets possédés et les références conservées; aucune purge globale implicite, aucun volume utilisateur ou image de rollback retenue supprimé.",
+      "test": [
+        "Daemon partagé avec ressources étrangères, images partagées et releases: seules les références sélectionnées disparaissent.",
+        "Annulation ou changement d’inventaire entre preview/exécution provoque réévaluation, pas élargissement du périmètre."
+      ],
+      "featureIds": [
+        "S07",
+        "A17",
+        "F08"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.25.0",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-0-1"
+        },
+        {
+          "version": "1.25.1",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-1-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H51",
+      "title": "Pression disque et limites des journaux",
+      "priority": "P0",
+      "observedFact": "Une rotation bornée des logs est introduite pour éviter saturation; une analyse disque distingue stockage service et éléments exclus.",
+      "requirement": "Afficher capacité réelle du daemon séparée du disque du panneau et calculer le coût de sauvegarde/candidat; traiter ENOSPC sans corrompre l’état.",
+      "test": [
+        "Simuler disque plein lors du dump, de la sauvegarde d’état et de la création candidat: pas de faux succès, ancien runtime intact.",
+        "Vérifier que la rotation et la suppression ciblée rendent l’espace attendu."
+      ],
+      "featureIds": [
+        "S01",
+        "R18",
+        "S07"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.19.0",
+          "date": "2025-05-23",
+          "url": "https://easypanel.io/changelog/2-19-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H52",
+      "title": "Compatibilité Docker et avertissements versionnés",
+      "priority": "P1",
+      "observedFact": "Un contrôle de version Docker est ajouté, immédiatement suivi d’un correctif pour anciennes versions et d’un avertissement renforcé.",
+      "requirement": "Publier une version minimale testée et détecter les fonctionnalités requises avant mutation; ne pas déduire compatibilité d’un simple numéro affiché.",
+      "test": [
+        "Simuler API Docker ancienne, absente et compatible; commandes indisponibles ne sont pas exécutées.",
+        "La recommandation d’upgrade est affichée sans lancer une mise à jour hôte automatiquement."
+      ],
+      "featureIds": [
+        "S01",
+        "S11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.25.1",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-1"
+        },
+        {
+          "version": "2.29.3",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-3"
+        }
+      ]
+    },
+    {
+      "id": "H53",
+      "title": "Mise à jour du panneau et dépendances actives",
+      "priority": "P0",
+      "observedFact": "Des dépendances de sécurité sont régulièrement mises à jour; certaines nécessitent un redémarrage manuel. Un patch corrige un script pouvant empêcher le panneau de démarrer. Une version annonce également une réduction de la taille de l’image.",
+      "requirement": "Distinguer version installée et active, montrer changements/migrations, sauvegarder état et clés, prévoir rollback du panneau sans toucher les workloads. Enregistrer le digest et la taille de l’artefact livré.",
+      "test": [
+        "Interrompre une mise à jour après téléchargement et après migration; l’accès se récupère selon procédure vérifiée.",
+        "Après restart, contrôler les versions réellement exécutées et non seulement le tag téléchargé."
+      ],
+      "featureIds": [
+        "S11",
+        "S01",
+        "F11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.36.2",
+          "date": "2024-03-26",
+          "url": "https://easypanel.io/changelog/1-36-2-1"
+        },
+        {
+          "version": "1.38.1",
+          "date": "2024-04-13",
+          "url": "https://easypanel.io/changelog/1-38-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.11.2",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-11-2-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H54",
+      "title": "Compaction de l’état au démarrage",
+      "priority": "P0",
+      "observedFact": "La compaction automatique de la base du panneau au démarrage est annoncée. Le mécanisme interne n’est pas publié.",
+      "requirement": "Toute compaction/migration Harborlight doit être transactionnelle, verrouillée et compatible avec la sauvegarde de l’état chiffré.",
+      "test": [
+        "Tuer le processus au milieu d’une compaction simulée: au prochain démarrage, obtenir un état ancien ou nouveau valide.",
+        "Deux writers concurrents et un disque plein doivent échouer sans perte silencieuse."
+      ],
+      "featureIds": [
+        "F11",
+        "S11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.30.0",
+          "date": "2026-04-22",
+          "url": "https://easypanel.io/changelog/2-30-0"
+        }
+      ]
+    },
+    {
+      "id": "H55",
+      "title": "Snapshots de configuration et migration serveur",
+      "priority": "P1",
+      "observedFact": "Des snapshots export/import puis migration serveur sont ajoutés; tailles et validation des noms évoluent.",
+      "requirement": "Séparer copie de configuration et transfert des données; vérifier versions, secrets, conflits de ports, volumes et intégrité avant activer la cible.",
+      "test": [
+        "Migrer une fixture avec données et comptes; la source reste récupérable tant que la cible n’est pas vérifiée.",
+        "Nom/ID interdit, fichier corrompu ou port occupé: aucun écrasement hors cible confirmée."
+      ],
+      "featureIds": [
+        "S11",
+        "F03",
+        "F08",
+        "D13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H56",
+      "title": "Renommer, déplacer et supprimer sans perdre les liens",
+      "priority": "P0",
+      "observedFact": "Renommage/déplacement sont ajoutés; répertoire manquant, services non initialisés, historique et domaines perdus au renommage font l’objet de correctifs.",
+      "requirement": "Utiliser UUID stables pour routes, jobs, secrets et volumes; définir transfert de droits et nettoyage des dépendances avec confirmation.",
+      "test": [
+        "Renommer puis déplacer vers un projet vide: domaines, données et historique restent associés au bon UUID.",
+        "Supprimer un service partiellement créé n’affecte aucun voisin et indique clairement les données conservées."
+      ],
+      "featureIds": [
+        "F03",
+        "F08",
+        "R06",
+        "A13"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.38.2",
+          "date": "2024-04-16",
+          "url": "https://easypanel.io/changelog/1-38-2-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H57",
+      "title": "Tunnels Cloudflare et règles existantes",
+      "priority": "P2",
+      "observedFact": "Cloudflared natif, domaines racines et conservation des règles existantes sont ajoutés/corrigés; la version du tunnel est ensuite actualisée.",
+      "requirement": "Limiter les tokens au tunnel visé, fusionner les règles explicitement possédées et conserver un accès local au panneau.",
+      "test": [
+        "Ajouter/supprimer une règle Harborlight dans un tunnel comportant une règle externe: celle-ci reste intacte.",
+        "Rotation du token et mise à jour du binaire sont vérifiées sans confondre tunnel actif et configuration enregistrée."
+      ],
+      "featureIds": [
+        "S09",
+        "S10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.55.0",
+          "date": "2024-10-11",
+          "url": "https://easypanel.io/changelog/1-55-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.2.2",
+          "date": "2024-12-09",
+          "url": "https://easypanel.io/changelog/2-2-2-1"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H58",
+      "title": "Notifications d’événements et tests de livraison",
+      "priority": "P2",
+      "observedFact": "Des canaux de notification et événements de déploiement, sauvegarde, disque ou mise à jour sont ajoutés, puis un canal webhook.",
+      "requirement": "Définir événement, destinataire autorisé, retry, déduplication et masquage; une notification échouée ne change pas rétroactivement le résultat du job.",
+      "test": [
+        "Simuler timeout, réponse500 puis succès: un événement conserve son ID et ses tentatives.",
+        "Le message contient cible et résultat utiles, jamais token, mot de passe ou dump."
+      ],
+      "featureIds": [
+        "S06",
+        "D11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.26.0",
+          "date": "2023-11-17",
+          "url": "https://easypanel.io/changelog/1-26-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H59",
+      "title": "Clés API, sessions et révocation",
+      "priority": "P0",
+      "observedFact": "Les tokens API sont introduits puis ouverts aux plans gratuits; une intégration d’authentification bearer est mentionnée.",
+      "requirement": "Séparer clés et sessions, stocker uniquement un hash vérifiable, limiter permissions/projets, afficher le secret une seule fois et permettre expiration/révocation.",
+      "test": [
+        "Une clé read-only ne lance pas de mutation et une clé d’un projet ne traverse pas ses limites.",
+        "Après rotation ou révocation et restart, l’ancienne clé reste refusée et le secret ne figure dans aucune réponse de liste."
+      ],
+      "featureIds": [
+        "S03",
+        "F02",
+        "F10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.27.0",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-0-1"
+        },
+        {
+          "version": "1.27.1",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-1-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H60",
+      "title": "API publique, CLI, MCP et conversion des paramètres",
+      "priority": "P1",
+      "observedFact": "Documentation API, migration compatible, CLI/MCP et nouveaux contrats publics sont publiés; chemins de documentation et paramètres numériques sont corrigés.",
+      "requirement": "Versionner les contrats et schémas; préserver identité/scopes entre UI, CLI et MCP; convertir les paramètres sans coercition permissive.",
+      "test": [
+        "Tester limites numériques, valeurs négatives/NaN et pagination cohérente.",
+        "Le même appel refusé à l’UI reste refusé via CLI/MCP; une migration garde les contrats promis et documente les ruptures."
+      ],
+      "featureIds": [
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "2.13.0",
+          "date": "2025-02-26",
+          "url": "https://easypanel.io/changelog/2-13-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.33.0",
+          "date": "2026-07-31",
+          "url": "https://easypanel.io/changelog/2-33-0"
+        },
+        {
+          "version": "2.33.1",
+          "date": "2026-08-03",
+          "url": "https://easypanel.io/changelog/2-33-1"
+        },
+        {
+          "version": "2.33.2",
+          "date": "2026-08-21",
+          "url": "https://easypanel.io/changelog/2-33-2"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        }
+      ]
+    },
+    {
+      "id": "H61",
+      "title": "Codes HTTP et erreurs compréhensibles",
+      "priority": "P0",
+      "observedFact": "Pages d’erreur, diagnostics service/Git et codes API sont améliorés; des réponses génériques500 deviennent401/404/400.",
+      "requirement": "Définir codes, messages publics et détails internes séparément; ne jamais transformer indisponibilité runtime en succès démo.",
+      "test": [
+        "Entrée invalide400, anonyme401, ressource inaccessible404 et conflit409 sont cohérents.",
+        "Une vraie erreur Docker reste visible dans le job avec un identifiant de diagnostic et sans secret."
+      ],
+      "featureIds": [
+        "F12",
+        "A13",
+        "S04"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.38.0",
+          "date": "2024-04-12",
+          "url": "https://easypanel.io/changelog/1-38-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        }
+      ]
+    },
+    {
+      "id": "H62",
+      "title": "Navigation, recherche et refonte sans perte de workflow",
+      "priority": "P1",
+      "observedFact": "Le tableau, la recherche, les onglets mémorisés et plusieurs refontes UX évoluent; 2.0 annonce une refonte visuelle sans rupture fonctionnelle. Un patch corrige aussi le bouton de déploiement.",
+      "requirement": "Concevoir une UI originale tout en conservant objectifs et étapes; liens profonds, retour navigateur et recherche doivent préserver la sélection autorisée.",
+      "test": [
+        "Naviguer projet→service→logs puis retour/reload; vérifier écran et contexte.",
+        "Création/suppression actualise la navigation, et une recherche ne montre jamais un projet inaccessible."
+      ],
+      "featureIds": [
+        "F04",
+        "F07",
+        "S12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.23.1",
+          "date": "2023-09-04",
+          "url": "https://easypanel.io/changelog/1-23-1-1"
+        },
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.53.1",
+          "date": "2024-10-04",
+          "url": "https://easypanel.io/changelog/1-53-1-1"
+        },
+        {
+          "version": "2.0.0",
+          "date": "2024-11-07",
+          "url": "https://easypanel.io/changelog/2-0-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "1.30.1",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-1-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H63",
+      "title": "Responsive, thème et surfaces défilantes",
+      "priority": "P1",
+      "observedFact": "Les correctifs couvrent mobile, création de modèles, sidebars, modales, logs, couleurs Markdown et toasts sombres.",
+      "requirement": "Tester clavier et petites largeurs sur les vrais workflows; chaque modale possède focus, fermeture et zone de défilement utilisable.",
+      "test": [
+        "À 390px et avec texte long, réaliser création, déploiement et confirmation sans débordement global.",
+        "Changer de thème et zoom 200%: libellés, erreurs, logs et boutons restent lisibles et atteignables."
+      ],
+      "featureIds": [
+        "S12",
+        "F07"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.30.2",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-2-1"
+        },
+        {
+          "version": "1.33.1",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-1-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.26.2",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-2"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.29.5",
+          "date": "2026-04-18",
+          "url": "https://easypanel.io/changelog/2-29-5"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H64",
+      "title": "Notes de service non intrusives",
+      "priority": "P2",
+      "observedFact": "Les notes sont ajoutées, peuvent être masquées puis leur bouton et visibilité à vide sont améliorés.",
+      "requirement": "Persister les notes par UUID, distinguer contenu vide/masqué et rendre le texte sans exécuter HTML/script.",
+      "test": [
+        "Éditer, cacher, renommer puis recharger un service: la note reste attachée au bon service.",
+        "Une note contenant Markdown et HTML malveillant n’exécute aucun code."
+      ],
+      "featureIds": [
+        "F06",
+        "S12"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H65",
+      "title": "Branding, licences et options commerciales : frontière explicite",
+      "priority": "P2",
+      "observedFact": "L’historique inclut plans, licences, logos, page de login, scripts de branding et corrections d’activation. Ces éléments commerciaux ne sont pas des exigences de licence Harborlight.",
+      "requirement": "Conserver une identité visuelle originale et des préférences sûres; exclure la reproduction des mécanismes de licence propriétaires. Les extensions HTML/script nécessitent une autorisation dédiée si elles existent.",
+      "test": [
+        "Harborlight fonctionne sans clé Easypanel ni appel au portail commercial.",
+        "Logo et thème ne modifient pas authentification/origine; une préférence invalide garde une interface récupérable."
+      ],
+      "featureIds": [
+        "S12",
+        "F10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.23.0",
+          "date": "2023-09-01",
+          "url": "https://easypanel.io/changelog/1-23-0-1"
+        },
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.25.0",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-0-1"
+        },
+        {
+          "version": "1.36.2",
+          "date": "2024-03-26",
+          "url": "https://easypanel.io/changelog/1-36-2-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.32.1",
+          "date": "2026-07-02",
+          "url": "https://easypanel.io/changelog/2-32-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H66",
+      "title": "Installation initiale et état partiel",
+      "priority": "P0",
+      "observedFact": "Script setup, wizard et validation initiale sont améliorés; des patches corrigent les actions sur installation fraîche et la création de services spécialisés.",
+      "requirement": "Créer le premier administrateur une seule fois et rendre les étapes d’installation idempotentes; tracer et nettoyer les ressources partielles avec leur propriété exacte.",
+      "test": [
+        "Deux bootstraps simultanés n’obtiennent pas deux propriétaires.",
+        "Arrêter le processus entre configuration et runtime: restart expose un état explicite, sans service fantôme ni mutation d’un daemon existant."
+      ],
+      "featureIds": [
+        "F01",
+        "F08",
+        "F11"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.39.1",
+          "date": "2024-04-27",
+          "url": "https://easypanel.io/changelog/1-39-1-1"
+        },
+        {
+          "version": "2.3.3",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-3-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        }
+      ]
+    },
+    {
+      "id": "H67",
+      "title": "Validation des identités et absence d’énumération",
+      "priority": "P0",
+      "observedFact": "Validation email, session mémorisée et double authentification évoluent; un message révélant un utilisateur absent est supprimé pour sécurité.",
+      "requirement": "Normaliser les identités sans collision, limiter les tentatives et rendre les erreurs de login/récupération indistinguables sur l’existence du compte.",
+      "test": [
+        "Compte absent et mauvais secret produisent le même contrat public; tester casse et email valide atypique.",
+        "Expiration et logout invalident la session selon la durée configurée, même après reconnexion du navigateur."
+      ],
+      "featureIds": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.24.4",
+          "date": "2023-10-30",
+          "url": "https://easypanel.io/changelog/1-24-4-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H68",
+      "title": "Mode démo et transports temps réel",
+      "priority": "P0",
+      "observedFact": "Un mode démo explicite est introduit; WebSocket et site de démonstration reçoivent des correctifs.",
+      "requirement": "Garder les simulations explicitement étiquetées et empêcher qu’un contrôle démo paraisse agir sur Docker; tester séparément les transports réels.",
+      "test": [
+        "Dans la démo, aucune action terminal/restore/rollback non simulée n’annonce un succès réel.",
+        "Dans le vrai runtime, une panne WebSocket ou Docker ne bascule jamais silencieusement vers la démo."
+      ],
+      "featureIds": [
+        "F12",
+        "R16"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.47.2",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-2-1"
+        },
+        {
+          "version": "2.33.1",
+          "date": "2026-08-03",
+          "url": "https://easypanel.io/changelog/2-33-1"
+        }
+      ]
+    },
+    {
+      "id": "H69",
+      "title": "Compression proxy : ajout puis retrait",
+      "priority": "P1",
+      "observedFact": "La compression globale ajoutée en 2.16.0 est retirée en 2.17.0 à cause d’un problème Traefik; l’historique impose de garder les retraits, pas seulement les ajouts.",
+      "requirement": "Activer les middlewares par politique explicite, tester protocoles et permettre un rollback de configuration sans effacer les routes.",
+      "test": [
+        "Tester HTML, téléchargement binaire, SSE et WebSocket avec et sans compression.",
+        "Après rollback du middleware, contenu et headers restent corrects et les domaines inchangés."
+      ],
+      "featureIds": [
+        "R10",
+        "S10"
+      ],
+      "releaseRefs": [
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H70",
+      "title": "Source Dockerfile inline et contexte de construction",
+      "priority": "P1",
+      "observedFact": "La publication 1.36.0 ajoute un type de source Dockerfile.",
+      "requirement": "Construire le Dockerfile inline dans un contexte isolé, définir les fichiers disponibles et refuser toute résolution hors workspace; enregistrer le résultat immuable.",
+      "test": [
+        "Construire une petite application HTTP depuis le texte sauvegardé et contrôler le contenu servi.",
+        "Dockerfile invalide, contexte absent ou symlink sortant: échec explicite, runtime précédent conservé."
+      ],
+      "featureIds": [
+        "A07",
+        "A08"
+      ],
+      "releaseRefs": [
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        }
+      ]
+    }
+  ]
+}

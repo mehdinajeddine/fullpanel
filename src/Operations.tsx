@@ -856,7 +856,7 @@ export function SettingsPage() {
       <div className="about-panel">
         <div>
           <h3>
-            Harborlight <span className="version-label">v0.1.0</span>
+            FullPanel <span className="version-label">v0.1.0</span>
           </h3>
           <p>Independent. Open source. Built to give your ideas a home.</p>
         </div>

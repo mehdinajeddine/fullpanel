@@ -1,8 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { KeyRound, ShieldCheck, Trash2 } from "lucide-react";
-import type { Service } from "../shared/types";
+import type { Service, SourceCredentialStatus } from "../shared/types";
 import { api, date, useQuery } from "./api";
 import { useAccess } from "./Access";
+import SshCredentials, { isSshRepository } from "./SshCredentials";
 import {
   Badge,
   Button,
@@ -13,20 +14,37 @@ import {
   Panel,
   useToast,
 } from "./ui";
-interface CredentialState {
-  configured: boolean;
-  repository?: string;
-  registry?: string;
-  imageRepository?: string;
-  username?: string;
-  updatedAt?: string;
-}
-interface CredentialsStatus {
-  git: CredentialState;
-  registry: CredentialState;
-  capabilities: { gitHttps: true; registryImages: true; registryBuilds: false };
-}
 export default function SourceCredentials({
+  service,
+  sourceSaved,
+  updated,
+}: {
+  service: Service;
+  sourceSaved: boolean;
+  updated: () => void;
+}) {
+  const access = useAccess();
+  if (!access.canOperate(service.projectId)) return null;
+  if (
+    service.source.type === "git" &&
+    isSshRepository(service.source.repository || "")
+  )
+    return (
+      <SshCredentials
+        service={service}
+        sourceSaved={sourceSaved}
+        updated={updated}
+      />
+    );
+  return (
+    <TokenCredentials
+      service={service}
+      sourceSaved={sourceSaved}
+      updated={updated}
+    />
+  );
+}
+function TokenCredentials({
   service,
   sourceSaved,
   updated,
@@ -40,7 +58,7 @@ export default function SourceCredentials({
   const allowed =
     access.canOperate(service.projectId) &&
     ["git", "image"].includes(service.source.type);
-  const query = useQuery<CredentialsStatus>(
+  const query = useQuery<SourceCredentialStatus>(
     `/services/${service.id}/source-credentials`,
     0,
     allowed,
@@ -68,7 +86,7 @@ export default function SourceCredentials({
     setBusy(true);
     setError("");
     try {
-      const value = await api<CredentialsStatus>(
+      const value = await api<SourceCredentialStatus>(
         `/services/${service.id}/source-credentials/${kind}`,
         {
           method: "PUT",
@@ -95,7 +113,7 @@ export default function SourceCredentials({
     setBusy(true);
     setError("");
     try {
-      const value = await api<CredentialsStatus>(
+      const value = await api<SourceCredentialStatus>(
         `/services/${service.id}/source-credentials/${kind}`,
         { method: "DELETE" },
       );
@@ -143,9 +161,10 @@ export default function SourceCredentials({
               <strong>Credential stored for {status.username}</strong>
               <p>
                 <code>
-                  {status.repository ||
-                    status.imageRepository ||
-                    status.registry}
+                  {kind === "git"
+                    ? query.data?.git.repository
+                    : query.data?.registry.imageRepository ||
+                      query.data?.registry.registry}
                 </code>
                 {status.updatedAt && (
                   <span>Updated {date(status.updatedAt)}</span>

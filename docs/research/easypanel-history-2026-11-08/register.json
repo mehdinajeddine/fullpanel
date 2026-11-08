@@ -1,0 +1,3403 @@
+{
+  "metadata": {
+    "consulted_on": "2026-11-08",
+    "language": "fr",
+    "scope": "Inventaire des 151 fiches publiques accessibles via les 16 pages du changelog officiel, patches inclus, et trois articles officiels complémentaires. Ne prouve pas la connaissance de correctifs privés ou non publiés.",
+    "source_boundary": "Faits: paraphrases du contenu publié. Exigences et scénarios: propositions originales Harborlight, sans présomption d’implémentation ou de succès.",
+    "main_release_count": 80,
+    "patch_release_count": 71,
+    "year_counts": {
+      "2022": 7,
+      "2023": 32,
+      "2024": 59,
+      "2025": 25,
+      "2026": 28
+    },
+    "rule_count": 70,
+    "version_count": 151,
+    "inaccessible_individual_pages": [],
+    "limitations": [
+      "Les pages indexées du moteur de recherche affichaient parfois149/78/79 versions en cache; la collecte HTTP fraîche a retourné151 fiches, toutesHTTP 200.",
+      "Les annonces vagues de sécurité ne permettent pas de déduire exploit, CVE, impact ou cause racine.",
+      "Les dates sont celles publiées, pas des dates de découverte ou déploiement effectif.",
+      "Les catalogues sont regroupés; aucun inventaire exhaustif de bugs des logiciels tiers ni certification des centaines de modèles n’est revendiqué.",
+      "La disponibilité historique ne prouve pas la disponibilité actuelle: cluster et compression ont connu dépréciation/retrait.",
+      "Aucune reproduction du code propriétaire ni de ses éléments graphiques. Les pagesHTML de travail sont conservées uniquement sous /private/tmp.",
+      "Les tests dérivés sont à rapprocher du registre de preuves Harborlight; documenter une règle ne signifie pas que son scénario a été exécuté."
+    ]
+  },
+  "rules": [
+    {
+      "id": "H01",
+      "title_fr": "Mesures explicites et historique de supervision",
+      "priority": "P1",
+      "criteria": [
+        "R17",
+        "R18",
+        "S01"
+      ],
+      "public_fact_fr": "Les publications ajoutent supervision réseau, historique, analyse disque puis métriques et journaux avancés; plusieurs défauts de mesure ou affichage sont corrigés.",
+      "derived_requirement_fr": "Identifier origine, unité, périmètre et instant de chaque mesure; borner la rétention et distinguer hôte, moteur Docker et service.",
+      "acceptance_fr": [
+        "Comparer CPU/mémoire/réseau à une charge connue puis interrompre Docker: afficher une mesure indisponible, jamais zéro inventé.",
+        "Redémarrer le panneau et vérifier limites de rétention et distinction disque des volumes, images et journaux."
+      ],
+      "sources": [
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        },
+        {
+          "version": "1.22.0",
+          "date": "2023-08-09",
+          "url": "https://easypanel.io/changelog/1-22-0-1"
+        },
+        {
+          "version": "1.29.0",
+          "date": "2023-11-28",
+          "url": "https://easypanel.io/changelog/1-29-0-1"
+        },
+        {
+          "version": "2.19.0",
+          "date": "2025-05-23",
+          "url": "https://easypanel.io/changelog/2-19-0-1"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.29.2",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-2"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H02",
+      "title_fr": "État réel et actions distinctes du déploiement",
+      "priority": "P0",
+      "criteria": [
+        "F04",
+        "A15"
+      ],
+      "public_fact_fr": "L’indicateur des services arrêtés est ajouté; un correctif empêche de reconstruire une application lors de son arrêt.",
+      "derived_requirement_fr": "Dériver l’état du runtime canonique; start/stop/restart ne doivent pas lancer de clone ou build.",
+      "acceptance_fr": [
+        "Arrêter une app et interdire toute commande build/pull dans le fixture.",
+        "Laisser un ancien conteneur arrêté à côté du conteneur actif; celui-ci reste affiché running, tandis qu’un enfant Compose arrêté affecte sa stack."
+      ],
+      "sources": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.33.4",
+          "date": "2024-02-21",
+          "url": "https://easypanel.io/changelog/1-33-4-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H03",
+      "title_fr": "Environnement de projet, valeurs vides et substitutions",
+      "priority": "P0",
+      "criteria": [
+        "F05",
+        "R01",
+        "A12"
+      ],
+      "public_fact_fr": "L’héritage de variables apparaît en 2022; plusieurs variables Nixpacks, valeurs vides et substitution du nom d’hôte sont ensuite corrigées.",
+      "derived_requirement_fr": "Définir une précédence stable, conserver les valeurs vides et littérales, séparer configuration enregistrée et effective. Toute interpolation doit être explicitement activée.",
+      "acceptance_fr": [
+        "Projet A=parent et service A=vide: le runtime reçoit vide après déploiement, jamais avant.",
+        "Vérifier espaces, dollar, égal, Unicode et plusieurs variables; le projet voisin ne reçoit aucune valeur."
+      ],
+      "sources": [
+        {
+          "version": "1.12.6",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-6-1"
+        },
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.26.3",
+          "date": "2026-02-13",
+          "url": "https://easypanel.io/changelog/2-26-3"
+        }
+      ]
+    },
+    {
+      "id": "H04",
+      "title_fr": "Catalogue et modèles reproductibles",
+      "priority": "P1",
+      "criteria": [
+        "C06",
+        "C07"
+      ],
+      "public_fact_fr": "De nombreuses versions ajoutent ou actualisent des modèles; certaines corrigent images, noms de services, domaines, variables, liens ou initialisation.",
+      "derived_requirement_fr": "Maintenir un catalogue original versionné avec schéma validé, références d’images explicites, dépendances, secrets générés et tests de démarrage; regrouper les ajouts éditoriaux sans prétendre tester tous les logiciels tiers.",
+      "acceptance_fr": [
+        "Instancier chaque modèle déclaré vérifié dans un projet neuf, contrôler URL, ports, comptes et persistance.",
+        "Rejeter une dépendance manquante; conserver un diagnostic et un nettoyage limité aux ressources créées."
+      ],
+      "sources": [
+        {
+          "version": "2.36.0",
+          "date": "2026-09-24",
+          "url": "https://easypanel.io/changelog/2-36-0"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.29.1",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-1"
+        },
+        {
+          "version": "2.28.0",
+          "date": "2026-03-24",
+          "url": "https://easypanel.io/changelog/2-28-0"
+        },
+        {
+          "version": "2.27.0",
+          "date": "2026-03-13",
+          "url": "https://easypanel.io/changelog/2-27-0"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.23.0",
+          "date": "2025-10-06",
+          "url": "https://easypanel.io/changelog/2-23-0-1"
+        },
+        {
+          "version": "2.22.0",
+          "date": "2025-08-29",
+          "url": "https://easypanel.io/changelog/2-22-0-1"
+        },
+        {
+          "version": "2.21.0",
+          "date": "2025-06-25",
+          "url": "https://easypanel.io/changelog/2-21-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.18.0",
+          "date": "2025-05-21",
+          "url": "https://easypanel.io/changelog/2-18-0-1"
+        },
+        {
+          "version": "2.15.0",
+          "date": "2025-04-14",
+          "url": "https://easypanel.io/changelog/2-15-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.11.0",
+          "date": "2025-02-17",
+          "url": "https://easypanel.io/changelog/2-11-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.7.0",
+          "date": "2025-01-23",
+          "url": "https://easypanel.io/changelog/2-7-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.5.0",
+          "date": "2025-01-06",
+          "url": "https://easypanel.io/changelog/2-5-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "1.55.0",
+          "date": "2024-10-11",
+          "url": "https://easypanel.io/changelog/1-55-0-1"
+        },
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.47.4",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-4-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "1.42.1",
+          "date": "2024-06-22",
+          "url": "https://easypanel.io/changelog/1-42-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.31.3",
+          "date": "2024-01-06",
+          "url": "https://easypanel.io/changelog/1-31-3-1"
+        },
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "1.23.1",
+          "date": "2023-09-04",
+          "url": "https://easypanel.io/changelog/1-23-1-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.15.5",
+          "date": "2023-03-28",
+          "url": "https://easypanel.io/changelog/1-15-5-1"
+        },
+        {
+          "version": "1.15.4",
+          "date": "2023-03-13",
+          "url": "https://easypanel.io/changelog/1-15-4-1"
+        },
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.14.0",
+          "date": "2023-02-22",
+          "url": "https://easypanel.io/changelog/1-14-0-1"
+        },
+        {
+          "version": "1.13.2",
+          "date": "2023-01-28",
+          "url": "https://easypanel.io/changelog/1-13-2-1"
+        },
+        {
+          "version": "1.13.1",
+          "date": "2023-01-08",
+          "url": "https://easypanel.io/changelog/1-13-1-1"
+        },
+        {
+          "version": "1.12.10",
+          "date": "2023-01-02",
+          "url": "https://easypanel.io/changelog/1-12-10-1"
+        },
+        {
+          "version": "1.12.9",
+          "date": "2022-12-10",
+          "url": "https://easypanel.io/changelog/1-12-9-1"
+        },
+        {
+          "version": "1.12.8",
+          "date": "2022-11-15",
+          "url": "https://easypanel.io/changelog/1-12-8-1"
+        },
+        {
+          "version": "1.12.6",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-6-1"
+        },
+        {
+          "version": "1.12.5",
+          "date": "2022-11-01",
+          "url": "https://easypanel.io/changelog/1-12-5-1"
+        },
+        {
+          "version": "1.12.3",
+          "date": "2022-10-15",
+          "url": "https://easypanel.io/changelog/1-12-3-1"
+        }
+      ]
+    },
+    {
+      "id": "H05",
+      "title_fr": "Versions de builders et compatibilité des langages",
+      "priority": "P2",
+      "criteria": [
+        "A09",
+        "A10",
+        "A11"
+      ],
+      "public_fact_fr": "Nixpacks, Buildpacks et leurs outils évoluent régulièrement; les versions sélectionnables et Railpack arrivent plus tard, avec des correctifs réseau/langage.",
+      "derived_requirement_fr": "Épingler chaque builder et publier sa matrice de compatibilité; exposer overrides et erreurs. Une option non implémentée doit rester indisponible.",
+      "acceptance_fr": [
+        "Pour chaque builder supporté, construire une fixture de langage et enregistrer sa version.",
+        "Changer de version ou simuler DNS indisponible: produire un échec utile, sans remplacer l’application active."
+      ],
+      "sources": [
+        {
+          "version": "1.12.3",
+          "date": "2022-10-15",
+          "url": "https://easypanel.io/changelog/1-12-3-1"
+        },
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "1.15.1",
+          "date": "2023-03-07",
+          "url": "https://easypanel.io/changelog/1-15-1-1"
+        },
+        {
+          "version": "1.15.3",
+          "date": "2023-03-09",
+          "url": "https://easypanel.io/changelog/1-15-3-1"
+        },
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.31.3",
+          "date": "2024-01-06",
+          "url": "https://easypanel.io/changelog/1-31-3-1"
+        },
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.44.1",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-1-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        },
+        {
+          "version": "2.5.0",
+          "date": "2025-01-06",
+          "url": "https://easypanel.io/changelog/2-5-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.29.2",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-2"
+        },
+        {
+          "version": "2.29.4",
+          "date": "2026-04-18",
+          "url": "https://easypanel.io/changelog/2-29-4"
+        }
+      ]
+    },
+    {
+      "id": "H06",
+      "title_fr": "Images de bases épinglées et changements de version",
+      "priority": "P0",
+      "criteria": [
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D05",
+        "A01"
+      ],
+      "public_fact_fr": "Un correctif remplace latest par une version statique pour les bases; PostgreSQL 18 devient ensuite une version prise en charge et le défaut.",
+      "derived_requirement_fr": "Séparer version proposée, version configurée et digest exécuté; ne pas transformer une mise à jour du catalogue en migration automatique des données.",
+      "acceptance_fr": [
+        "Créer une base sur une version puis changer le défaut du catalogue: la base existante reste inchangée.",
+        "Refuser la restauration entre versions incompatibles avant de modifier le runtime."
+      ],
+      "sources": [
+        {
+          "version": "1.13.0",
+          "date": "2023-01-03",
+          "url": "https://easypanel.io/changelog/1-13-0-1"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        }
+      ]
+    },
+    {
+      "id": "H07",
+      "title_fr": "Autorisation par projet, y compris collections",
+      "priority": "P0",
+      "criteria": [
+        "S02",
+        "F10"
+      ],
+      "public_fact_fr": "Le multi-utilisateur commence en 2023; les publications de 2025–2026 corrigent droits non-admin, visibilité des domaines et contrôles de projet. Le détail des vulnérabilités n’est pas publié.",
+      "derived_requirement_fr": "Appliquer l’autorisation côté serveur aux listes et actions, avec refus par défaut et filtrage des métadonnées, journaux, fichiers et domaines.",
+      "acceptance_fr": [
+        "Un membre du projet A tente IDs, listes globales et routes encodées du projet B: aucun contenu n’est révélé.",
+        "Révoquer le rôle pendant une session et vérifier l’effet immédiat sur toutes les interfaces."
+      ],
+      "sources": [
+        {
+          "version": "1.14.0",
+          "date": "2023-02-22",
+          "url": "https://easypanel.io/changelog/1-14-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.20.1",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-1-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H08",
+      "title_fr": "Authentification forte, déconnexion et récupération",
+      "priority": "P0",
+      "criteria": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "public_fact_fr": "La double authentification est annoncée en bêta; des correctifs touchent ensuite sa reprise après logout et plusieurs réinitialisations de mot de passe.",
+      "derived_requirement_fr": "Spécifier séparément connexion, second facteur, récupération, expiration et révocation. Ne pas déduire d’un historique de correctifs une 2FA déjà présente dans Harborlight.",
+      "acceptance_fr": [
+        "Avec 2FA activée, logout puis nouveau login impose à nouveau le second facteur.",
+        "Un lien de récupération expiré ou réutilisé est refusé et une modification de mot de passe invalide les sessions prévues par la politique."
+      ],
+      "sources": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.36.1",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.30.1",
+          "date": "2026-05-15",
+          "url": "https://easypanel.io/changelog/2-30-1"
+        }
+      ]
+    },
+    {
+      "id": "H09",
+      "title_fr": "Git privé et clés SSH",
+      "priority": "P1",
+      "criteria": [
+        "A04"
+      ],
+      "public_fact_fr": "Le support Git par clé SSH est suivi d’un patch; la génération des clés Compose et l’aide aux tokens GitHub évoluent aussi.",
+      "derived_requirement_fr": "Garder les secrets liés au dépôt exact; vérifier identité serveur et révocation. Distinguer explicitement HTTPS-token supporté, SSH et GitHub OAuth non supportés.",
+      "acceptance_fr": [
+        "Un secret du dépôt A ne doit jamais partir au dépôt B ni après redirection.",
+        "Rotation et révocation font échouer l’ancien accès; une option SSH indisponible ne peut produire un faux succès."
+      ],
+      "sources": [
+        {
+          "version": "1.15.1",
+          "date": "2023-03-07",
+          "url": "https://easypanel.io/changelog/1-15-1-1"
+        },
+        {
+          "version": "1.15.2",
+          "date": "2023-03-08",
+          "url": "https://easypanel.io/changelog/1-15-2-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H10",
+      "title_fr": "Schémas de modèles et identité du projet cible",
+      "priority": "P1",
+      "criteria": [
+        "C06",
+        "C07",
+        "F03"
+      ],
+      "public_fact_fr": "Les schémas gagnent des variables de projet/service/domaine, puis sont simplifiés et acceptent des sources Git.",
+      "derived_requirement_fr": "Valider un schéma déclaratif original; résoudre les références dans le projet cible sans accepter un projectId ou chemin arbitraire du document importé.",
+      "acceptance_fr": [
+        "Importer le même modèle dans deux projets et vérifier noms, secrets et URLs indépendants.",
+        "Un schéma visant un autre projet ou contenant un cycle de dépendance est refusé sans création partielle silencieuse."
+      ],
+      "sources": [
+        {
+          "version": "1.15.4",
+          "date": "2023-03-13",
+          "url": "https://easypanel.io/changelog/1-15-4-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H11",
+      "title_fr": "Frontière cluster, données locales et modes réseau",
+      "priority": "P2",
+      "criteria": [
+        "S09",
+        "R13"
+      ],
+      "public_fact_fr": "Le multi-serveur bêta est annoncé en 2023, puis le cluster est déprécié en 2024 pour instabilité; une option Swarm DNSRR apparaît en 2026. Ces annonces ne prouvent pas une disponibilité continue du cluster.",
+      "derived_requirement_fr": "Documenter le moteur réellement supporté et la localisation des données. Ne promettre ni HA ni répartition multi-nœuds sans reprise vérifiée.",
+      "acceptance_fr": [
+        "Retirer un worker dans une fixture future: seul un service stateless admissible peut être replanifié.",
+        "Vérifier DNS et routage pour chaque endpoint mode; le mode standalone actuel ne lance jamais swarm init/leave."
+      ],
+      "sources": [
+        {
+          "version": "1.16.0",
+          "date": "2023-04-04",
+          "url": "https://easypanel.io/changelog/1-16-0-1"
+        },
+        {
+          "version": "1.47.0",
+          "date": "2024-08-01",
+          "url": "https://easypanel.io/changelog/1-47-0-1"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": null,
+          "date": "2023-04-04",
+          "url": "https://easypanel.io/blog/multi-server-support-beta-release",
+          "title": "Multi-Server Support (Beta)"
+        }
+      ]
+    },
+    {
+      "id": "H12",
+      "title_fr": "Unicité des domaines et validation canonique",
+      "priority": "P0",
+      "criteria": [
+        "R06",
+        "R09",
+        "S02"
+      ],
+      "public_fact_fr": "L’utilisation d’un domaine dans plusieurs services est empêchée; la validation des doublons est ensuite corrigée.",
+      "derived_requirement_fr": "Normaliser hostname/IDN/casse et évaluer conflits de routes exactes, wildcard et chemins sans exposer l’identité des autres projets.",
+      "acceptance_fr": [
+        "Deux requêtes concurrentes réclament le même host/path: une seule réussit.",
+        "Tester casse, point final et wildcard; un refus inter-projet ne révèle pas son propriétaire."
+      ],
+      "sources": [
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H13",
+      "title_fr": "Cible du domaine, chemin et protocole amont",
+      "priority": "P1",
+      "criteria": [
+        "R06",
+        "R09",
+        "C05"
+      ],
+      "public_fact_fr": "Les domaines peuvent choisir port et chemin; les ports internes sont affichés, le protocole amont et les URL externes sont ajoutés plus tard.",
+      "derived_requirement_fr": "Représenter explicitement service/conteneur, port, chemin et HTTP/HTTPS amont; valider URL externe et certificat sans désactiver TLS.",
+      "acceptance_fr": [
+        "Router deux chemins vers deux ports et vérifier la frontière /api versus /apix.",
+        "Un mauvais certificat amont ou port absent donne une erreur observable; aucune base n’est exposée implicitement."
+      ],
+      "sources": [
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H14",
+      "title_fr": "Middleware, redirections et maintenance",
+      "priority": "P1",
+      "criteria": [
+        "R10",
+        "R11",
+        "R12"
+      ],
+      "public_fact_fr": "Les publications ajoutent configuration Traefik, redirections, maintenance et gestion de middlewares; des défauts de redirection et basic auth sont corrigés.",
+      "derived_requirement_fr": "Composer les règles dans un ordre défini, tester activation/désactivation, borner les redirections et protéger les configurations administratives.",
+      "acceptance_fr": [
+        "Tester basic auth juste/fausse, changement de secret, maintenance puis retour normal.",
+        "Une redirection de chemin fonctionne sans domaine source auxiliaire et ne crée pas de boucle."
+      ],
+      "sources": [
+        {
+          "version": "1.13.1",
+          "date": "2023-01-08",
+          "url": "https://easypanel.io/changelog/1-13-1-1"
+        },
+        {
+          "version": "1.20.1",
+          "date": "2023-07-08",
+          "url": "https://easypanel.io/changelog/1-20-1-1"
+        },
+        {
+          "version": "1.28.0",
+          "date": "2023-11-27",
+          "url": "https://easypanel.io/changelog/1-28-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H15",
+      "title_fr": "Proxy de confiance et exposition volontaire",
+      "priority": "P0",
+      "criteria": [
+        "R06",
+        "R11",
+        "S10",
+        "F09"
+      ],
+      "public_fact_fr": "Un problème avec le proxy Cloudflare est corrigé; Traefik cesse d’exposer les conteneurs par défaut; une liste de proxies de confiance est ajoutée.",
+      "derived_requirement_fr": "Publier uniquement des routes explicites et n’accepter les en-têtes forwarded que depuis des réseaux de confiance configurés.",
+      "acceptance_fr": [
+        "Un conteneur sans domaine reste inaccessible via le proxy.",
+        "Un client direct falsifie X-Forwarded-For/Proto: cela ne contourne ni origine, limites ni journal d’identité."
+      ],
+      "sources": [
+        {
+          "version": "1.37.1",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-1-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.37.0",
+          "date": "2026-10-14",
+          "url": "https://easypanel.io/changelog/2-37-0"
+        }
+      ]
+    },
+    {
+      "id": "H16",
+      "title_fr": "Certificats et priorité des routes wildcard",
+      "priority": "P0",
+      "criteria": [
+        "R07",
+        "R09",
+        "S10"
+      ],
+      "public_fact_fr": "La gestion de certificats et les wildcards apparaissent; provisioning SSL, documentation de certificat personnalisé et priorité des wildcards sont corrigés.",
+      "derived_requirement_fr": "Séparer émission, renouvellement, import et sélection de route; une route exacte doit gagner sur un wildcard. Le test HTTP ne vaut pas preuve ACME.",
+      "acceptance_fr": [
+        "Sur un domaine de test réel, émettre puis renouveler en environnement ACME staging et vérifier la chaîne.",
+        "Tester host exact et wildcard concurrents, certificat expiré et indisponibilité de l’autorité sans perdre l’accès de secours."
+      ],
+      "sources": [
+        {
+          "version": "1.29.0",
+          "date": "2023-11-28",
+          "url": "https://easypanel.io/changelog/1-29-0-1"
+        },
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.11.1",
+          "date": "2025-02-18",
+          "url": "https://easypanel.io/changelog/2-11-1-1"
+        }
+      ]
+    },
+    {
+      "id": "H17",
+      "title_fr": "Domaine du panneau et URL générée",
+      "priority": "P1",
+      "criteria": [
+        "R08",
+        "S10"
+      ],
+      "public_fact_fr": "Rafraîchissement IP, URL générée et domaine personnalisé évoluent; plusieurs patches corrigent IP, accès direct et domaine du panneau.",
+      "derived_requirement_fr": "Traiter tout changement d’adresse comme une transition explicite avec URL canonique, contrôle d’origine et accès de récupération.",
+      "acceptance_fr": [
+        "Changer le domaine généré: seules les nouvelles routes prévues changent, les personnalisées restent intactes.",
+        "Un domaine panneau invalide ne supprime pas le chemin de récupération local."
+      ],
+      "sources": [
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.37.4",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-4-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.26.1",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-1"
+        },
+        {
+          "version": "2.26.3",
+          "date": "2026-02-13",
+          "url": "https://easypanel.io/changelog/2-26-3"
+        }
+      ]
+    },
+    {
+      "id": "H18",
+      "title_fr": "Ports TCP/UDP, collisions et retrait",
+      "priority": "P0",
+      "criteria": [
+        "R05",
+        "D08"
+      ],
+      "public_fact_fr": "Le support UDP, la vérification des collisions et le retrait de ports sont ajoutés ou corrigés; une action retire ensuite tous les ports.",
+      "derived_requirement_fr": "Valider protocole, port hôte/cible et conflit avant remplacement; le retrait doit fermer réellement l’écoute externe.",
+      "acceptance_fr": [
+        "Publier un port, vérifier une connexion authentifiée, le retirer et constater le refus TCP.",
+        "Tester conflit occupé et paire TCP/UDP; l’ancien runtime reste fonctionnel en cas d’échec."
+      ],
+      "sources": [
+        {
+          "version": "1.12.7",
+          "date": "2022-11-05",
+          "url": "https://easypanel.io/changelog/1-12-7-1"
+        },
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        }
+      ]
+    },
+    {
+      "id": "H19",
+      "title_fr": "Réseaux de projet et résolution interne",
+      "priority": "P1",
+      "criteria": [
+        "F03",
+        "C07",
+        "S09"
+      ],
+      "public_fact_fr": "Les alias internes et réseaux par projet apparaissent; des correctifs touchent Docker, Nixpacks et le réseau Box.",
+      "derived_requirement_fr": "Créer des réseaux nommés et possédés par le projet; distinguer réseau du build, runtime et proxy, et ne pas rejoindre un réseau tiers.",
+      "acceptance_fr": [
+        "Deux services du même projet résolvent leurs alias; un autre projet ne reçoit pas automatiquement l’accès.",
+        "Échec de création réseau ou DNS build: pas de remplacement destructeur du runtime existant."
+      ],
+      "sources": [
+        {
+          "version": "1.33.5",
+          "date": "2024-02-28",
+          "url": "https://easypanel.io/changelog/1-33-5-1"
+        },
+        {
+          "version": "1.38.0",
+          "date": "2024-04-12",
+          "url": "https://easypanel.io/changelog/1-38-0-1"
+        },
+        {
+          "version": "1.38.1",
+          "date": "2024-04-13",
+          "url": "https://easypanel.io/changelog/1-38-1-1"
+        },
+        {
+          "version": "1.44.1",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-1-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        }
+      ]
+    },
+    {
+      "id": "H20",
+      "title_fr": "Commande, identité Unix, PID1 et processus enfants",
+      "priority": "P1",
+      "criteria": [
+        "R14",
+        "A15"
+      ],
+      "public_fact_fr": "Les commandes personnalisées de bases et groupes Unix des services sont ajoutés; la récupération des enfants et les applications exigeant PID1 sont ensuite corrigées.",
+      "derived_requirement_fr": "Définir init, signal d’arrêt et délai de terminaison sans imposer un wrapper incompatible; borner les processus orphelins. Définir commande et UID/GID/groupes appliqués, et vérifier leur compatibilité avec les volumes gérés.",
+      "acceptance_fr": [
+        "Une fixture qui intercepte SIGTERM écrit son marqueur et termine proprement.",
+        "Une fixture qui exige PID1 fonctionne avec le mode approprié; les enfants ne survivent pas à la fin du conteneur.",
+        "Exécuter une commande avec UID/GID/groupes configurés; vérifier identité et écriture uniquement dans les volumes autorisés."
+      ],
+      "sources": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.37.2",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-2-1"
+        },
+        {
+          "version": "1.21.0",
+          "date": "2023-08-03",
+          "url": "https://easypanel.io/changelog/1-21-0-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H21",
+      "title_fr": "Image disponible avant remplacement",
+      "priority": "P0",
+      "criteria": [
+        "A01",
+        "A17",
+        "A18",
+        "A02"
+      ],
+      "public_fact_fr": "Le déploiement attend désormais la fin du pull; des erreurs Docker pull et image introuvable sont corrigées.",
+      "derived_requirement_fr": "Résoudre l’image en ID immuable avant création du candidat et conserver l’ancien runtime en cas d’échec du pull ou de création.",
+      "acceptance_fr": [
+        "Retirer l’accès registry ou déplacer le tag pendant la préparation: ne pas arrêter l’ancienne app.",
+        "Rollback sans image locale échoue avant toute mutation et ne déclenche aucun pull implicite."
+      ],
+      "sources": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H22",
+      "title_fr": "Reconstruction forcée vérifiable",
+      "priority": "P1",
+      "criteria": [
+        "A14",
+        "C08",
+        "C11"
+      ],
+      "public_fact_fr": "L’invalidation du cache est améliorée; le webhook puis Box/WordPress reçoivent une reconstruction forcée.",
+      "derived_requirement_fr": "Définir si rebuild invalide cache, actualise bases et recrée le runtime; journaliser ce choix et protéger les secrets de build.",
+      "acceptance_fr": [
+        "Une instruction RUN marquée est réexécutée en mode forcé.",
+        "Un échec du nouveau build laisse l’ancienne app disponible et ne prétend pas avoir appliqué les mises à jour de sécurité."
+      ],
+      "sources": [
+        {
+          "version": "1.37.3",
+          "date": "2024-04-05",
+          "url": "https://easypanel.io/changelog/1-37-3-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H23",
+      "title_fr": "Branche Git, force push et répertoire propre",
+      "priority": "P0",
+      "criteria": [
+        "A03",
+        "A05"
+      ],
+      "public_fact_fr": "Des correctifs concernent la branche d’auto-déploiement, le changement de branche, les modifications locales et les force push.",
+      "derived_requirement_fr": "Utiliser un workspace isolé et une révision explicite; définir le traitement d’un SHA réécrit ou devenu inaccessible.",
+      "acceptance_fr": [
+        "Déployer A, changer de branche puis force-push B: le commit exécuté est exactement celui attendu.",
+        "Un événement d’une autre branche ou un workspace sale ne modifie pas la source sélectionnée."
+      ],
+      "sources": [
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H24",
+      "title_fr": "Références Git et traçabilité du commit",
+      "priority": "P0",
+      "criteria": [
+        "A03",
+        "A13",
+        "A17"
+      ],
+      "public_fact_fr": "Le commit Git devient disponible au runtime puis au build; les refs autres que branches sont rétablies.",
+      "derived_requirement_fr": "Enregistrer commit demandé, commit cloné, révision OCI et imageID; annoncer précisément branches/tags/SHA supportés.",
+      "acceptance_fr": [
+        "Déplacer un tag après build puis inspecter l’image active: son SHA reste le précédent exact.",
+        "Le journal et le label OCI concordent après redémarrage du serveur."
+      ],
+      "sources": [
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H25",
+      "title_fr": "Webhooks de déploiement et répétitions",
+      "priority": "P0",
+      "criteria": [
+        "A05",
+        "A16",
+        "A18"
+      ],
+      "public_fact_fr": "Plusieurs versions corrigent les webhooks app/Compose et l’auto-déploiement GitHub; une publication précise le comportement force deploy.",
+      "derived_requirement_fr": "Authentifier le corps brut, filtrer dépôt et branche, borner/dédupliquer les livraisons et utiliser la même exclusion mutuelle que l’UI.",
+      "acceptance_fr": [
+        "Signature invalide, dépôt incorrect, suppression de branche et replay ne créent aucun job.",
+        "Un refus busy peut être retenté; rotation, révocation et changement de source invalident l’ancienne autorité."
+      ],
+      "sources": [
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.33.3",
+          "date": "2024-02-17",
+          "url": "https://easypanel.io/changelog/1-33-3-1"
+        },
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "1.42.1",
+          "date": "2024-06-22",
+          "url": "https://easypanel.io/changelog/1-42-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H26",
+      "title_fr": "Erreurs Git utiles et dépôts volumineux",
+      "priority": "P1",
+      "criteria": [
+        "A03",
+        "A04",
+        "A05"
+      ],
+      "public_fact_fr": "Les erreurs Git/GitHub deviennent plus explicites; la sélection dépôt/branche et le téléchargement des gros dépôts sont améliorés.",
+      "derived_requirement_fr": "Différencier refus d’accès, ref absente, réseau et taille, sans divulguer token ou dépôt hors périmètre; paginer les sélecteurs.",
+      "acceptance_fr": [
+        "Simuler chaque catégorie d’échec et vérifier message/action de reprise.",
+        "Cloner une fixture volumineuse avec budgets mémoire/temps, annulation et cleanup; aucune URL contenant secret ne finit dans les logs."
+      ],
+      "sources": [
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H27",
+      "title_fr": "Fichier environnement injecté au build",
+      "priority": "P1",
+      "criteria": [
+        "R01",
+        "A08",
+        "A10"
+      ],
+      "public_fact_fr": "Un fichier .env peut être créé avant le build, puis son nom et chemin deviennent configurables.",
+      "derived_requirement_fr": "Séparer variables de build/runtime et secrets; restreindre le chemin au workspace et décider explicitement si le fichier entre dans une couche image.",
+      "acceptance_fr": [
+        "Tester sous-répertoire autorisé et noms avec espaces; refuser chemins absolus, symlink et parent.",
+        "Inspecter historique/couches d’une fixture à secret: aucun secret déclaré éphémère ne doit persister."
+      ],
+      "sources": [
+        {
+          "version": "1.27.0",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        }
+      ]
+    },
+    {
+      "id": "H28",
+      "title_fr": "Archives source, plateformes et bornes",
+      "priority": "P0",
+      "criteria": [
+        "A06",
+        "F10"
+      ],
+      "public_fact_fr": "Les uploads ZIP puis de multiples formats sont ajoutés; Windows, entrées de répertoire ZIP et validation des sources font l’objet de correctifs.",
+      "derived_requirement_fr": "Annoncer les formats acceptés; valider chemins, liens, fichiers spéciaux, tailles compressées/décompressées et quotas avant construction.",
+      "acceptance_fr": [
+        "Accepter une archive avec répertoires terminés par slash et fichiers Unicode.",
+        "Refuser ../, chemin Windows absolu, lien sortant, archive-bombe et fichier trop grand avant toute extraction hors workspace."
+      ],
+      "sources": [
+        {
+          "version": "1.30.0",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-0-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H29",
+      "title_fr": "Terminal conteneur : shell, dimensions et fermeture",
+      "priority": "P0",
+      "criteria": [
+        "R16",
+        "F10",
+        "S02"
+      ],
+      "public_fact_fr": "Plusieurs correctifs portent sur console navigateur, absence de bash, largeur des lignes et redimensionnement.",
+      "derived_requirement_fr": "Choisir un shell disponible, transmettre les dimensions PTY, vérifier le conteneur exact et fermer la session à la déconnexion/révocation.",
+      "acceptance_fr": [
+        "Sur Alpine sans bash, ouvrir sh, envoyer Unicode/Ctrl-C et vérifier stty après resize.",
+        "Déconnecter ou retirer le rôle: aucun exec interactif orphelin ne reste actif."
+      ],
+      "sources": [
+        {
+          "version": "1.33.2",
+          "date": "2024-02-17",
+          "url": "https://easypanel.io/changelog/1-33-2-1"
+        },
+        {
+          "version": "1.33.4",
+          "date": "2024-02-21",
+          "url": "https://easypanel.io/changelog/1-33-4-1"
+        },
+        {
+          "version": "1.33.5",
+          "date": "2024-02-28",
+          "url": "https://easypanel.io/changelog/1-33-5-1"
+        },
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H30",
+      "title_fr": "Console hôte et redémarrage séparés",
+      "priority": "P2",
+      "criteria": [
+        "R16",
+        "S01",
+        "S02"
+      ],
+      "public_fact_fr": "Une console et un bouton reboot hôte sont ajoutés; le bouton de fermeture est corrigé ensuite.",
+      "derived_requirement_fr": "Séparer les droits d’administration hôte de ceux du terminal de service; rendre indisponible l’action hôte tant que son périmètre n’est pas implémenté.",
+      "acceptance_fr": [
+        "Un opérateur projet ne peut ouvrir la console hôte.",
+        "Une fermeture coupe le transport; reboot exige une confirmation et un journal indépendant de la disponibilité du panneau."
+      ],
+      "sources": [
+        {
+          "version": "1.50.0",
+          "date": "2024-09-02",
+          "url": "https://easypanel.io/changelog/1-50-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H31",
+      "title_fr": "Annulation, concurrence et interruption",
+      "priority": "P0",
+      "criteria": [
+        "A18",
+        "C13"
+      ],
+      "public_fact_fr": "L’annulation des builds est ajoutée; le dernier déploiement peut annuler les précédents, les actions sont arrêtées au redémarrage, puis une course d’annulation est corrigée.",
+      "derived_requirement_fr": "Définir une machine d’états durable; annuler un job ne doit ni tuer un autre job ni annoncer succès avant finalisation.",
+      "acceptance_fr": [
+        "Déclencher finish et cancel simultanément mille fois dans un test contrôlé: un seul état terminal cohérent.",
+        "SIGKILL aux frontières du journal puis redémarrer: l’action reste interrompue ou réconciliée, jamais faussement réussie."
+      ],
+      "sources": [
+        {
+          "version": "1.43.0",
+          "date": "2024-06-25",
+          "url": "https://easypanel.io/changelog/1-43-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H32",
+      "title_fr": "Journal global, acteur, fuseau et identité stable",
+      "priority": "P0",
+      "criteria": [
+        "A13",
+        "F11",
+        "S02"
+      ],
+      "public_fact_fr": "Les actions gagnent vue globale, acteur et origine; des bugs affectent installation neuve, fuseau horaire et historique après renommage.",
+      "derived_requirement_fr": "Persister UUID, acteur, source UI/API/système, timestamps UTC et état; l’affichage local ne modifie pas les données. Journaliser les changements sans valeurs secrètes.",
+      "acceptance_fr": [
+        "Créer sur une installation vierge, changer de fuseau puis renommer le service: ordre, identité et liens historiques restent corrects.",
+        "Job planifié et requête API conservent des origines distinctes après restart."
+      ],
+      "sources": [
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.3.3",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-3-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.11.0",
+          "date": "2025-02-17",
+          "url": "https://easypanel.io/changelog/2-11-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        }
+      ]
+    },
+    {
+      "id": "H33",
+      "title_fr": "Journaux : ordre, répétitions, fluidité et taille",
+      "priority": "P1",
+      "criteria": [
+        "R15",
+        "R18",
+        "A13"
+      ],
+      "public_fact_fr": "Les publications corrigent défilement, ordre, largeur, répétition et modales des logs; elles ajoutent rotation et logs par service Compose.",
+      "derived_requirement_fr": "Définir curseur/reprise, limites de rétention et séparation stderr/stdout; éviter doublons de transport sans supprimer de vraies lignes identiques.",
+      "acceptance_fr": [
+        "Une fixture émet deux lignes identiques légitimes et subit une reconnexion: deux lignes, pas une ni quatre.",
+        "Débit élevé, pause, filtre, mobile et rotation restent utilisables sans mémoire non bornée."
+      ],
+      "sources": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.47.0",
+          "date": "2024-08-01",
+          "url": "https://easypanel.io/changelog/1-47-0-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.47.3",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-3-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.2.3",
+          "date": "2024-12-14",
+          "url": "https://easypanel.io/changelog/2-2-3-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H34",
+      "title_fr": "Révélation et propagation contrôlée des secrets",
+      "priority": "P0",
+      "criteria": [
+        "F10",
+        "D06",
+        "S02"
+      ],
+      "public_fact_fr": "Un défaut de révélation de mot de passe est corrigé; des durcissements touchent plus tard les journaux et actions WordPress. Aucun mécanisme détaillé n’est publié.",
+      "derived_requirement_fr": "Révéler un secret seulement sur action autorisée, ne jamais le placer dans inventaires ou traces; redacter aussi les anciens secrets appliqués.",
+      "acceptance_fr": [
+        "Tester viewer/opérateur/admin sur réponses, logs et erreurs.",
+        "Émettre un secret en fragments et changer ensuite le secret: les fragments reconstitués et les anciennes valeurs restent masqués."
+      ],
+      "sources": [
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H35",
+      "title_fr": "Rotation de mot de passe native",
+      "priority": "P0",
+      "criteria": [
+        "D07",
+        "D06"
+      ],
+      "public_fact_fr": "Le changement de mot de passe de base est introduit puis corrigé dans la version suivante.",
+      "derived_requirement_fr": "Changer le compte dans le moteur avant de valider sa configuration; prévoir compensation si la persistance échoue.",
+      "acceptance_fr": [
+        "Sur une base déjà remplie, l’ancien secret échoue et le nouveau se connecte depuis un client réseau indépendant.",
+        "Échec en cours de rotation: un état récupérable décrit la réalité du moteur, pas seulement son environnement."
+      ],
+      "sources": [
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H36",
+      "title_fr": "Noms, utilisateurs et configuration native des bases",
+      "priority": "P1",
+      "criteria": [
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D06",
+        "D09"
+      ],
+      "public_fact_fr": "Des noms/utilisateurs personnalisés et configurations MySQL/MariaDB sont ajoutés; noms affichés et clients PostgreSQL personnalisés sont corrigés.",
+      "derived_requirement_fr": "Utiliser le profil réellement appliqué, encoder les URI, valider identifiants sans interpolation shell/SQL et refuser les topologies non prises en charge.",
+      "acceptance_fr": [
+        "Noms autorisés avec ponctuation et secret réservé URI: le client utilise les bons paramètres.",
+        "Une chaîne de connexion injectée comme nom ou un data_directory hors volume géré est refusé avant sauvegarde/restauration."
+      ],
+      "sources": [
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.2.1",
+          "date": "2024-12-09",
+          "url": "https://easypanel.io/changelog/2-2-1-1"
+        },
+        {
+          "version": "2.3.2",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-2-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H37",
+      "title_fr": "Périmètre exact des dumps et restauration",
+      "priority": "P0",
+      "criteria": [
+        "D10",
+        "D13"
+      ],
+      "public_fact_fr": "Les sauvegardes bêta précèdent la restauration; 1.31.0 limite le dump à la base par défaut, puis la sélection et les sauvegardes multiples évoluent.",
+      "derived_requirement_fr": "Versionner format et périmètre; distinguer dump mono-base, instance complète, utilisateurs et rôles. Harborlight choisit explicitement ses propres formats.",
+      "acceptance_fr": [
+        "Créer deux bases et comptes distincts, restaurer et vérifier exactement le périmètre annoncé.",
+        "Pour un dump d’instance, vérifier adoption des comptes source, refus anciens comptes cible et absence de perte des volumes précédents."
+      ],
+      "sources": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H38",
+      "title_fr": "Planification et rétention des sauvegardes",
+      "priority": "P1",
+      "criteria": [
+        "D11",
+        "D12"
+      ],
+      "public_fact_fr": "Les sauvegardes programmées sont annoncées en 2023; la purge est alors future. Des réglages de rétention arrivent en 2026.",
+      "derived_requirement_fr": "Rendre fuseau, prochain passage, reprise après redémarrage et rétention explicites; ne supprimer que les fichiers attribués à ce service/job.",
+      "acceptance_fr": [
+        "Avec horloge contrôlée, redémarrer après trois échéances: pas de tempête de rattrapage.",
+        "Busy/échec ne supprime pas la dernière copie valide; tester fichiers manquants, symlinks et changement de configuration."
+      ],
+      "sources": [
+        {
+          "version": "1.15.0",
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/changelog/1-15-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H39",
+      "title_fr": "Grandes sauvegardes et MySQL GTID",
+      "priority": "P0",
+      "criteria": [
+        "D02",
+        "D10",
+        "D13"
+      ],
+      "public_fact_fr": "Deux correctifs distincts concernent grandes bases et sauvegardes MySQL avec GTID actif.",
+      "derived_requirement_fr": "Streamer les dumps vers un fichier durable et borner la mémoire; définir les options GTID pour le périmètre importé.",
+      "acceptance_fr": [
+        "Sauvegarder/restaurer une fixture dépassant le budget mémoire du processus puis vérifier des lignes en début/fin.",
+        "Sur MySQL GTID activé, valider import, utilisateurs et absence de mutation de la source; le test MySQL standard seul ne couvre pas GTID."
+      ],
+      "sources": [
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        }
+      ]
+    },
+    {
+      "id": "H40",
+      "title_fr": "Chemins et noms de sauvegarde",
+      "priority": "P0",
+      "criteria": [
+        "D10",
+        "D12",
+        "D15"
+      ],
+      "public_fact_fr": "Validation des chemins, acceptation des points, nom de base et nommage des copies manuelles évoluent par corrections successives.",
+      "derived_requirement_fr": "Conserver les noms légitimes tout en refusant traversée et liens; séparer nom d’affichage, nom natif et identifiant fichier interne.",
+      "acceptance_fr": [
+        "Accepter backup.2026-11-08.sql dans le répertoire prévu; refuser ../, symlink et caractères de contrôle.",
+        "Deux copies de même titre conservent des identifiants distincts et un téléchargement autorisé."
+      ],
+      "sources": [
+        {
+          "version": "2.14.0",
+          "date": "2025-03-24",
+          "url": "https://easypanel.io/changelog/2-14-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        }
+      ]
+    },
+    {
+      "id": "H41",
+      "title_fr": "Stockage distant, OAuth et sauvegardes de volumes",
+      "priority": "P1",
+      "criteria": [
+        "D14",
+        "D16",
+        "D17",
+        "D18"
+      ],
+      "public_fact_fr": "Des fournisseurs locaux/FTP/SFTP/Dropbox/Drive puis sauvegardes de volumes sont ajoutés; OAuth Drive et S3 volumes sont corrigés; classes S3 et R2 suivent.",
+      "derived_requirement_fr": "Modéliser upload, vérification, téléchargement, refresh et révocation séparément; une copie locale réussie ne signifie pas upload réussi.",
+      "acceptance_fr": [
+        "Avec bucket S3 test et fournisseur OAuth simulant expiration, vérifier upload/download/checksum et refresh unique.",
+        "Une destination invalide reste supprimable; rétention ne touche aucun objet extérieur au préfixe attribué."
+      ],
+      "sources": [
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.7.0",
+          "date": "2025-01-23",
+          "url": "https://easypanel.io/changelog/2-7-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.12.1",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-1-1"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": null,
+          "date": "2023-03-02",
+          "url": "https://easypanel.io/blog/database-backups-are-here",
+          "title": "Database backups are here!"
+        }
+      ]
+    },
+    {
+      "id": "H42",
+      "title_fr": "Persistance et permissions des volumes",
+      "priority": "P0",
+      "criteria": [
+        "R02",
+        "R03",
+        "D14",
+        "C02"
+      ],
+      "public_fact_fr": "La persistance de fichiers Compose dans le dépôt est améliorée; les sauvegardes de volumes et leurs permissions font l’objet d’évolutions.",
+      "derived_requirement_fr": "Séparer source reconstruite et données persistantes; conserver UID/GID/modes et gérer explicitement liens et chemins non supportés.",
+      "acceptance_fr": [
+        "Réécrire le dépôt puis déployer: la donnée utilisateur reste présente.",
+        "Restaurer un fichier Unicode UID123/GID234/mode0640 et vérifier contenu et droits; un lien non supporté provoque un refus explicite."
+      ],
+      "sources": [
+        {
+          "version": "1.48.0",
+          "date": "2024-08-16",
+          "url": "https://easypanel.io/changelog/1-48-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H43",
+      "title_fr": "Clients de bases : compte personnalisé et nettoyage",
+      "priority": "P1",
+      "criteria": [
+        "D09",
+        "F08",
+        "S02"
+      ],
+      "public_fact_fr": "Des clients web natifs puis DbGate sont ajoutés; pgAdmin oublié lors d’une suppression et clients PostgreSQL avec utilisateurs personnalisés sont corrigés.",
+      "derived_requirement_fr": "Lier le client web au service exact, à ses identifiants appliqués et à une autorisation; fermer ses routes lors de la désactivation/suppression.",
+      "acceptance_fr": [
+        "Ouvrir le client sur un utilisateur personnalisé puis révoquer l’accès.",
+        "Supprimer la base selon la politique annoncée: aucun client web orphelin ni URL encore accessible ne subsiste."
+      ],
+      "sources": [
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H44",
+      "title_fr": "Compose : source, build et diagnostic par enfant",
+      "priority": "P1",
+      "criteria": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05"
+      ],
+      "public_fact_fr": "Le service Compose natif apporte source inline/Git, domaines, logs et console; des logs individuels et build au déploiement suivent.",
+      "derived_requirement_fr": "Annoncer le sous-ensemble YAML supporté, préserver les chemins relatifs et adresser chaque enfant sans confondre la stack avec ses conteneurs.",
+      "acceptance_fr": [
+        "Une stack à deux enfants conserve ses volumes après stop/start/redeploy.",
+        "Rejeter clairement un bind hôte ou option non supportée; une erreur d’un enfant est identifiée dans son propre journal."
+      ],
+      "sources": [
+        {
+          "version": "1.46.0",
+          "date": "2024-07-30",
+          "url": "https://easypanel.io/changelog/1-46-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H45",
+      "title_fr": "WordPress : initialisation et opérations natives",
+      "priority": "P2",
+      "criteria": [
+        "C08",
+        "C09"
+      ],
+      "public_fact_fr": "WordPress natif arrive avec des correctifs d’installation de plugin, base existante, image et création; ses actions sont ensuite durcies.",
+      "derived_requirement_fr": "Implémenter WordPress comme workflow vérifié avec base privée et commandes natives autorisées, sans déclarer ce support à partir d’un simple modèle Docker.",
+      "acceptance_fr": [
+        "Installer avec base neuve puis existante; vérifier navigateur, médias, plugin et mise à jour.",
+        "Un membre hors projet ne peut lancer une action; l’échec d’upgrade garde un chemin de récupération."
+      ],
+      "sources": [
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H46",
+      "title_fr": "Import/export WordPress et charge importante",
+      "priority": "P2",
+      "criteria": [
+        "C10",
+        "D13",
+        "F08"
+      ],
+      "public_fact_fr": "Les snapshots de services sont ajoutés; limites et performances d’import/export WordPress évoluent, puis les noms importés sont validés.",
+      "derived_requirement_fr": "Distinguer contenu, base et configuration; prévisualiser cible et migrations d’URL, borner l’archive et vérifier le résultat avant adoption.",
+      "acceptance_fr": [
+        "Importer une fixture avec médias volumineux et URL d’origine; vérifier liens et données après bascule.",
+        "Nom cible invalide ou archive corrompue: pas de remplacement partiel ni fuite de secrets."
+      ],
+      "sources": [
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H47",
+      "title_fr": "Box : modules, IDE et processus",
+      "priority": "P2",
+      "criteria": [
+        "C11",
+        "C12"
+      ],
+      "public_fact_fr": "Box bêta introduit IDE et modules; extensions PHP, identité Git, réseau et versions Node évoluent ensuite.",
+      "derived_requirement_fr": "Décrire une matrice de modules réellement supportés, identité du processus, accès IDE et stockage persistant; garder le reste explicitement indisponible.",
+      "acceptance_fr": [
+        "Déployer une fixture par module déclaré et vérifier processus, redémarrage et workspace.",
+        "IDE désactivé ou token révoqué: accès refusé; une extension incompatible échoue avant bascule."
+      ],
+      "sources": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.44.2",
+          "date": "2024-07-19",
+          "url": "https://easypanel.io/changelog/1-44-2-1"
+        },
+        {
+          "version": "1.47.3",
+          "date": "2024-08-05",
+          "url": "https://easypanel.io/changelog/1-47-3-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        }
+      ]
+    },
+    {
+      "id": "H48",
+      "title_fr": "Scripts nommés, cron et déclencheurs",
+      "priority": "P1",
+      "criteria": [
+        "C13",
+        "R16",
+        "A18"
+      ],
+      "public_fact_fr": "Box inclut scripts/cron; les routes de scripts évoluent, puis les applications obtiennent un CRUD de scripts nommés.",
+      "derived_requirement_fr": "Exécuter uniquement dans le service autorisé avec limites, journal, annulation et politique de chevauchement; définir fuseau et sémantique HTTP.",
+      "acceptance_fr": [
+        "Deux échéances chevauchées respectent la politique documentée sans lancer deux jobs silencieux.",
+        "Exécution API, manuelle et planifiée conservent acteur/origine et code de sortie; arrêt coupe le bon processus."
+      ],
+      "sources": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.27.0",
+          "date": "2026-03-13",
+          "url": "https://easypanel.io/changelog/2-27-0"
+        }
+      ]
+    },
+    {
+      "id": "H49",
+      "title_fr": "Budgets de build et builders distants",
+      "priority": "P2",
+      "criteria": [
+        "S08",
+        "R04",
+        "A08"
+      ],
+      "public_fact_fr": "La priorité CPU des builds est expérimentée, puis des builders avec limites et un guide distant sont introduits.",
+      "derived_requirement_fr": "Allouer CPU/mémoire et accès réseau du build séparément du runtime; ne pas exposer le socket ou les services du projet sans choix explicite.",
+      "acceptance_fr": [
+        "Un build dépassant son budget ne rend pas le panneau indisponible.",
+        "Builder distant perdu: le job échoue ou reprend selon politique, sans déployer une image non vérifiée."
+      ],
+      "sources": [
+        {
+          "version": "1.31.0",
+          "date": "2024-01-05",
+          "url": "https://easypanel.io/changelog/1-31-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.12.0",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-12-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H50",
+      "title_fr": "Nettoyage Docker ciblé et prévisualisé",
+      "priority": "P0",
+      "criteria": [
+        "S07",
+        "A17",
+        "F08"
+      ],
+      "public_fact_fr": "Le nettoyage images/builders et sa planification évoluent; plusieurs correctifs touchent valeurs par défaut et images devenues introuvables.",
+      "derived_requirement_fr": "Prévisualiser les objets possédés et les références conservées; aucune purge globale implicite, aucun volume utilisateur ou image de rollback retenue supprimé.",
+      "acceptance_fr": [
+        "Daemon partagé avec ressources étrangères, images partagées et releases: seules les références sélectionnées disparaissent.",
+        "Annulation ou changement d’inventaire entre preview/exécution provoque réévaluation, pas élargissement du périmètre."
+      ],
+      "sources": [
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.25.0",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-0-1"
+        },
+        {
+          "version": "1.25.1",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-1-1"
+        },
+        {
+          "version": "1.32.0",
+          "date": "2024-01-25",
+          "url": "https://easypanel.io/changelog/1-32-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H51",
+      "title_fr": "Pression disque et limites des journaux",
+      "priority": "P0",
+      "criteria": [
+        "S01",
+        "R18",
+        "S07"
+      ],
+      "public_fact_fr": "Une rotation bornée des logs est introduite pour éviter saturation; une analyse disque distingue stockage service et éléments exclus.",
+      "derived_requirement_fr": "Afficher capacité réelle du daemon séparée du disque du panneau et calculer le coût de sauvegarde/candidat; traiter ENOSPC sans corrompre l’état.",
+      "acceptance_fr": [
+        "Simuler disque plein lors du dump, de la sauvegarde d’état et de la création candidat: pas de faux succès, ancien runtime intact.",
+        "Vérifier que la rotation et la suppression ciblée rendent l’espace attendu."
+      ],
+      "sources": [
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.19.0",
+          "date": "2025-05-23",
+          "url": "https://easypanel.io/changelog/2-19-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H52",
+      "title_fr": "Compatibilité Docker et avertissements versionnés",
+      "priority": "P1",
+      "criteria": [
+        "S01",
+        "S11"
+      ],
+      "public_fact_fr": "Un contrôle de version Docker est ajouté, immédiatement suivi d’un correctif pour anciennes versions et d’un avertissement renforcé.",
+      "derived_requirement_fr": "Publier une version minimale testée et détecter les fonctionnalités requises avant mutation; ne pas déduire compatibilité d’un simple numéro affiché.",
+      "acceptance_fr": [
+        "Simuler API Docker ancienne, absente et compatible; commandes indisponibles ne sont pas exécutées.",
+        "La recommandation d’upgrade est affichée sans lancer une mise à jour hôte automatiquement."
+      ],
+      "sources": [
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.25.1",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-1"
+        },
+        {
+          "version": "2.29.3",
+          "date": "2026-04-17",
+          "url": "https://easypanel.io/changelog/2-29-3"
+        }
+      ]
+    },
+    {
+      "id": "H53",
+      "title_fr": "Mise à jour du panneau et dépendances actives",
+      "priority": "P0",
+      "criteria": [
+        "S11",
+        "S01",
+        "F11"
+      ],
+      "public_fact_fr": "Des dépendances de sécurité sont régulièrement mises à jour; certaines nécessitent un redémarrage manuel. Un patch corrige un script pouvant empêcher le panneau de démarrer. Une version annonce également une réduction de la taille de l’image.",
+      "derived_requirement_fr": "Distinguer version installée et active, montrer changements/migrations, sauvegarder état et clés, prévoir rollback du panneau sans toucher les workloads. Enregistrer le digest et la taille de l’artefact livré.",
+      "acceptance_fr": [
+        "Interrompre une mise à jour après téléchargement et après migration; l’accès se récupère selon procédure vérifiée.",
+        "Après restart, contrôler les versions réellement exécutées et non seulement le tag téléchargé."
+      ],
+      "sources": [
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.36.2",
+          "date": "2024-03-26",
+          "url": "https://easypanel.io/changelog/1-36-2-1"
+        },
+        {
+          "version": "1.38.1",
+          "date": "2024-04-13",
+          "url": "https://easypanel.io/changelog/1-38-1-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.52.0",
+          "date": "2024-09-30",
+          "url": "https://easypanel.io/changelog/1-52-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.11.2",
+          "date": "2025-02-19",
+          "url": "https://easypanel.io/changelog/2-11-2-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.25.0",
+          "date": "2026-02-04",
+          "url": "https://easypanel.io/changelog/2-25-0"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.35.0",
+          "date": "2026-09-16",
+          "url": "https://easypanel.io/changelog/2-35-0"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H54",
+      "title_fr": "Compaction de l’état au démarrage",
+      "priority": "P0",
+      "criteria": [
+        "F11",
+        "S11"
+      ],
+      "public_fact_fr": "La compaction automatique de la base du panneau au démarrage est annoncée. Le mécanisme interne n’est pas publié.",
+      "derived_requirement_fr": "Toute compaction/migration Harborlight doit être transactionnelle, verrouillée et compatible avec la sauvegarde de l’état chiffré.",
+      "acceptance_fr": [
+        "Tuer le processus au milieu d’une compaction simulée: au prochain démarrage, obtenir un état ancien ou nouveau valide.",
+        "Deux writers concurrents et un disque plein doivent échouer sans perte silencieuse."
+      ],
+      "sources": [
+        {
+          "version": "2.30.0",
+          "date": "2026-04-22",
+          "url": "https://easypanel.io/changelog/2-30-0"
+        }
+      ]
+    },
+    {
+      "id": "H55",
+      "title_fr": "Snapshots de configuration et migration serveur",
+      "priority": "P1",
+      "criteria": [
+        "S11",
+        "F03",
+        "F08",
+        "D13"
+      ],
+      "public_fact_fr": "Des snapshots export/import puis migration serveur sont ajoutés; tailles et validation des noms évoluent.",
+      "derived_requirement_fr": "Séparer copie de configuration et transfert des données; vérifier versions, secrets, conflits de ports, volumes et intégrité avant activer la cible.",
+      "acceptance_fr": [
+        "Migrer une fixture avec données et comptes; la source reste récupérable tant que la cible n’est pas vérifiée.",
+        "Nom/ID interdit, fichier corrompu ou port occupé: aucun écrasement hors cible confirmée."
+      ],
+      "sources": [
+        {
+          "version": "1.54.0",
+          "date": "2024-10-10",
+          "url": "https://easypanel.io/changelog/1-54-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H56",
+      "title_fr": "Renommer, déplacer et supprimer sans perdre les liens",
+      "priority": "P0",
+      "criteria": [
+        "F03",
+        "F08",
+        "R06",
+        "A13"
+      ],
+      "public_fact_fr": "Renommage/déplacement sont ajoutés; répertoire manquant, services non initialisés, historique et domaines perdus au renommage font l’objet de correctifs.",
+      "derived_requirement_fr": "Utiliser UUID stables pour routes, jobs, secrets et volumes; définir transfert de droits et nettoyage des dépendances avec confirmation.",
+      "acceptance_fr": [
+        "Renommer puis déplacer vers un projet vide: domaines, données et historique restent associés au bon UUID.",
+        "Supprimer un service partiellement créé n’affecte aucun voisin et indique clairement les données conservées."
+      ],
+      "sources": [
+        {
+          "version": "1.37.0",
+          "date": "2024-04-04",
+          "url": "https://easypanel.io/changelog/1-37-0-1"
+        },
+        {
+          "version": "1.38.2",
+          "date": "2024-04-16",
+          "url": "https://easypanel.io/changelog/1-38-2-1"
+        },
+        {
+          "version": "1.45.0",
+          "date": "2024-07-25",
+          "url": "https://easypanel.io/changelog/1-45-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        },
+        {
+          "version": "2.10.0",
+          "date": "2025-02-14",
+          "url": "https://easypanel.io/changelog/2-10-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H57",
+      "title_fr": "Tunnels Cloudflare et règles existantes",
+      "priority": "P2",
+      "criteria": [
+        "S09",
+        "S10"
+      ],
+      "public_fact_fr": "Cloudflared natif, domaines racines et conservation des règles existantes sont ajoutés/corrigés; la version du tunnel est ensuite actualisée.",
+      "derived_requirement_fr": "Limiter les tokens au tunnel visé, fusionner les règles explicitement possédées et conserver un accès local au panneau.",
+      "acceptance_fr": [
+        "Ajouter/supprimer une règle Harborlight dans un tunnel comportant une règle externe: celle-ci reste intacte.",
+        "Rotation du token et mise à jour du binaire sont vérifiées sans confondre tunnel actif et configuration enregistrée."
+      ],
+      "sources": [
+        {
+          "version": "1.55.0",
+          "date": "2024-10-11",
+          "url": "https://easypanel.io/changelog/1-55-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.2.2",
+          "date": "2024-12-09",
+          "url": "https://easypanel.io/changelog/2-2-2-1"
+        },
+        {
+          "version": "2.38.0",
+          "date": "2026-10-22",
+          "url": "https://easypanel.io/changelog/2-38-0"
+        }
+      ]
+    },
+    {
+      "id": "H58",
+      "title_fr": "Notifications d’événements et tests de livraison",
+      "priority": "P2",
+      "criteria": [
+        "S06",
+        "D11"
+      ],
+      "public_fact_fr": "Des canaux de notification et événements de déploiement, sauvegarde, disque ou mise à jour sont ajoutés, puis un canal webhook.",
+      "derived_requirement_fr": "Définir événement, destinataire autorisé, retry, déduplication et masquage; une notification échouée ne change pas rétroactivement le résultat du job.",
+      "acceptance_fr": [
+        "Simuler timeout, réponse500 puis succès: un événement conserve son ID et ses tentatives.",
+        "Le message contient cible et résultat utiles, jamais token, mot de passe ou dump."
+      ],
+      "sources": [
+        {
+          "version": "1.26.0",
+          "date": "2023-11-17",
+          "url": "https://easypanel.io/changelog/1-26-0-1"
+        },
+        {
+          "version": "2.9.0",
+          "date": "2025-02-12",
+          "url": "https://easypanel.io/changelog/2-9-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H59",
+      "title_fr": "Clés API, sessions et révocation",
+      "priority": "P0",
+      "criteria": [
+        "S03",
+        "F02",
+        "F10"
+      ],
+      "public_fact_fr": "Les tokens API sont introduits puis ouverts aux plans gratuits; une intégration d’authentification bearer est mentionnée.",
+      "derived_requirement_fr": "Séparer clés et sessions, stocker uniquement un hash vérifiable, limiter permissions/projets, afficher le secret une seule fois et permettre expiration/révocation.",
+      "acceptance_fr": [
+        "Une clé read-only ne lance pas de mutation et une clé d’un projet ne traverse pas ses limites.",
+        "Après rotation ou révocation et restart, l’ancienne clé reste refusée et le secret ne figure dans aucune réponse de liste."
+      ],
+      "sources": [
+        {
+          "version": "1.27.0",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-0-1"
+        },
+        {
+          "version": "1.27.1",
+          "date": "2023-11-25",
+          "url": "https://easypanel.io/changelog/1-27-1-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H60",
+      "title_fr": "API publique, CLI, MCP et conversion des paramètres",
+      "priority": "P1",
+      "criteria": [
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "public_fact_fr": "Documentation API, migration compatible, CLI/MCP et nouveaux contrats publics sont publiés; chemins de documentation et paramètres numériques sont corrigés.",
+      "derived_requirement_fr": "Versionner les contrats et schémas; préserver identité/scopes entre UI, CLI et MCP; convertir les paramètres sans coercition permissive.",
+      "acceptance_fr": [
+        "Tester limites numériques, valeurs négatives/NaN et pagination cohérente.",
+        "Le même appel refusé à l’UI reste refusé via CLI/MCP; une migration garde les contrats promis et documente les ruptures."
+      ],
+      "sources": [
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "2.13.0",
+          "date": "2025-02-26",
+          "url": "https://easypanel.io/changelog/2-13-0-1"
+        },
+        {
+          "version": "2.31.0",
+          "date": "2026-06-05",
+          "url": "https://easypanel.io/changelog/2-31-0"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.33.0",
+          "date": "2026-07-31",
+          "url": "https://easypanel.io/changelog/2-33-0"
+        },
+        {
+          "version": "2.33.1",
+          "date": "2026-08-03",
+          "url": "https://easypanel.io/changelog/2-33-1"
+        },
+        {
+          "version": "2.33.2",
+          "date": "2026-08-21",
+          "url": "https://easypanel.io/changelog/2-33-2"
+        },
+        {
+          "version": "2.34.0",
+          "date": "2026-09-10",
+          "url": "https://easypanel.io/changelog/2-34-0"
+        }
+      ]
+    },
+    {
+      "id": "H61",
+      "title_fr": "Codes HTTP et erreurs compréhensibles",
+      "priority": "P0",
+      "criteria": [
+        "F12",
+        "A13",
+        "S04"
+      ],
+      "public_fact_fr": "Pages d’erreur, diagnostics service/Git et codes API sont améliorés; des réponses génériques500 deviennent401/404/400.",
+      "derived_requirement_fr": "Définir codes, messages publics et détails internes séparément; ne jamais transformer indisponibilité runtime en succès démo.",
+      "acceptance_fr": [
+        "Entrée invalide400, anonyme401, ressource inaccessible404 et conflit409 sont cohérents.",
+        "Une vraie erreur Docker reste visible dans le job avec un identifiant de diagnostic et sans secret."
+      ],
+      "sources": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.38.0",
+          "date": "2024-04-12",
+          "url": "https://easypanel.io/changelog/1-38-0-1"
+        },
+        {
+          "version": "1.44.0",
+          "date": "2024-07-17",
+          "url": "https://easypanel.io/changelog/1-44-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        }
+      ]
+    },
+    {
+      "id": "H62",
+      "title_fr": "Navigation, recherche et refonte sans perte de workflow",
+      "priority": "P1",
+      "criteria": [
+        "F04",
+        "F07",
+        "S12"
+      ],
+      "public_fact_fr": "Le tableau, la recherche, les onglets mémorisés et plusieurs refontes UX évoluent; 2.0 annonce une refonte visuelle sans rupture fonctionnelle. Un patch corrige aussi le bouton de déploiement.",
+      "derived_requirement_fr": "Concevoir une UI originale tout en conservant objectifs et étapes; liens profonds, retour navigateur et recherche doivent préserver la sélection autorisée.",
+      "acceptance_fr": [
+        "Naviguer projet→service→logs puis retour/reload; vérifier écran et contexte.",
+        "Création/suppression actualise la navigation, et une recherche ne montre jamais un projet inaccessible."
+      ],
+      "sources": [
+        {
+          "version": "1.12.4",
+          "date": "2022-10-31",
+          "url": "https://easypanel.io/changelog/1-12-4-1"
+        },
+        {
+          "version": "1.23.1",
+          "date": "2023-09-04",
+          "url": "https://easypanel.io/changelog/1-23-1-1"
+        },
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.33.0",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-0-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.35.0",
+          "date": "2024-03-20",
+          "url": "https://easypanel.io/changelog/1-35-0-1"
+        },
+        {
+          "version": "1.53.1",
+          "date": "2024-10-04",
+          "url": "https://easypanel.io/changelog/1-53-1-1"
+        },
+        {
+          "version": "2.0.0",
+          "date": "2024-11-07",
+          "url": "https://easypanel.io/changelog/2-0-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.2.0",
+          "date": "2024-12-04",
+          "url": "https://easypanel.io/changelog/2-2-0-1"
+        },
+        {
+          "version": "2.26.0",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-0"
+        },
+        {
+          "version": "1.30.1",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-1-1"
+        },
+        {
+          "version": null,
+          "date": "2022-08-12",
+          "url": "https://easypanel.io/blog/changelog-august-2022",
+          "title": "Resource Monitoring, New Dashboard, and Other Improvements"
+        }
+      ]
+    },
+    {
+      "id": "H63",
+      "title_fr": "Responsive, thème et surfaces défilantes",
+      "priority": "P1",
+      "criteria": [
+        "S12",
+        "F07"
+      ],
+      "public_fact_fr": "Les correctifs couvrent mobile, création de modèles, sidebars, modales, logs, couleurs Markdown et toasts sombres.",
+      "derived_requirement_fr": "Tester clavier et petites largeurs sur les vrais workflows; chaque modale possède focus, fermeture et zone de défilement utilisable.",
+      "acceptance_fr": [
+        "À 390px et avec texte long, réaliser création, déploiement et confirmation sans débordement global.",
+        "Changer de thème et zoom 200%: libellés, erreurs, logs et boutons restent lisibles et atteignables."
+      ],
+      "sources": [
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.19.1",
+          "date": "2023-07-04",
+          "url": "https://easypanel.io/changelog/1-19-1-1"
+        },
+        {
+          "version": "1.30.2",
+          "date": "2023-12-19",
+          "url": "https://easypanel.io/changelog/1-30-2-1"
+        },
+        {
+          "version": "1.33.1",
+          "date": "2024-02-16",
+          "url": "https://easypanel.io/changelog/1-33-1-1"
+        },
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "2.6.0",
+          "date": "2025-01-20",
+          "url": "https://easypanel.io/changelog/2-6-0-1"
+        },
+        {
+          "version": "2.8.0",
+          "date": "2025-01-30",
+          "url": "https://easypanel.io/changelog/2-8-0-1"
+        },
+        {
+          "version": "2.26.2",
+          "date": "2026-02-11",
+          "url": "https://easypanel.io/changelog/2-26-2"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.29.5",
+          "date": "2026-04-18",
+          "url": "https://easypanel.io/changelog/2-29-5"
+        },
+        {
+          "version": "2.32.0",
+          "date": "2026-06-22",
+          "url": "https://easypanel.io/changelog/2-32-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H64",
+      "title_fr": "Notes de service non intrusives",
+      "priority": "P2",
+      "criteria": [
+        "F06",
+        "S12"
+      ],
+      "public_fact_fr": "Les notes sont ajoutées, peuvent être masquées puis leur bouton et visibilité à vide sont améliorés.",
+      "derived_requirement_fr": "Persister les notes par UUID, distinguer contenu vide/masqué et rendre le texte sans exécuter HTML/script.",
+      "acceptance_fr": [
+        "Éditer, cacher, renommer puis recharger un service: la note reste attachée au bon service.",
+        "Une note contenant Markdown et HTML malveillant n’exécute aucun code."
+      ],
+      "sources": [
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.40.0",
+          "date": "2024-05-01",
+          "url": "https://easypanel.io/changelog/1-40-0-1"
+        },
+        {
+          "version": "2.29.0",
+          "date": "2026-04-16",
+          "url": "https://easypanel.io/changelog/2-29-0"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H65",
+      "title_fr": "Branding, licences et options commerciales : frontière explicite",
+      "priority": "P2",
+      "criteria": [
+        "S12",
+        "F10"
+      ],
+      "public_fact_fr": "L’historique inclut plans, licences, logos, page de login, scripts de branding et corrections d’activation. Ces éléments commerciaux ne sont pas des exigences de licence Harborlight.",
+      "derived_requirement_fr": "Conserver une identité visuelle originale et des préférences sûres; exclure la reproduction des mécanismes de licence propriétaires. Les extensions HTML/script nécessitent une autorisation dédiée si elles existent.",
+      "acceptance_fr": [
+        "Harborlight fonctionne sans clé Easypanel ni appel au portail commercial.",
+        "Logo et thème ne modifient pas authentification/origine; une préférence invalide garde une interface récupérable."
+      ],
+      "sources": [
+        {
+          "version": "1.17.0",
+          "date": "2023-05-07",
+          "url": "https://easypanel.io/changelog/1-17-0-1"
+        },
+        {
+          "version": "1.18.0",
+          "date": "2023-05-27",
+          "url": "https://easypanel.io/changelog/1-18-0-1"
+        },
+        {
+          "version": "1.23.0",
+          "date": "2023-09-01",
+          "url": "https://easypanel.io/changelog/1-23-0-1"
+        },
+        {
+          "version": "1.24.0",
+          "date": "2023-09-29",
+          "url": "https://easypanel.io/changelog/1-24-0-1"
+        },
+        {
+          "version": "1.25.0",
+          "date": "2023-11-13",
+          "url": "https://easypanel.io/changelog/1-25-0-1"
+        },
+        {
+          "version": "1.36.2",
+          "date": "2024-03-26",
+          "url": "https://easypanel.io/changelog/1-36-2-1"
+        },
+        {
+          "version": "1.41.0",
+          "date": "2024-06-06",
+          "url": "https://easypanel.io/changelog/1-41-0-1"
+        },
+        {
+          "version": "1.49.0",
+          "date": "2024-08-30",
+          "url": "https://easypanel.io/changelog/1-49-0-1"
+        },
+        {
+          "version": "1.51.0",
+          "date": "2024-09-03",
+          "url": "https://easypanel.io/changelog/1-51-0-1"
+        },
+        {
+          "version": "1.51.1",
+          "date": "2024-09-13",
+          "url": "https://easypanel.io/changelog/1-51-1-1"
+        },
+        {
+          "version": "1.53.0",
+          "date": "2024-10-03",
+          "url": "https://easypanel.io/changelog/1-53-0-1"
+        },
+        {
+          "version": "1.56.0",
+          "date": "2024-10-24",
+          "url": "https://easypanel.io/changelog/1-56-0-1"
+        },
+        {
+          "version": "2.1.0",
+          "date": "2024-11-18",
+          "url": "https://easypanel.io/changelog/2-1-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        },
+        {
+          "version": "2.20.0",
+          "date": "2025-06-10",
+          "url": "https://easypanel.io/changelog/2-20-0-1"
+        },
+        {
+          "version": "2.24.0",
+          "date": "2025-12-31",
+          "url": "https://easypanel.io/changelog/2-24-0-1"
+        },
+        {
+          "version": "2.32.1",
+          "date": "2026-07-02",
+          "url": "https://easypanel.io/changelog/2-32-1"
+        },
+        {
+          "version": "2.32.2",
+          "date": "2026-07-08",
+          "url": "https://easypanel.io/changelog/2-32-2"
+        }
+      ]
+    },
+    {
+      "id": "H66",
+      "title_fr": "Installation initiale et état partiel",
+      "priority": "P0",
+      "criteria": [
+        "F01",
+        "F08",
+        "F11"
+      ],
+      "public_fact_fr": "Script setup, wizard et validation initiale sont améliorés; des patches corrigent les actions sur installation fraîche et la création de services spécialisés.",
+      "derived_requirement_fr": "Créer le premier administrateur une seule fois et rendre les étapes d’installation idempotentes; tracer et nettoyer les ressources partielles avec leur propriété exacte.",
+      "acceptance_fr": [
+        "Deux bootstraps simultanés n’obtiennent pas deux propriétaires.",
+        "Arrêter le processus entre configuration et runtime: restart expose un état explicite, sans service fantôme ni mutation d’un daemon existant."
+      ],
+      "sources": [
+        {
+          "version": "1.34.0",
+          "date": "2024-03-11",
+          "url": "https://easypanel.io/changelog/1-34-0-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.39.1",
+          "date": "2024-04-27",
+          "url": "https://easypanel.io/changelog/1-39-1-1"
+        },
+        {
+          "version": "2.3.3",
+          "date": "2024-12-20",
+          "url": "https://easypanel.io/changelog/2-3-3-1"
+        },
+        {
+          "version": "2.3.4",
+          "date": "2024-12-23",
+          "url": "https://easypanel.io/changelog/2-3-4-1"
+        }
+      ]
+    },
+    {
+      "id": "H67",
+      "title_fr": "Validation des identités et absence d’énumération",
+      "priority": "P0",
+      "criteria": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "public_fact_fr": "Validation email, session mémorisée et double authentification évoluent; un message révélant un utilisateur absent est supprimé pour sécurité.",
+      "derived_requirement_fr": "Normaliser les identités sans collision, limiter les tentatives et rendre les erreurs de login/récupération indistinguables sur l’existence du compte.",
+      "acceptance_fr": [
+        "Compte absent et mauvais secret produisent le même contrat public; tester casse et email valide atypique.",
+        "Expiration et logout invalident la session selon la durée configurée, même après reconnexion du navigateur."
+      ],
+      "sources": [
+        {
+          "version": "1.24.4",
+          "date": "2023-10-30",
+          "url": "https://easypanel.io/changelog/1-24-4-1"
+        },
+        {
+          "version": "1.39.0",
+          "date": "2024-04-26",
+          "url": "https://easypanel.io/changelog/1-39-0-1"
+        },
+        {
+          "version": "1.42.0",
+          "date": "2024-06-21",
+          "url": "https://easypanel.io/changelog/1-42-0-1"
+        },
+        {
+          "version": "2.4.0",
+          "date": "2025-01-02",
+          "url": "https://easypanel.io/changelog/2-4-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H68",
+      "title_fr": "Mode démo et transports temps réel",
+      "priority": "P0",
+      "criteria": [
+        "F12",
+        "R16"
+      ],
+      "public_fact_fr": "Un mode démo explicite est introduit; WebSocket et site de démonstration reçoivent des correctifs.",
+      "derived_requirement_fr": "Garder les simulations explicitement étiquetées et empêcher qu’un contrôle démo paraisse agir sur Docker; tester séparément les transports réels.",
+      "acceptance_fr": [
+        "Dans la démo, aucune action terminal/restore/rollback non simulée n’annonce un succès réel.",
+        "Dans le vrai runtime, une panne WebSocket ou Docker ne bascule jamais silencieusement vers la démo."
+      ],
+      "sources": [
+        {
+          "version": "1.47.1",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-1-1"
+        },
+        {
+          "version": "1.47.2",
+          "date": "2024-08-02",
+          "url": "https://easypanel.io/changelog/1-47-2-1"
+        },
+        {
+          "version": "2.33.1",
+          "date": "2026-08-03",
+          "url": "https://easypanel.io/changelog/2-33-1"
+        }
+      ]
+    },
+    {
+      "id": "H69",
+      "title_fr": "Compression proxy : ajout puis retrait",
+      "priority": "P1",
+      "criteria": [
+        "R10",
+        "S10"
+      ],
+      "public_fact_fr": "La compression globale ajoutée en 2.16.0 est retirée en 2.17.0 à cause d’un problème Traefik; l’historique impose de garder les retraits, pas seulement les ajouts.",
+      "derived_requirement_fr": "Activer les middlewares par politique explicite, tester protocoles et permettre un rollback de configuration sans effacer les routes.",
+      "acceptance_fr": [
+        "Tester HTML, téléchargement binaire, SSE et WebSocket avec et sans compression.",
+        "Après rollback du middleware, contenu et headers restent corrects et les domaines inchangés."
+      ],
+      "sources": [
+        {
+          "version": "2.16.0",
+          "date": "2025-05-14",
+          "url": "https://easypanel.io/changelog/2-16-0-1"
+        },
+        {
+          "version": "2.17.0",
+          "date": "2025-05-19",
+          "url": "https://easypanel.io/changelog/2-17-0-1"
+        }
+      ]
+    },
+    {
+      "id": "H70",
+      "title_fr": "Source Dockerfile inline et contexte de construction",
+      "priority": "P1",
+      "criteria": [
+        "A07",
+        "A08"
+      ],
+      "public_fact_fr": "La publication 1.36.0 ajoute un type de source Dockerfile.",
+      "derived_requirement_fr": "Construire le Dockerfile inline dans un contexte isolé, définir les fichiers disponibles et refuser toute résolution hors workspace; enregistrer le résultat immuable.",
+      "acceptance_fr": [
+        "Construire une petite application HTTP depuis le texte sauvegardé et contrôler le contenu servi.",
+        "Dockerfile invalide, contexte absent ou symlink sortant: échec explicite, runtime précédent conservé."
+      ],
+      "sources": [
+        {
+          "version": "1.36.0",
+          "date": "2024-03-22",
+          "url": "https://easypanel.io/changelog/1-36-0-1"
+        }
+      ]
+    }
+  ]
+}

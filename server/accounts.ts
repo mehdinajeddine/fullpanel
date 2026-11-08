@@ -22,7 +22,7 @@ export function revokeUserCredentials(store: Store, userId: string) {
   for (const [serviceId, issuer] of Object.entries(store.state.deployTokenOwners)) if (issuer === userId) { delete store.state.deployTokens[serviceId]; delete store.state.deployTokenOwners[serviceId]; }
 }
 
-export function registerAccounts(app: FastifyInstance, store: Store, access: AccessControl) {
+export function registerAccounts(app: FastifyInstance, store: Store, access: AccessControl, onRevoke?: (userId:string)=>Promise<void>) {
   const parameter = (request: FastifyRequest) => z.string().uuid().parse((request.params as { id: string }).id);
   const find = (id: string) => { const user = store.state.users.find(item => item.id === id); if (!user) throw accessError(404, 'User not found.'); return user; };
   function validateMemberships(memberships: UserRecord['memberships']) {
@@ -50,13 +50,13 @@ export function registerAccounts(app: FastifyInstance, store: Store, access: Acc
     Object.assign(user, input, { updatedAt: timestamp() });
     if (privilegesChanged) revokeUserCredentials(store, user.id);
     if (user.role === 'owner') store.state.owner = { name: user.name, email: user.email, hash: user.hash, salt: user.salt };
-    store.activity('User updated', user.email); store.save(); return publicUser(user);
+    store.activity('User updated', user.email); store.save(); if(privilegesChanged)await onRevoke?.(user.id); return publicUser(user);
   });
   app.delete('/api/users/:id', async request => {
     const actor = access.requireGlobal(request), user = find(parameter(request));
     if (user.role === 'owner') throw accessError(403, 'The owner account cannot be deleted.');
     if (actor.user.id === user.id) throw accessError(400, 'You cannot delete your own active account.');
-    revokeUserCredentials(store, user.id); store.state.users = store.state.users.filter(item => item.id !== user.id); store.activity('User deleted', user.email); store.save(); return { ok: true };
+    revokeUserCredentials(store, user.id); store.state.users = store.state.users.filter(item => item.id !== user.id); store.activity('User deleted', user.email); store.save(); await onRevoke?.(user.id); return { ok: true };
   });
   app.post('/api/users/:id/password', async request => {
     let actor = access.requireGlobal(request), user = find(parameter(request));
@@ -67,7 +67,7 @@ export function registerAccounts(app: FastifyInstance, store: Store, access: Acc
     if (user.role === 'owner' && actor.user.id !== user.id) throw accessError(403, 'Only the owner can change the owner password.');
     user.hash = hash; user.salt = salt; user.updatedAt = timestamp(); revokeUserCredentials(store, user.id);
     if (user.role === 'owner') store.state.owner = { name: user.name, email: user.email, hash, salt };
-    store.activity('User password reset', user.email); store.save(); return { ok: true, sessionsRevoked: true, apiKeysRevoked: true };
+    store.activity('User password reset', user.email); store.save(); await onRevoke?.(user.id); return { ok: true, sessionsRevoked: true, apiKeysRevoked: true };
   });
   app.get('/api/api-keys', async request => { const actor = access.requireCookie(request); return store.state.apiKeys.filter(key => key.userId === actor.user.id).map(publicApiKey); });
   app.post('/api/api-keys', async (request, reply) => {

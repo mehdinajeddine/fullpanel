@@ -89,6 +89,8 @@ try {
     const service: Service = { id, projectId, name: `${kind}-proof`, kind, source: { type: 'image', image: kind === 'mysql' ? 'mysql:8.4' : kind === 'mariadb' ? 'mariadb:11.4' : 'mongo:8' }, env: Object.fromEntries(Object.entries(env).filter(([, value]) => value !== undefined)) as Record<string, string>, domains: [], mounts: [{ id: randomUUID(), name: 'data', mountPath: kind === 'mongo' ? '/data/db' : '/var/lib/mysql' }], ports: [], resources: { cpu: 1, memoryMb: 768 }, status: 'not-deployed', notes: '', createdAt: timestamp, updatedAt: timestamp };
     services.push(service);
     await deploy(service);
+    const [fixtureImage] = JSON.parse(await command('docker', ['image', 'inspect', service.source.image!]));
+    console.log(`Checking ${kind} using ${fixtureImage.RepoDigests?.[0] || fixtureImage.Id}.`);
     await eventually(() => native.ready(`hl-${id}`, service));
     const version = await native.version(`hl-${id}`, kind);
     assert.match(version, /^\d+\.\d+/);

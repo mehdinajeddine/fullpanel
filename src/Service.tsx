@@ -1,4 +1,10 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import {
   ArrowUpRight,
   Box,
@@ -32,6 +38,7 @@ import type {
 import { date, navigate, newId, patch, post, remove, useQuery } from "./api";
 import {
   Badge,
+  ConfigurationBadge,
   Button,
   ConfirmDelete,
   CopyButton,
@@ -56,6 +63,7 @@ import { ServiceEnvironment } from "./Environment";
 import { RestoreHistory } from "./Restores";
 import GitHubWebhook from "./GitHubWebhook";
 import Releases from "./Releases";
+const ServiceTerminal = lazy(() => import("./Terminal"));
 const tabs = [
   ["overview", "Overview"],
   ["source", "Source"],
@@ -66,10 +74,15 @@ const tabs = [
   ["deployments", "Deployments"],
   ["releases", "Releases"],
   ["logs", "Logs"],
+  ["terminal", "Terminal"],
   ["backups", "Backups"],
   ["settings", "Settings"],
 ] as const;
-function useSave(service: Service, updated: () => void) {
+function useSave(
+  service: Service,
+  updated: () => void,
+  onSaved?: (service: Service) => void,
+) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const toast = useToast();
@@ -77,7 +90,8 @@ function useSave(service: Service, updated: () => void) {
     setBusy(true);
     setError("");
     try {
-      await patch(`/services/${service.id}`, values);
+      const result = await patch<Service>(`/services/${service.id}`, values);
+      onSaved?.(result);
       toast("Configuration saved. Deploy to apply runtime changes.");
       updated();
       return true;
@@ -167,7 +181,9 @@ export default function ServicePage({
   const project = projects.data?.find((p) => p.id === service.projectId);
   const canEdit = access.canOperate(service.projectId);
   const visibleTabs = tabs.filter(
-    ([name]) => canEdit || !["environment", "logs", "settings"].includes(name),
+    ([name]) =>
+      canEdit ||
+      !["environment", "logs", "terminal", "settings"].includes(name),
   );
   const active = visibleTabs.some(([t]) => t === tab) ? tab : "overview";
   const openDomain = ([...service.domains] as RoutingDomain[])
@@ -268,6 +284,25 @@ export default function ServicePage({
           )}
         </div>
       </div>
+      <div
+        className="service-configuration-strip"
+        aria-label="Service configuration state"
+      >
+        <span>
+          <Rocket size={15} aria-hidden="true" />
+          Deployment configuration
+        </span>
+        <ConfigurationBadge service={service} />
+        <span className="service-configuration-detail">
+          {service.runtimeUncertain
+            ? "A fresh deployment is required to reconcile runtime state."
+            : !service.deployedAt
+              ? "Configure this service, then deploy when ready."
+              : service.status === "running"
+                ? "Container running. Application health is not monitored here."
+                : "Configuration state is separate from the container’s running state."}
+        </span>
+      </div>
       <ErrorBox message={query.error || service.error || ""} />
       {!canEdit && (
         <Notice>
@@ -289,9 +324,10 @@ export default function ServicePage({
       </nav>
       <div className="service-tab-content" key={`${id}/${active}`}>
         {service.runtimeUncertain && (
-          <Notice>
+          <Notice tone="warning" title="Applied configuration needs attention">
             A deployment was interrupted, so the applied runtime configuration
-            is uncertain. {canEdit
+            is uncertain.{" "}
+            {canEdit
               ? "Deploy the saved configuration to reconcile it before using rollback or backups."
               : "Ask a project operator to deploy the saved configuration and reconcile the runtime."}
           </Notice>
@@ -300,11 +336,11 @@ export default function ServicePage({
           !service.runtimeUncertain &&
           service.deployedAt &&
           (service.pendingChanges ??
-            (new Date(service.updatedAt).getTime() >
-              new Date(service.deployedAt).getTime())) && (
-            <Notice>
-              Saved configuration differs from the current runtime. Select Deploy
-              to apply your saved changes.
+            new Date(service.updatedAt).getTime() >
+              new Date(service.deployedAt).getTime()) && (
+            <Notice tone="warning" title="Saved changes are waiting">
+              Saved configuration differs from the current runtime. Select
+              Deploy to apply your saved changes.
             </Notice>
           )}
         {active === "overview" && <ServiceOverview service={service} />}
@@ -342,6 +378,11 @@ export default function ServicePage({
         {active === "deployments" && <ServiceDeployments service={service} />}
         {active === "releases" && <Releases service={service} />}
         {active === "logs" && <Logs service={service} />}
+        {active === "terminal" && canEdit && (
+          <Suspense fallback={<Loading label="Loading terminal" />}>
+            <ServiceTerminal service={service} />
+          </Suspense>
+        )}
         {active === "backups" &&
           (service.kind === "compose" ||
           (service.kind === "app" && !service.mounts.length) ? (
@@ -526,7 +567,9 @@ function SourceEditor({
   updated: () => void;
 }) {
   const [source, setSource] = useState<Source>({ ...service.source });
-  const { save, busy, error } = useSave(service, updated);
+  const { save, busy, error } = useSave(service, updated, (saved) =>
+    setSource({ ...saved.source }),
+  );
   function cleanSource(): Source {
     if (source.type === "image")
       return { type: "image", image: source.image?.trim() };
@@ -596,11 +639,23 @@ function SourceEditor({
       source.repository?.trim() === service.source.repository?.trim()) &&
     (source.type !== "image" ||
       source.image?.trim() === service.source.image?.trim());
+  const sourceDraft = cleanSource();
+  const sourceHasEdits = (
+    [
+      "type",
+      "image",
+      "repository",
+      "branch",
+      "context",
+      "dockerfile",
+      "compose",
+    ] as const
+  ).some((key) => (sourceDraft[key] || "") !== (service.source[key] || ""));
   return (
     <>
       <EditorPanel
         title="Application source"
-        description="Tell Harborlight where your application comes from."
+        description="Tell FullPanel where your application comes from."
         busy={busy}
         error={error}
         onSubmit={(e) => {
@@ -608,6 +663,17 @@ function SourceEditor({
           void save({ source: cleanSource() });
         }}
       >
+        <div className="source-state-line">
+          <Badge
+            status={sourceHasEdits ? "pending-changes" : "configured"}
+            label={sourceHasEdits ? "Unsaved source" : "Source saved"}
+          />
+          <span>
+            {sourceHasEdits
+              ? "Save this draft before deploying it."
+              : "Deploy to apply source and configuration changes."}
+          </span>
+        </div>
         <div className="source-types">
           {types.map((t) => (
             <button
@@ -666,10 +732,14 @@ function SourceEditor({
           <>
             <Field
               label="Repository URL"
-              hint="HTTPS repositories. Save the source, then add credentials below for private access."
+              hint="Use HTTPS, git@host:owner/repo.git, or ssh://git@host:port/path. Save first, then configure private access below."
             >
               <input
-                type="url"
+                type="text"
+                inputMode="url"
+                autoComplete="off"
+                spellCheck={false}
+                maxLength={1000}
                 value={source.repository || ""}
                 onChange={(e) => set("repository", e.target.value)}
                 placeholder="https://github.com/your-team/your-app.git"
@@ -714,7 +784,7 @@ function SourceEditor({
               onChange={(e) => set("dockerfile", e.target.value)}
               required
               placeholder={
-                'FROM nginx:1.27-alpine\nRUN echo "Hello, Harborlight" > /usr/share/nginx/html/index.html\nEXPOSE 80'
+                'FROM nginx:1.27-alpine\nRUN echo "Hello, FullPanel" > /usr/share/nginx/html/index.html\nEXPOSE 80'
               }
             />
           </Field>
@@ -754,7 +824,11 @@ function SourceEditor({
         <GitHubWebhook
           key={`${service.id}:${service.source.repository || ""}:${service.source.branch || "main"}`}
           service={service}
-          sourceSaved={sourceSaved && (source.branch?.trim() || "main") === (service.source.branch?.trim() || "main")}
+          sourceSaved={
+            sourceSaved &&
+            (source.branch?.trim() || "main") ===
+              (service.source.branch?.trim() || "main")
+          }
         />
       )}
     </>

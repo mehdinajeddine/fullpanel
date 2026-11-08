@@ -2,6 +2,7 @@ import Fastify, { type FastifyRequest, type FastifyReply } from 'fastify';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import staticFiles from '@fastify/static';
+import websocket from '@fastify/websocket';
 import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual, createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import { resolve, join } from 'node:path';
@@ -11,6 +12,8 @@ import { z } from 'zod';
 import { Store, type UserRecord } from './store.js';
 import { AccessControl, publicUser } from './access.js';
 import { registerAccounts } from './accounts.js';
+import { registerTerminals, type TerminalRuntime, type TerminalPolicy, type TerminalManager } from './terminals.js';
+import { DockerTerminalRuntime } from './container-terminal.js';
 import { assertDomainOwnership } from './domain-ownership.js';
 import { registerProjectEnvironment } from './project-environment.js';
 import { effectiveServiceEnvironment } from '../shared/environment.js';
@@ -23,6 +26,7 @@ import { registerReleases, recordRelease, pendingReleaseServices } from './relea
 import { registerBackupSchedules } from './backup-schedules.js';
 import { registerProxyAuth } from './proxy-auth.js';
 import { registerSourceCredentials, pruneSourceCredentials, resolveSourceCredentials, sourceCredentialSecrets } from './source-credentials.js';
+import { initializeSshCredentialDirectory } from './git-ssh.js';
 import { projectInput, projectPatch, serviceCreate, servicePatch, settingsInput, setupInput, loginInput, id } from './validation.js';
 import type { Service, RuntimeMode, Session, Backup, Deployment } from '../shared/types.js';
 
@@ -32,12 +36,15 @@ const hashToken = (token: string) => createHash('sha256').update(token).digest('
 const COOKIE = 'harborlight_session';
 const ttl = 86400 * 7;
 class HttpError extends Error { constructor(readonly statusCode: number, message: string) { super(message); } }
-export interface AppOptions { dataDir?: string; mode?: RuntimeMode; driver?: RuntimeDriver; logger?: boolean; publicUrl?: string; cookieSecure?: boolean; staticDir?: string }
+export interface AppOptions { dataDir?: string; mode?: RuntimeMode; driver?: RuntimeDriver; logger?: boolean; publicUrl?: string; cookieSecure?: boolean; staticDir?: string; terminalRuntime?: TerminalRuntime; terminalPolicy?: Partial<TerminalPolicy> }
 
 export async function createApp(options: AppOptions = {}) {
   const mode = options.mode || (process.env.HARBORLIGHT_MODE === 'demo' ? 'demo' : 'docker');
   const dataDir = resolve(options.dataDir || process.env.DATA_DIR || (mode === 'demo' ? '.data/demo' : '.data'));
   const store = new Store(dataDir, mode);
+  const credentialsDirectory = join(dataDir, 'ssh-credentials');
+  // The Store writer lock ensures no other panel uses this private staging area.
+  try { await initializeSshCredentialDirectory(credentialsDirectory); } catch (error) { store.close(); throw error; }
   const access = new AccessControl(store);
   const driver: RuntimeDriver = options.driver || (mode === 'demo' ? new DemoDriver() : new DockerDriver(dataDir));
   try { await recoverPreparedRestores(store,driver); } catch(error) { store.close(); throw error; }
@@ -45,10 +52,12 @@ export async function createApp(options: AppOptions = {}) {
   const publicOrigin = publicUrl ? new URL(publicUrl).origin : undefined;
   const secureCookie = options.cookieSecure ?? (process.env.COOKIE_SECURE === 'true' || publicUrl?.startsWith('https:') || false);
   const app = Fastify({ logger: options.logger ? { redact: ['req.headers.authorization', 'req.headers.cookie', 'req.headers.x-hub-signature-256'] } : false, bodyLimit: 1024 * 1024, trustProxy: false, requestTimeout: 30000 });
+  await app.register(websocket,{options:{maxPayload:16*1024,perMessageDeflate:false},errorHandler:(_error,socket)=>socket.terminate()});
   await app.register(cookie);
   await app.register(rateLimit, { global: false });
   const jobs = new Set<Promise<unknown>>();
   const busy = new Set<string>();
+  let terminals:TerminalManager|undefined;
   let cachedMetrics: { at: number; value: Awaited<ReturnType<RuntimeDriver['metrics']>> } | undefined;
   let metricsPromise: Promise<Awaited<ReturnType<RuntimeDriver['metrics']>>> | undefined;
   async function metrics() {
@@ -116,7 +125,17 @@ export async function createApp(options: AppOptions = {}) {
   };
   const enqueue = (serviceId: string, action: () => Promise<void>) => {
     busy.add(serviceId);
-    const job = Promise.resolve().then(action).catch(error => { app.log.error(error); }).finally(() => { busy.delete(serviceId); jobs.delete(job); cachedMetrics = undefined; });
+    const job = Promise.resolve().then(async()=>{
+      try{await terminals?.closeService(serviceId);}catch{
+        const message='The existing terminal could not be stopped. The runtime operation was cancelled.';
+        for(const deployment of store.state.deployments)if(deployment.serviceId===serviceId&&['queued','running'].includes(deployment.status)){deployment.status='failed';deployment.finishedAt=now();deployment.output+=`\n${message}\n`;}
+        for(const backup of store.state.backups)if(backup.serviceId===serviceId&&backup.status==='running'){backup.status='failed';backup.error=message;}
+        for(const restore of store.state.restores)if(restore.targetServiceId===serviceId&&['queued','running'].includes(restore.status)){restore.status='failed';restore.phase='finished';restore.finishedAt=now();restore.error=message;}
+        const service=store.state.services.find(item=>item.id===serviceId);if(service){service.status='failed';service.error=message;}
+        store.save();return;
+      }
+      await action();
+    }).catch(error => { app.log.error(error); }).finally(() => { busy.delete(serviceId); jobs.delete(job); cachedMetrics = undefined; });
     jobs.add(job); return job;
   };
   const runtimeService = (service: Service): Service => {
@@ -187,8 +206,9 @@ export async function createApp(options: AppOptions = {}) {
     if (!current || !timingSafeEqual(calculated, Buffer.from(current.hash, 'hex'))) throw new HttpError(401, 'Email or password is incorrect.');
     return signIn(reply, current);
   });
-  registerAccounts(app, store, access);
-  app.post('/api/auth/logout', async (request, reply) => { const hash = hashToken(request.cookies[COOKIE] || ''); store.state.sessions = store.state.sessions.filter(item => item.hash !== hash); store.save(); reply.clearCookie(COOKIE, { path: '/' }); return { ok: true }; });
+  terminals=registerTerminals(app,{store,access,mode,runtime:options.terminalRuntime??(mode==='docker'&&process.env.HARBORLIGHT_EXPERIMENTAL_TERMINAL==='true'?new DockerTerminalRuntime():undefined),publicOrigin,requireIdle,policy:options.terminalPolicy});
+  registerAccounts(app, store, access,userId=>terminals!.closeUser(userId));
+  app.post('/api/auth/logout', async (request, reply) => { const hash = hashToken(request.cookies[COOKIE] || ''); store.state.sessions = store.state.sessions.filter(item => item.hash !== hash); store.save(); await terminals?.closeSession(hash); reply.clearCookie(COOKIE, { path: '/' }); return { ok: true }; });
   app.get('/api/metrics', async () => metrics());
   app.get('/api/overview', async request => {
     const global = access.isGlobal(request);
@@ -230,7 +250,7 @@ export async function createApp(options: AppOptions = {}) {
   });
   app.delete('/api/services/:id', async request => {
     const service = serviceById(parameter(request)); requireIdle(service.id); busy.add(service.id);
-    try { if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; delete store.state.appliedProxyAuth[service.id]; delete store.state.activeReleaseIds[service.id]; delete store.state.pendingReleaseIds[service.id]; delete store.state.githubWebhooks[service.id]; store.state.releases=store.state.releases.filter(release=>release.metadata.serviceId!==service.id); store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
+    try { await terminals?.closeService(service.id); if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; delete store.state.appliedProxyAuth[service.id]; delete store.state.activeReleaseIds[service.id]; delete store.state.pendingReleaseIds[service.id]; delete store.state.githubWebhooks[service.id]; store.state.releases=store.state.releases.filter(release=>release.metadata.serviceId!==service.id); store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
     catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); }
   });
   function queueDeployment(serviceId: string, trigger: string, options: { forceRebuild?: boolean; expectedCommit?: string; onQueued?: (deployment:Deployment)=>void } = {}): Deployment {
@@ -262,10 +282,11 @@ export async function createApp(options: AppOptions = {}) {
   registerGitHubWebhooks(app,{store,access,mode,publicUrl,enqueueDeploy:queueDeployment});
   registerReleases(app,{store,access,driver,mode,requireIdle,enqueue,validateService,secrets});
   registerSourceCredentials(app, {
+    credentialsDirectory,
     getService: serviceId => store.state.services.find(service => service.id === serviceId),
     getCredentials: serviceId => store.state.sourceCredentials[serviceId],
     setCredentials: (serviceId, value) => { const service = serviceById(serviceId); requireIdle(serviceId); store.state.sourceCredentials[serviceId] = value; service.updatedAt = now(); store.activity('Source credentials updated', service.name, undefined, service.projectId); store.save(); },
-    authorize: (request, serviceId, permission) => { access.requireService(request, serviceId, permission); },
+    authorize: (request, serviceId) => { access.requireService(request, serviceId, 'write'); },
     requireIdle
   });
   registerProxyAuth(app, {
@@ -283,7 +304,7 @@ export async function createApp(options: AppOptions = {}) {
   });
   for (const action of ['start', 'stop', 'restart'] as const) app.post(`/api/services/:id/${action}`, async request => {
     const service = serviceById(parameter(request)); requireIdle(service.id); if (!service.deployedAt && !service.containerId) throw new HttpError(409, 'Deploy this service first.'); busy.add(service.id);
-    try { await driver.action(service, action); service.status = action === 'stop' ? 'stopped' : 'running'; store.activity(`Service ${action === 'stop' ? 'stopped' : action === 'start' ? 'started' : 'restarted'}`, service.name, undefined, service.projectId); store.save(); return service; }
+    try { await terminals?.closeService(service.id); await driver.action(service, action); service.status = action === 'stop' ? 'stopped' : 'running'; store.activity(`Service ${action === 'stop' ? 'stopped' : action === 'start' ? 'started' : 'restarted'}`, service.name, undefined, service.projectId); store.save(); return service; }
     catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); }
   });
   app.get('/api/services/:id/logs', async request => { const service = serviceById(parameter(request)); const tail = z.coerce.number().int().min(1).max(2000).default(200).parse((request.query as { tail?: string }).tail); if (!service.deployedAt && !service.containerId && service.status !== 'failed') return { logs: 'Deploy this service to view runtime logs.' }; try { return { logs: redact(service, await driver.logs(service, tail)) }; } catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } });

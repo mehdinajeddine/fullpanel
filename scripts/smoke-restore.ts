@@ -120,7 +120,19 @@ try {
       assert.equal((await inspect(target)).Id, original.Id); assert.equal((await inspect(target)).State.Running, true);
     } });
     target.env = { ...target.env, ...result.environment }; target.volumeOverrides = result.volumeOverrides;
+    // MongoDB also declares /data/configdb: remember the restored runtime's anonymous
+    // mount before the later redeploy replaces that container without deleting its data.
+    await trackAnonymous(target);
     assert.notEqual((await inspect(target)).Id, original.Id); await ready(target); assert.equal(await readProof(target), 'source-snapshot');
+    if (['mysql', 'mariadb', 'mongo'].includes(kind)) {
+      await assert.rejects(native.ready(result.containerId, { ...target, env: previous.env }), /Access denied|Authentication failed|AuthenticationFailed/i);
+      if (kind !== 'mongo') {
+        const prefix = kind === 'mysql' ? 'MYSQL' : 'MARIADB';
+        const application = { ...target, env: { ...target.env, [`${prefix}_ROOT_PASSWORD`]: target.env[`${prefix}_PASSWORD`] } };
+        assert.equal((await native.execute(result.containerId, application, [kind === 'mysql' ? 'mysql' : 'mariadb', '-u', target.env[`${prefix}_USER`], target.env[`${prefix}_DATABASE`], '-Nse', 'SELECT value FROM recovery_proof'])).trim(), 'source-snapshot');
+      }
+      console.log(`PASS: ${kind} restored source credentials authenticate, former target credentials are refused${kind === 'mongo' ? '.' : ', and the source application account retains its data access.'}`);
+    }
     if (kind === 'app') {
       assert.equal(await command('docker', ['exec', result.containerId, 'cat', nestedPath]), nestedContents);
       assert.equal((await command('docker', ['exec', result.containerId, 'stat', '-c', '%u:%g:%a', nestedPath])).trim(), '123:234:640');

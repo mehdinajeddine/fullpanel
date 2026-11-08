@@ -10,6 +10,7 @@ services:
       PORT: 3000
       DATA_DIR: /var/lib/harborlight
       HARBORLIGHT_MODE: docker
+      HARBORLIGHT_EXPERIMENTAL_TERMINAL: ${HARBORLIGHT_EXPERIMENTAL_TERMINAL:-false}
     ports:
       - "127.0.0.1:${PANEL_PORT:-3000}:3000"
     volumes:

@@ -174,15 +174,15 @@ export class DockerDriver implements RuntimeDriver {
         if (service.source.type === 'git') {
           const repo = join(work, 'repo');
           output('Cloning source repository…\n');
-          commit = await withGitSourceCredentials(service.source.repository!, credentials.git, async git => {
-            await command('git', [...git.args, 'clone', '--depth', '1', '--single-branch', '--branch', service.source.branch || 'main', '--', git.repository, repo], { cwd: git.cwd, timeout: 300000, output: credentials.git ? undefined : output, env: git.env });
+          commit = await withGitSourceCredentials(service.source.repository!, credentials.ssh ?? credentials.git, async git => {
+            await command('git', [...git.args, 'clone', '--depth', '1', '--single-branch', '--branch', service.source.branch || 'main', '--', git.repository, repo], { cwd: git.cwd, timeout: 300000, output: credentials.git || credentials.ssh ? undefined : output, env: git.env });
             await command('git', [...git.args, 'remote', 'set-url', 'origin', normalizeGitRepository(service.source.repository!)], { cwd: repo, env: git.env });
             if (options.expectedCommit) {
-              await command('git', [...git.args, 'fetch', '--depth', '1', '--no-tags', 'origin', options.expectedCommit], { cwd: repo, timeout: 300000, output: credentials.git ? undefined : output, env: git.env });
+              await command('git', [...git.args, 'fetch', '--depth', '1', '--no-tags', 'origin', options.expectedCommit], { cwd: repo, timeout: 300000, output: credentials.git || credentials.ssh ? undefined : output, env: git.env });
               await command('git', [...git.args, 'checkout', '--detach', options.expectedCommit], { cwd: repo, env: git.env });
             }
             return (await command('git', [...git.args, 'rev-parse', 'HEAD'], { cwd: repo, env: git.env })).trim();
-          });
+          }, process.env, join(this.dataDir, 'ssh-credentials'));
           if (!/^[a-f0-9]{40,64}$/.test(commit)) throw new Error('Git did not return a valid source commit.');
           if (options.expectedCommit && commit !== options.expectedCommit) throw new Error('Fetched source did not match the requested commit.');
           output(`Source commit: ${commit}\n`);

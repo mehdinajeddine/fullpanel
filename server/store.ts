@@ -39,13 +39,13 @@ export class Store {
     mkdirSync(directory, { recursive: true, mode: 0o700 }); chmodSync(directory, 0o700);
     this.lockFile = join(directory, 'writer.lock');
     this.file = join(directory, 'state.enc');
-    if (activeDirectories.has(directory)) throw new Error('The data directory is already open in another Harborlight process.');
+    if (activeDirectories.has(directory)) throw new Error('The data directory is already open in another FullPanel process.');
     if (existsSync(this.lockFile)) {
       const previous = readFileSync(this.lockFile, 'utf8');
       let owner: { pid: number; identity?: string };
       try { owner = JSON.parse(previous); } catch { owner = { pid: Number(previous.split(':')[0]) }; }
       const identity = processIdentity(owner.pid);
-      if (identity && (!owner.identity || identity === owner.identity)) throw new Error('The data directory is already open in another Harborlight process.');
+      if (identity && (!owner.identity || identity === owner.identity)) throw new Error('The data directory is already open in another FullPanel process.');
       if (readFileSync(this.lockFile, 'utf8') === previous) unlinkSync(this.lockFile);
     }
     writeFileSync(this.lockFile, this.lockToken, { mode: 0o600, flag: 'wx' });
@@ -100,7 +100,7 @@ export class Store {
     } catch (error) { this.close(); throw error; }
   }
   close() { if (existsSync(this.lockFile) && readFileSync(this.lockFile, 'utf8') === this.lockToken) unlinkSync(this.lockFile); activeDirectories.delete(this.directory); }
-  assertWritable() { if (this.persistenceError) throw Object.assign(new Error('Persistent storage failed. Fix the data directory and restart Harborlight.'), { statusCode: 503 }); }
+  assertWritable() { if (this.persistenceError) throw Object.assign(new Error('Persistent storage failed. Fix the data directory and restart FullPanel.'), { statusCode: 503 }); }
   save() {
     this.assertWritable();
     this.state.sessions = this.state.sessions.filter(session => session.expires > Date.now());
@@ -121,7 +121,7 @@ export class Store {
       // The committed snapshot is safe to retain, but cannot describe the active runtime.
       for (const deployment of this.state.deployments) if (['queued', 'running'].includes(deployment.status)) {
         deployment.status = 'failed'; deployment.finishedAt = now();
-        deployment.output += '\nPersistent storage failed before deployment completion was recorded. Restart Harborlight and reconcile the runtime.';
+        deployment.output += '\nPersistent storage failed before deployment completion was recorded. Restart FullPanel and reconcile the runtime.';
         const service = this.state.services.find(item => item.id === deployment.serviceId);
         if (service) { service.runtimeUncertain = true; service.status = 'failed'; service.error = 'Persistent storage failed before runtime state could be recorded.'; }
         delete this.state.activeReleaseIds[deployment.serviceId];
@@ -136,7 +136,7 @@ export class Store {
   private seed() {
     const createdAt = new Date(Date.now() - 86400000 * 3).toISOString();
     const web = randomUUID(), tools = randomUUID();
-    this.state.settings.serverName = 'Harborlight demo';
+    this.state.settings.serverName = 'FullPanel demo';
     this.state.projects = [
       { id: web, name: 'studio', description: 'The things we are building', color: '#6366f1', createdAt },
       { id: tools, name: 'workspace', description: 'A home for our everyday tools', color: '#16a085', createdAt }
@@ -149,6 +149,6 @@ export class Store {
     ];
     this.state.services = fixtures.map((fixture, i) => ({ id: randomUUID(), projectId: fixture.projectId, name: fixture.name, kind: fixture.kind, source: { type: 'image', image: fixture.image }, status: i === 3 ? 'stopped' : 'running', env: {}, domains: fixture.kind === 'app' ? [{ id: randomUUID(), hostname: `${fixture.name}.example.com`, https: true, port: fixture.port, path: '/' }] : [], mounts: [], ports: [], resources: { cpu: 1, memoryMb: 512 }, notes: '', createdAt, updatedAt: createdAt, deployedAt: createdAt }));
     this.state.deployments = this.state.services.map(service => ({ id: randomUUID(), serviceId: service.id, status: 'success', trigger: 'Demo fixture', createdAt, finishedAt: createdAt, output: 'DEMO — illustrative deployment output. No container was created.\nImage pulled. Container started.\n', image: service.source.image }));
-    this.activity('Demo workspace created', 'Harborlight', 'Illustrative data only; Docker is never accessed in demo mode.');
+    this.activity('Demo workspace created', 'FullPanel', 'Illustrative data only; Docker is never accessed in demo mode.');
   }
 }

@@ -3,12 +3,14 @@ import { homedir, tmpdir } from 'node:os';
 import { isAbsolute, join, resolve } from 'node:path';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import type { Service } from '../shared/types.js';
+import type { Service, SourceCredentialStatus } from '../shared/types.js';
+import { generateSshKeyPair, isSshRepository, parseSshRepository, validateSshKnownHosts, withSshSourceCredentials, isolatedGitEnvironment, type GitSshCredential } from './git-ssh.js';
+export type { GitSshCredential } from './git-ssh.js';
 
 export interface GitSourceCredential { serviceId: string; repository: string; username: string; token: string; updatedAt: string }
 export interface RegistrySourceCredential { serviceId: string; registry: string; imageRepository: string; username: string; password: string; updatedAt: string }
 /** Private encrypted-store data. Never merge these properties into the public Service model. */
-export interface ServiceSourceCredentials { git?: GitSourceCredential; registry?: RegistrySourceCredential }
+export interface ServiceSourceCredentials { git?: GitSourceCredential; ssh?: GitSshCredential; registry?: RegistrySourceCredential }
 export type DeploymentSourceCredentials = ServiceSourceCredentials;
 export interface SourceCredentialDependencies {
   getService(serviceId: string): Service | undefined;
@@ -16,6 +18,7 @@ export interface SourceCredentialDependencies {
   setCredentials(serviceId: string, value: ServiceSourceCredentials): void;
   authorize(request: FastifyRequest, serviceId: string, access: 'read' | 'write'): void | Promise<void>;
   requireIdle?(serviceId: string): void;
+  credentialsDirectory?: string;
 }
 export interface CredentialCommandOptions { cwd?: string; timeout?: number; env?: NodeJS.ProcessEnv; input?: string }
 export type CredentialCommand = (binary: string, args: string[], options?: CredentialCommandOptions) => Promise<string>;
@@ -27,6 +30,7 @@ const registryInput = z.object({ username, password: secret }).strict();
 function fail(statusCode: number, message: string) { return Object.assign(new Error(message), { statusCode }); }
 
 export function normalizeGitRepository(repository: string): string {
+  if (isSshRepository(repository)) return parseSshRepository(repository).repository;
   let url: URL;
   try { url = new URL(repository); } catch { throw fail(400, 'Save a valid HTTPS repository URL first.'); }
   if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || !url.hostname || url.pathname === '/' || /[\r\n\0\\]/.test(repository) || /%(?:2f|5c|00)/i.test(url.pathname)) throw fail(400, 'Git credentials require an exact HTTPS repository URL without credentials, query or fragment.');
@@ -58,7 +62,11 @@ export function registryScopeForImage(image: string): { registry: string; imageR
 
 export function pruneSourceCredentials(service: Service, credentials: ServiceSourceCredentials = {}): ServiceSourceCredentials {
   try {
-    if (service.source.type === 'git' && credentials.git?.serviceId === service.id && credentials.git.repository === normalizeGitRepository(service.source.repository || '')) return { git: credentials.git };
+    if (service.source.type === 'git') {
+      const repository = normalizeGitRepository(service.source.repository || '');
+      if (isSshRepository(repository) && credentials.ssh?.serviceId === service.id && credentials.ssh.repository === repository) return { ssh: credentials.ssh };
+      if (!isSshRepository(repository) && credentials.git?.serviceId === service.id && credentials.git.repository === repository) return { git: credentials.git };
+    }
     if (service.kind !== 'compose' && service.source.type === 'image' && credentials.registry?.serviceId === service.id) {
       const scope = registryScopeForImage(service.source.image || '');
       if (credentials.registry.registry === scope.registry && credentials.registry.imageRepository === scope.imageRepository) return { registry: credentials.registry };
@@ -69,7 +77,7 @@ export function pruneSourceCredentials(service: Service, credentials: ServiceSou
 
 export function resolveSourceCredentials(service: Service, credentials: ServiceSourceCredentials = {}): DeploymentSourceCredentials {
   const scoped = pruneSourceCredentials(service, credentials);
-  if (credentials.git && !scoped.git || credentials.registry && !scoped.registry) throw fail(409, 'Source credentials no longer match this service source. Save new credentials before deployment.');
+  if (credentials.git && !scoped.git || credentials.ssh && !scoped.ssh || credentials.registry && !scoped.registry) throw fail(409, 'Source credentials no longer match this service source. Save new credentials before deployment.');
   return structuredClone(scoped);
 }
 
@@ -78,6 +86,12 @@ export function sourceCredentialSecrets(credentials: ServiceSourceCredentials = 
   for (const item of [credentials.git && { username: credentials.git.username, value: credentials.git.token }, credentials.registry && { username: credentials.registry.username, value: credentials.registry.password }]) {
     if (item) values.push(item.value, encodeURIComponent(item.value), Buffer.from(`${item.username}:${item.value}`).toString('base64'));
   }
+  if (credentials.ssh) {
+    const key = credentials.ssh.privateKey;
+    values.push(key, key.trim(), Buffer.from(key).toString('base64'));
+    const lines = key.split(/\r?\n/).filter(line => /^[A-Za-z0-9+/=]{32,}$/.test(line));
+    values.push(...lines, lines.join(''));
+  }
   return [...new Set(values.filter(Boolean))].sort((a, b) => b.length - a.length);
 }
 
@@ -85,12 +99,13 @@ export function redactSourceCredentials(text: string, credentials: ServiceSource
   return sourceCredentialSecrets(credentials).reduce((value, current) => value.split(current).join('[REDACTED]'), text);
 }
 
-function status(service: Service, stored: ServiceSourceCredentials = {}) {
+function status(service: Service, stored: ServiceSourceCredentials = {}): SourceCredentialStatus {
   const credentials = pruneSourceCredentials(service, stored);
   return {
     git: credentials.git ? { configured: true, repository: credentials.git.repository, username: credentials.git.username, updatedAt: credentials.git.updatedAt } : { configured: false },
+    ssh: credentials.ssh ? { configured: true, repository: credentials.ssh.repository, publicKey: credentials.ssh.publicKey, fingerprint: credentials.ssh.fingerprint, knownHosts: credentials.ssh.knownHosts, hostKeyConfigured: !!credentials.ssh.knownHosts, hostFingerprints: credentials.ssh.hostFingerprints || [], updatedAt: credentials.ssh.updatedAt, hostKeyUpdatedAt: credentials.ssh.hostKeyUpdatedAt } : { configured: false },
     registry: credentials.registry ? { configured: true, registry: credentials.registry.registry, imageRepository: credentials.registry.imageRepository, username: credentials.registry.username, updatedAt: credentials.registry.updatedAt } : { configured: false },
-    capabilities: { gitHttps: true, registryImages: true, registryBuilds: false }
+    capabilities: { gitHttps: true, gitSsh: true, registryImages: true, registryBuilds: false }
   };
 }
 
@@ -110,11 +125,43 @@ export function registerSourceCredentials(app: FastifyInstance, dependencies: So
   });
   app.put('/api/services/:id/source-credentials/git', async request => {
     const { service, stored } = await context(request, 'write');
-    if (service.source.type !== 'git') throw fail(400, 'Save the Git source before configuring its credentials.');
+    if (service.source.type !== 'git' || isSshRepository(service.source.repository || '')) throw fail(400, 'Save an HTTPS Git source before configuring its token.');
     const input = gitInput.parse(request.body);
     const next = { ...pruneSourceCredentials(service, stored), git: { ...input, serviceId: service.id, repository: normalizeGitRepository(service.source.repository || ''), updatedAt: new Date().toISOString() } };
     dependencies.setCredentials(service.id, next);
     return status(service, next);
+  });
+  function sshScope(service: Service): string {
+    if (service.source.type !== 'git' || !isSshRepository(service.source.repository || '')) throw fail(400, 'Save an SSH Git repository before configuring its deploy key.');
+    return parseSshRepository(service.source.repository!).repository;
+  }
+  async function unchanged(request: FastifyRequest, repository: string, previous: string) {
+    // Key generation/validation yields. Recheck current authority, busy state, source and credential revision.
+    const current = await context(request, 'write');
+    if (sshScope(current.service) !== repository || JSON.stringify(current.stored) !== previous) throw fail(409, 'The source or credentials changed. Reload and try again.');
+    return current;
+  }
+  app.post('/api/services/:id/source-credentials/ssh/rotate', { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } }, async request => {
+    const { service, stored } = await context(request, 'write');
+    z.object({}).strict().parse(request.body || {});
+    const repository = sshScope(service), previous = JSON.stringify(stored);
+    const generated = await generateSshKeyPair(service.id, dependencies.credentialsDirectory);
+    const current = await unchanged(request, repository, previous);
+    const old = pruneSourceCredentials(current.service, current.stored).ssh;
+    const next: ServiceSourceCredentials = { ssh: { ...generated, serviceId: service.id, repository, updatedAt: new Date().toISOString(), ...(old?.knownHosts ? { knownHosts: old.knownHosts, hostFingerprints: old.hostFingerprints, hostKeyUpdatedAt: old.hostKeyUpdatedAt } : {}) } };
+    dependencies.setCredentials(service.id, next);
+    return status(current.service, next);
+  });
+  app.put('/api/services/:id/source-credentials/ssh/host-key', async request => {
+    const { service, stored } = await context(request, 'write');
+    const input = z.object({ knownHosts: z.string().min(1).max(16000) }).strict().parse(request.body);
+    const repository = sshScope(service), previous = JSON.stringify(stored);
+    if (!pruneSourceCredentials(service, stored).ssh) throw fail(409, 'Generate a deploy key before saving its server key.');
+    const trust = await validateSshKnownHosts(repository, input.knownHosts);
+    const current = await unchanged(request, repository, previous);
+    const next: ServiceSourceCredentials = { ssh: { ...current.stored.ssh!, ...trust, hostKeyUpdatedAt: new Date().toISOString() } };
+    dependencies.setCredentials(service.id, next);
+    return status(current.service, next);
   });
   app.put('/api/services/:id/source-credentials/registry', async request => {
     const { service, stored } = await context(request, 'write');
@@ -125,7 +172,7 @@ export function registerSourceCredentials(app: FastifyInstance, dependencies: So
     dependencies.setCredentials(service.id, next);
     return status(service, next);
   });
-  for (const kind of ['git', 'registry'] as const) app.delete(`/api/services/:id/source-credentials/${kind}`, async request => {
+  for (const kind of ['git', 'ssh', 'registry'] as const) app.delete(`/api/services/:id/source-credentials/${kind}`, async request => {
     const { service, stored } = await context(request, 'write');
     const next = { ...stored }; delete next[kind];
     dependencies.setCredentials(service.id, next);
@@ -145,16 +192,16 @@ try {
 } catch { process.exit(1); }
 `;
 
-function isolatedGitEnvironment(base: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
-  const env = { ...base };
-  for (const key of Object.keys(env)) if (/^(GIT_|HL_GIT_|SSH_ASKPASS|CURL_VERBOSE|NODE_OPTIONS)/.test(key)) delete env[key];
-  return { ...env, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_GLOBAL: '/dev/null', GIT_TERMINAL_PROMPT: '0', LC_ALL: 'C' };
-}
-
 /** Credentials exist only in the clone child environment; cleanup finishes before the build. */
-export async function withGitSourceCredentials<T>(repository: string, credential: GitSourceCredential | undefined, callback: (context: { repository: string; args: string[]; env: NodeJS.ProcessEnv; cwd: string }) => Promise<T>, baseEnv = process.env): Promise<T> {
+export async function withGitSourceCredentials<T>(repository: string, credential: GitSourceCredential | GitSshCredential | undefined, callback: (context: { repository: string; args: string[]; env: NodeJS.ProcessEnv; cwd: string }) => Promise<T>, baseEnv = process.env, credentialsDirectory?: string): Promise<T> {
   const scope = normalizeGitRepository(repository);
   if (credential && credential.repository !== scope) throw fail(409, 'Git credential scope does not match the repository.');
+  if (isSshRepository(scope)) {
+    if (credential && !('privateKey' in credential)) throw fail(409, 'An HTTPS token cannot authenticate an SSH repository.');
+    try { return await withSshSourceCredentials(scope, credential, callback, baseEnv, credentialsDirectory); }
+    catch (error) { throw Object.assign(new Error(redactSourceCredentials(error instanceof Error ? error.message : String(error), credential ? { ssh: credential } : {})), { statusCode: (error as { statusCode?: number }).statusCode }); }
+  }
+  if (credential && 'privateKey' in credential) throw fail(409, 'An SSH key cannot authenticate an HTTPS repository.');
   const directory = await mkdtemp(join(tmpdir(), 'harborlight-git-auth-')); await chmod(directory, 0o700);
   const askpass = join(directory, 'askpass.cjs');
   try {

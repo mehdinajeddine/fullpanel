@@ -497,7 +497,7 @@ export function RestoreHistory({
             }
             description={
               access.mode === "demo"
-                ? "Demo backups are illustrative. Run Harborlight with Docker to restore real application data."
+                ? "Demo backups are illustrative. Run FullPanel with Docker to restore real application data."
                 : "Restore a backup to see its validation and recovery progress here."
             }
           />

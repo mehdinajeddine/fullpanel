@@ -1,0 +1,4 @@
+# Reviewed synthetic integration-test value, never an external credential.
+de659ccab4aa9c8cc2cafb81d6154c21d8f212da:server/tests/restore.test.ts:generic-api-key:152
+# UI documentation example uses the literal placeholder YOUR_DEPLOYMENT_TOKEN.
+898337839b0569919f6d4eea8ed26d474ad1bd59:src/DeploymentTrigger.tsx:curl-auth-header:107

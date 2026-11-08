@@ -16,13 +16,18 @@ import {
 import { createPortal } from "react-dom";
 import {
   AlertCircle,
+  AlertTriangle,
   Check,
+  CheckCircle2,
   ChevronRight,
   CircleDashed,
+  Clock3,
   Container,
   Database,
   Layers,
   Loader2,
+  Info,
+  PauseCircle,
   Search,
   X,
 } from "lucide-react";
@@ -31,32 +36,13 @@ import { navigate } from "./api";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <a className="brand" href="#/" aria-label="Harborlight home">
+    <a className="brand" href="#/" aria-label="FullPanel home">
       <span className="brand-mark">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 32 32"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M11 25h10l-3-13h-4l-3 13Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M12 8h8M16 3v2M4 12l5 2M28 12l-5 2M8 28h16"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
+        <img src="/assets/fullpanel-logo.png" alt="" width="40" height="40" />
       </span>
       {!compact && (
         <span>
-          harborlight<span className="brand-period">.</span>
+          Full<span className="brand-accent">Panel</span>
         </span>
       )}
     </a>
@@ -103,12 +89,154 @@ export function IconButton({
     </button>
   );
 }
-export function Badge({ status }: { status: string }) {
+export type StatusTone = "positive" | "warning" | "danger" | "neutral" | "info";
+function statusAppearance(status: string): {
+  tone: StatusTone;
+  Icon: typeof CheckCircle2;
+  label: string;
+} {
+  const label =
+    status === "not-deployed"
+      ? "Not deployed"
+      : status.replace(/-/g, " ").replace(/^./, (value) => value.toUpperCase());
+  if (["failed", "error"].includes(status))
+    return { tone: "danger", Icon: AlertCircle, label };
+  if (["running", "success", "enabled", "active"].includes(status))
+    return { tone: "positive", Icon: CheckCircle2, label };
+  if (
+    [
+      "deploying",
+      "queued",
+      "restoring",
+      "pending",
+      "deferred",
+      "pending-changes",
+    ].includes(status)
+  )
+    return {
+      tone: "warning",
+      Icon: ["deploying", "restoring"].includes(status) ? Loader2 : Clock3,
+      label,
+    };
+  if (["stopped", "paused", "disabled"].includes(status))
+    return { tone: "neutral", Icon: PauseCircle, label };
+  if (
+    ["not-deployed", "not configured", "not-configured", "idle"].includes(
+      status,
+    )
+  )
+    return { tone: "neutral", Icon: CircleDashed, label };
+  return { tone: "info", Icon: Info, label };
+}
+export function Badge({
+  status,
+  label,
+  tone,
+}: {
+  status: string;
+  label?: string;
+  tone?: StatusTone;
+}) {
+  const appearance = statusAppearance(status);
   return (
-    <span className={`badge status-${status}`}>
-      <span />
-      {status === "not-deployed" ? "Not deployed" : status.replace(/-/g, " ")}
+    <span
+      className={`badge status-${status.replace(/\s+/g, "-")}`}
+      data-tone={tone || appearance.tone}
+    >
+      <appearance.Icon
+        size={12}
+        aria-hidden="true"
+        className={
+          status === "deploying" || status === "restoring" ? "spin" : undefined
+        }
+      />
+      {label || appearance.label}
     </span>
+  );
+}
+export function hasPendingConfiguration(service: Service) {
+  return (
+    service.runtimeUncertain ||
+    (service.pendingChanges ??
+      (!!service.deployedAt &&
+        Date.parse(service.updatedAt) > Date.parse(service.deployedAt)))
+  );
+}
+export function ConfigurationBadge({ service }: { service: Service }) {
+  return service.runtimeUncertain ? (
+    <Badge status="pending-changes" label="Runtime uncertain" tone="warning" />
+  ) : !service.deployedAt ? (
+    <Badge status="not-deployed" label="Awaiting first deploy" />
+  ) : hasPendingConfiguration(service) ? (
+    <Badge status="pending-changes" label="Saved changes" />
+  ) : (
+    <Badge status="configured" label="Configuration applied" />
+  );
+}
+export function ServiceStateSummary({ services }: { services: Service[] }) {
+  return (
+    <div
+      className="service-state-summary"
+      role="list"
+      aria-label="Service states"
+    >
+      {["running", "deploying", "failed", "stopped", "not-deployed"].map(
+        (status) => {
+          const count = services.filter(
+            (service) => service.status === status,
+          ).length;
+          return (
+            <div
+              role="listitem"
+              key={status}
+              data-empty={!count}
+              aria-label={`${count} ${status.replace(/-/g, " ")} services`}
+            >
+              <strong>{count}</strong>
+              <Badge status={status} tone={count ? undefined : "neutral"} />
+            </div>
+          );
+        },
+      )}
+    </div>
+  );
+}
+export function SetupProgress({
+  label,
+  steps,
+}: {
+  label: string;
+  steps: {
+    label: string;
+    detail: string;
+    state: "complete" | "current" | "pending";
+  }[];
+}) {
+  return (
+    <ol className="setup-progress" aria-label={label}>
+      {steps.map((step, index) => (
+        <li key={step.label} data-state={step.state}>
+          <span className="setup-progress-marker" aria-hidden="true">
+            {step.state === "complete" ? <Check size={15} /> : index + 1}
+          </span>
+          <div>
+            <strong>
+              {step.label}
+              <span className="sr-only">
+                {" "}
+                —{" "}
+                {step.state === "complete"
+                  ? "Complete"
+                  : step.state === "current"
+                    ? "Next step"
+                    : "Pending"}
+              </span>
+            </strong>
+            <small>{step.detail}</small>
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }
 export function ServiceIcon({
@@ -537,16 +665,40 @@ export function ServiceRow({
           {service.source.image || service.source.repository || service.kind}
         </small>
       </span>
-      <Badge status={service.status} />
+      <span className="service-row-states">
+        <Badge status={service.status} />
+        {hasPendingConfiguration(service) && (
+          <ConfigurationBadge service={service} />
+        )}
+      </span>
       <ChevronRight size={17} className="muted" />
     </button>
   );
 }
-export function Notice({ children }: { children: ReactNode }) {
+export function Notice({
+  children,
+  tone = "info",
+  title,
+}: {
+  children: ReactNode;
+  tone?: StatusTone;
+  title?: string;
+}) {
+  const Icon =
+    tone === "warning"
+      ? AlertTriangle
+      : tone === "positive"
+        ? CheckCircle2
+        : tone === "danger"
+          ? AlertCircle
+          : Info;
   return (
-    <div className="notice">
-      <CircleDashed size={17} />
-      <p>{children}</p>
+    <div className="notice" data-tone={tone}>
+      <Icon size={18} aria-hidden="true" />
+      <div>
+        {title && <strong className="notice-title">{title}</strong>}
+        <p>{children}</p>
+      </div>
     </div>
   );
 }
