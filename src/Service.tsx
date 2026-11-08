@@ -54,6 +54,8 @@ import SourceCredentials from "./SourceCredentials";
 import { useAccess } from "./Access";
 import { ServiceEnvironment } from "./Environment";
 import { RestoreHistory } from "./Restores";
+import GitHubWebhook from "./GitHubWebhook";
+import Releases from "./Releases";
 const tabs = [
   ["overview", "Overview"],
   ["source", "Source"],
@@ -62,6 +64,7 @@ const tabs = [
   ["storage", "Storage"],
   ["resources", "Resources"],
   ["deployments", "Deployments"],
+  ["releases", "Releases"],
   ["logs", "Logs"],
   ["backups", "Backups"],
   ["settings", "Settings"],
@@ -285,13 +288,23 @@ export default function ServicePage({
         ))}
       </nav>
       <div className="service-tab-content" key={`${id}/${active}`}>
+        {service.runtimeUncertain && (
+          <Notice>
+            A deployment was interrupted, so the applied runtime configuration
+            is uncertain. {canEdit
+              ? "Deploy the saved configuration to reconcile it before using rollback or backups."
+              : "Ask a project operator to deploy the saved configuration and reconcile the runtime."}
+          </Notice>
+        )}
         {canEdit &&
+          !service.runtimeUncertain &&
           service.deployedAt &&
-          new Date(service.updatedAt).getTime() >
-            new Date(service.deployedAt).getTime() && (
+          (service.pendingChanges ??
+            (new Date(service.updatedAt).getTime() >
+              new Date(service.deployedAt).getTime())) && (
             <Notice>
-              Configuration changed since the last deployment. Select Deploy to
-              apply your saved changes.
+              Saved configuration differs from the current runtime. Select Deploy
+              to apply your saved changes.
             </Notice>
           )}
         {active === "overview" && <ServiceOverview service={service} />}
@@ -327,6 +340,7 @@ export default function ServicePage({
             <ServiceReadView service={service} section="resources" />
           ))}
         {active === "deployments" && <ServiceDeployments service={service} />}
+        {active === "releases" && <Releases service={service} />}
         {active === "logs" && <Logs service={service} />}
         {active === "backups" &&
           (service.kind === "compose" ||
@@ -559,7 +573,7 @@ function SourceEditor({
               type: "git",
               label: "Git repository",
               icon: <GitBranch size={21} />,
-              description: "Build from a public repository",
+              description: "Build and deploy a Git repository",
             },
             {
               type: "dockerfile",
@@ -736,6 +750,13 @@ function SourceEditor({
         sourceSaved={sourceSaved}
         updated={updated}
       />
+      {service.kind === "app" && source.type === "git" && (
+        <GitHubWebhook
+          key={`${service.id}:${service.source.repository || ""}:${service.source.branch || "main"}`}
+          service={service}
+          sourceSaved={sourceSaved && (source.branch?.trim() || "main") === (service.source.branch?.trim() || "main")}
+        />
+      )}
     </>
   );
 }

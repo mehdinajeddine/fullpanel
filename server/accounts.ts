@@ -18,6 +18,7 @@ const keyInput = z.object({ name: z.string().trim().min(1).max(80), projectIds: 
 export function revokeUserCredentials(store: Store, userId: string) {
   store.state.sessions = store.state.sessions.filter(session => session.userId !== userId);
   store.state.apiKeys = store.state.apiKeys.filter(key => key.userId !== userId);
+  for (const [serviceId,hook] of Object.entries(store.state.githubWebhooks)) if (hook.issuerId===userId) delete store.state.githubWebhooks[serviceId];
   for (const [serviceId, issuer] of Object.entries(store.state.deployTokenOwners)) if (issuer === userId) { delete store.state.deployTokens[serviceId]; delete store.state.deployTokenOwners[serviceId]; }
 }
 

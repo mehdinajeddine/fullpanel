@@ -3,6 +3,7 @@ import type { FastifyRequest } from 'fastify';
 import type { ApiKey, PublicUser, ProjectRole, Service, Deployment, Backup, Activity, RestoreJob } from '../shared/types.js';
 import type { Store, UserRecord, ApiKeyRecord } from './store.js';
 import { normalizeGitRepository } from './source-credentials.js';
+import { servicePendingChanges } from './release-config.js';
 
 export const SESSION_COOKIE = 'harborlight_session';
 export const digestToken = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -83,10 +84,11 @@ export class AccessControl {
   restore(request: FastifyRequest, job: RestoreJob): RestoreJob { const write = this.isGlobal(request) || this.level(request, job.sourceProjectId || '') === 'operator' && this.level(request, job.targetProjectId) === 'operator'; return write ? job : { ...job, output: '', error: job.error ? 'Restore failed. Ask an operator to inspect the job.' : undefined, requestedBy: '' }; }
   service(request: FastifyRequest, service: Service, inventory = false): Service {
     const operator = this.level(request, service.projectId) === 'operator';
-    if (operator && !inventory) return service;
+    const view={...service,pendingChanges:servicePendingChanges(this.store,service),activeReleaseId:service.status==='deploying'||service.runtimeUncertain?undefined:this.store.state.activeReleaseIds[service.id]};
+    if (operator && !inventory) return view;
     let repository: string | undefined;
     if (service.source.repository) try { repository = normalizeGitRepository(service.source.repository); } catch { /* Legacy invalid URLs can contain credentials; viewers must never receive them. */ }
-    return { ...service, env: {}, ...(operator ? {} : { source: { type: service.source.type, image: service.source.image, repository, branch: service.source.branch, context: service.source.context }, notes: '', error: service.error ? 'This service reported an error. Ask an operator to inspect its logs.' : undefined }) };
+    return { ...view, env: {}, ...(operator ? {} : { source: { type: service.source.type, image: service.source.image, repository, branch: service.source.branch, context: service.source.context }, notes: '', error: service.error ? 'This service reported an error. Ask an operator to inspect its logs.' : undefined }) };
   }
   deployment(request: FastifyRequest, deployment: Deployment): Deployment { return this.level(request, this.recordProject(deployment) || '') === 'operator' || this.isGlobal(request) ? deployment : { ...deployment, output: '' }; }
   backup(request: FastifyRequest, backup: Backup): Backup { return this.level(request, this.recordProject(backup) || '') === 'operator' || this.isGlobal(request) ? backup : { ...backup, error: backup.error ? 'Backup failed. Ask an operator to inspect the error.' : undefined }; }
@@ -115,8 +117,8 @@ export class AccessControl {
       return;
     }
     if (route.startsWith('/api/services/:id')) {
-      if (route.includes('/trigger')) this.requireCookie(request);
-      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.endsWith('/auth') || route.endsWith('/environment');
+      if (route.includes('/trigger') || route.includes('/github-webhook')) this.requireCookie(request);
+      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.includes('/github-webhook') || route.endsWith('/auth') || route.endsWith('/environment');
       this.requireService(request, params.id || '', sensitiveRead ? 'write' : permission); return;
     }
     if (route === '/api/deployments/:id') {

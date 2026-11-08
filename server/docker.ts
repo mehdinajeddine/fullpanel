@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { mkdir, writeFile, rm, statfs, realpath, mkdtemp } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm, statfs, realpath, mkdtemp } from 'node:fs/promises';
 import { join, resolve, sep } from 'node:path';
 import { cpus, freemem, totalmem, uptime } from 'node:os';
 import { randomUUID } from 'node:crypto';
@@ -14,12 +14,15 @@ import { assertEngineCompatible, backupFormats, NativeDatabaseTools, restoredEnv
 const LABEL = 'io.harborlight.managed';
 const SERVICE_LABEL = 'io.harborlight.service';
 export type Output = (chunk: string) => void;
-export interface DeployOptions { forceRebuild?: boolean; sourceCredentials?: DeploymentSourceCredentials; proxyAuth?: ProxyAuthMap; projectEnvironment?: Record<string, string> }
+export interface DeployOptions { forceRebuild?: boolean; sourceCredentials?: DeploymentSourceCredentials; proxyAuth?: ProxyAuthMap; projectEnvironment?: Record<string, string>; releaseId?: string; expectedCommit?: string }
+export interface DeploymentResult { containerId?: string; image?: string; imageId?: string; releaseTag?: string; commit?: string }
+export interface RollbackOptions { imageId: string; releaseTag: string; proxyAuth?: ProxyAuthMap; releaseId?: string }
 export interface RestoreCheckpoint { restoreId: string; previousContainerId: string; candidateContainerId: string; previousWasRunning: boolean }
 export interface RestoreOptions { sourceService?: Service; onPrepared?: (result: RestoreResult, checkpoint: RestoreCheckpoint) => Promise<void> }
 export interface RestoreResult { containerId: string; volumeOverrides: Record<string, string>; environment?: Record<string, string> }
 export interface RuntimeDriver {
-  deploy(service: Service, output: Output, options?: DeployOptions): Promise<{ containerId?: string; image?: string; commit?: string }>;
+  deploy(service: Service, output: Output, options?: DeployOptions): Promise<DeploymentResult>;
+  rollback?(service: Service, output: Output, options: RollbackOptions): Promise<DeploymentResult>;
   action(service: Service, action: 'start' | 'stop' | 'restart'): Promise<void>;
   remove(service: Service): Promise<void>;
   logs(service: Service, tail: number): Promise<string>;
@@ -102,18 +105,65 @@ export class DockerDriver implements RuntimeDriver {
       if (volume.Labels?.[LABEL] !== 'true' || volume.Labels?.[SERVICE_LABEL] !== service.id) throw new Error('Refusing to back up or restore an unmanaged volume.');
     }
   }
-  async deploy(service: Service, output: Output, options: DeployOptions = {}) {
-    const credentials = resolveSourceCredentials(service, options.sourceCredentials);
+  private releaseTag(service: Service, releaseId: string) {
+    const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+    if (service.kind !== 'app' || !uuid.test(service.id) || !uuid.test(releaseId)) throw new Error('Immutable releases require an application service and valid release identifiers.');
+    return `harborlight-release/${service.id}:${releaseId}`;
+  }
+  private async exactImage(imageId: string) {
+    if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error('A complete immutable Docker image ID is required.');
+    const [image] = JSON.parse(await command('docker', ['image', 'inspect', imageId]));
+    if (image.Id !== imageId) throw new Error('Docker did not return the expected immutable image.');
+    return imageId;
+  }
+  private async pinRelease(service: Service, releaseId: string, imageId: string) {
+    const tag = this.releaseTag(service, releaseId);
+    try {
+      const [existing] = JSON.parse(await command('docker', ['image', 'inspect', tag]));
+      if (existing.Id !== imageId) throw new Error('This release tag already belongs to a different immutable image.');
+      return { tag, created: false };
+    } catch (error) { if (!/No such image|No such object/i.test(String(error))) throw error; }
+    // Adding our own reference does not change labels or other users' references on a shared image.
+    await command('docker', ['image', 'tag', imageId, tag]);
+    const [retained] = JSON.parse(await command('docker', ['image', 'inspect', tag]));
+    if (retained.Id !== imageId) throw new Error('The release reference changed before it could be retained.');
+    return { tag, created: true };
+  }
+  async deploy(service: Service, output: Output, options: DeployOptions = {}): Promise<DeploymentResult> {
+    return this.deployInternal(service, output, options);
+  }
+  async rollback(service: Service, output: Output, options: RollbackOptions): Promise<DeploymentResult> {
+    return this.deployInternal(service, output, { proxyAuth: options.proxyAuth, releaseId: options.releaseId }, options);
+  }
+  private async deployInternal(service: Service, output: Output, options: DeployOptions = {}, rollback?: RollbackOptions): Promise<DeploymentResult> {
+    if (options.releaseId) this.releaseTag(service, options.releaseId);
+    if (options.expectedCommit && (service.source.type !== 'git' || !/^[a-f0-9]{40}(?:[a-f0-9]{24})?$/.test(options.expectedCommit))) throw new Error('A pinned commit requires a Git source and a complete commit SHA.');
+    let imageId: string | undefined;
+    if (rollback) {
+      if (service.kind !== 'app' || !rollback.releaseTag.startsWith(`harborlight-release/${service.id}:`) || this.releaseTag(service, rollback.releaseTag.split(':').at(-1)!) !== rollback.releaseTag) throw new Error('This release does not belong to the application service.');
+      imageId = await this.exactImage(rollback.imageId);
+      const [reference] = JSON.parse(await command('docker', ['image', 'inspect', rollback.releaseTag]));
+      if (reference.Id !== imageId) throw new Error('The retained release tag no longer matches its recorded image.');
+      if (Object.keys(reference.Config?.Volumes || {}).some(path => !service.mounts.some(mount => mount.mountPath === path))) throw new Error('The retained image declares a persistent volume that is absent from the managed release mounts.');
+      const current = await this.ownedContainer(service);
+      const [runtime] = JSON.parse(await command('docker', ['container', 'inspect', current!]));
+      await this.assertRuntimeVolumes(service, runtime);
+      if ((runtime.Mounts || []).some((mount: { Type: string; Destination: string }) => mount.Type === 'volume' && !service.mounts.some(configured => configured.mountPath === mount.Destination))) throw new Error('Rollback requires every persistent container volume to be explicitly managed.');
+      output(`Using retained immutable image ${imageId}. No source fetch, pull or build is performed.\n`);
+    }
+    const credentials = rollback ? {} : resolveSourceCredentials(service, options.sourceCredentials);
     for (const value of Object.values(service.env)) if (/[\r\n\0]/.test(value)) throw new Error('Docker environment values must be single-line. Encode multiline secrets before use.');
     if (service.domains.length) await command('docker', ['network', 'inspect', 'harborlight-proxy']);
     await this.network(service);
     if (service.kind === 'compose') return this.deployCompose(service, output, options.projectEnvironment);
     const work = join(this.dataDir, 'work', `${service.id}-${randomUUID()}`);
     await mkdir(work, { recursive: true, mode: 0o700 });
-    let image = service.source.image;
+    let image = rollback?.releaseTag || service.source.image;
     let commit: string | undefined;
+    let retained: { tag: string; created: boolean } | undefined, completed = false;
     try {
-      if (service.source.type === 'image') {
+      if (rollback) { /* The exact image was verified before network, volume or container mutations. */ }
+      else if (service.source.type === 'image') {
         if (!image) throw new Error('An image is required.');
         output(`Pulling ${image}\n`);
         await withDockerSourceCredentials(image, credentials.registry, command, env => command('docker', ['pull', image!], { env, output: credentials.registry ? undefined : output, timeout: 600000 }));
@@ -127,9 +177,14 @@ export class DockerDriver implements RuntimeDriver {
           commit = await withGitSourceCredentials(service.source.repository!, credentials.git, async git => {
             await command('git', [...git.args, 'clone', '--depth', '1', '--single-branch', '--branch', service.source.branch || 'main', '--', git.repository, repo], { cwd: git.cwd, timeout: 300000, output: credentials.git ? undefined : output, env: git.env });
             await command('git', [...git.args, 'remote', 'set-url', 'origin', normalizeGitRepository(service.source.repository!)], { cwd: repo, env: git.env });
+            if (options.expectedCommit) {
+              await command('git', [...git.args, 'fetch', '--depth', '1', '--no-tags', 'origin', options.expectedCommit], { cwd: repo, timeout: 300000, output: credentials.git ? undefined : output, env: git.env });
+              await command('git', [...git.args, 'checkout', '--detach', options.expectedCommit], { cwd: repo, env: git.env });
+            }
             return (await command('git', [...git.args, 'rev-parse', 'HEAD'], { cwd: repo, env: git.env })).trim();
           });
           if (!/^[a-f0-9]{40,64}$/.test(commit)) throw new Error('Git did not return a valid source commit.');
+          if (options.expectedCommit && commit !== options.expectedCommit) throw new Error('Fetched source did not match the requested commit.');
           output(`Source commit: ${commit}\n`);
           const repoReal = await realpath(repo);
           context = await realpath(resolve(repo, service.source.context || '.'));
@@ -139,8 +194,13 @@ export class DockerDriver implements RuntimeDriver {
           if (!dockerfileReal.startsWith(repoReal + sep)) throw new Error('Dockerfile escapes repository.');
         } else await writeFile(join(work, 'Dockerfile'), service.source.dockerfile!, { mode: 0o600 });
         output('Building image…\n');
-        await withDockerSourceCredentials(undefined, undefined, command, env => command('docker', ['build', '--label', `${LABEL}=true`, ...(commit ? ['--label', `org.opencontainers.image.revision=${commit}`] : []), ...(options.forceRebuild ? ['--no-cache', '--pull'] : []), '-t', image!, '-f', join(context, dockerfile), context], { env, output, timeout: 1800000 }));
+        const iidFile = join(work, 'built-image.id');
+        await withDockerSourceCredentials(undefined, undefined, command, env => command('docker', ['build', '--iidfile', iidFile, '--label', `${LABEL}=true`, ...(commit ? ['--label', `org.opencontainers.image.revision=${commit}`] : []), ...(options.forceRebuild ? ['--no-cache', '--pull'] : []), '-t', image!, '-f', join(context, dockerfile), context], { env, output, timeout: 1800000 }));
+        imageId = (await readFile(iidFile, 'utf8')).trim();
       } else throw new Error('Choose an image, Git repository or inline Dockerfile for this service.');
+      if (!imageId) imageId = JSON.parse(await command('docker', ['image', 'inspect', image!]))[0].Id;
+      imageId = await this.exactImage(imageId!);
+      if (options.releaseId) retained = await this.pinRelease(service, options.releaseId, imageId);
       for (const mount of service.mounts) await this.ensureVolume(service, mount.name);
       // Create the candidate and validate its networks before touching the previous runtime.
       const existing = await this.ownedContainer(service, true);
@@ -148,13 +208,13 @@ export class DockerDriver implements RuntimeDriver {
       await writeFile(envFile, Object.entries(service.env).map(([key, value]) => `${key}=${value}`).join('\n'), { mode: 0o600 });
       const candidateName = `${this.name(service)}-candidate-${randomUUID().slice(0, 8)}`;
       const previousName = `${this.name(service)}-previous-${randomUUID().slice(0, 8)}`;
-      const args = ['create', '--name', candidateName, '--label', `${LABEL}=true`, '--label', `${SERVICE_LABEL}=${service.id}`, '--label', `io.harborlight.project=${service.projectId}`, '--restart', 'unless-stopped', '--network', this.projectNetwork(service), '--network-alias', service.name, '--cpus', String(service.resources.cpu), '--memory', `${service.resources.memoryMb}m`, '--env-file', envFile];
+      const args = ['create', '--pull=never', '--name', candidateName, '--label', `${LABEL}=true`, '--label', `${SERVICE_LABEL}=${service.id}`, '--label', `io.harborlight.project=${service.projectId}`, '--restart', 'unless-stopped', '--network', this.projectNetwork(service), '--network-alias', service.name, '--cpus', String(service.resources.cpu), '--memory', `${service.resources.memoryMb}m`, '--env-file', envFile];
       for (const mount of service.mounts) args.push('--mount', `type=volume,src=${this.volume(service, mount.name)},dst=${mount.mountPath}`);
       for (const port of service.ports) args.push('-p', `${port.published}:${port.target}/${port.protocol}`);
       args.push('--label', `traefik.enable=${service.domains.length > 0}`);
       if (service.domains.length) args.push('--label', 'traefik.docker.network=harborlight-proxy');
       args.push(...proxyLabels(service.domains, service.id, options.proxyAuth));
-      args.push(image!);
+      args.push(imageId);
       if (service.kind === 'redis') args.push('sh', '-c', 'exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"');
       const containerId = (await command('docker', args)).trim();
       let renamedPrevious = false, previousRunning = false;
@@ -181,8 +241,15 @@ export class DockerDriver implements RuntimeDriver {
       }
       if (existing) await command('docker', ['rm', existing]).catch(error => output(`Previous stopped container cleanup failed: ${(error as Error).message}\n`));
       output('Container started. Application readiness is not health-checked.\n');
-      return { containerId, image, ...(commit ? { commit } : {}) };
-    } finally { await rm(work, { recursive: true, force: true }); }
+      completed = true;
+      return { containerId, image, imageId, ...(retained ? { releaseTag: retained.tag } : rollback ? { releaseTag: rollback.releaseTag } : {}), ...(commit ? { commit } : {}) };
+    } finally {
+      if (!completed && retained?.created) {
+        const [reference] = JSON.parse(await command('docker', ['image', 'inspect', retained.tag]).catch(() => '[]'));
+        if (reference?.Id === imageId) await command('docker', ['image', 'rm', retained.tag]).catch(() => {});
+      }
+      await rm(work, { recursive: true, force: true });
+    }
   }
   private composePath(service: Service) { return join(this.dataDir, 'compose', service.id, 'compose.yaml'); }
   private composeArgs(service: Service) { return ['compose', '-p', `hl-${service.id}`, '-f', this.composePath(service)]; }
@@ -211,10 +278,19 @@ export class DockerDriver implements RuntimeDriver {
     if (service.kind === 'compose') {
       const ids = (await command('docker', ['ps', '-aq', '--filter', `label=${SERVICE_LABEL}=${service.id}`])).trim();
       if (ids) { await this.assertComposeOwnership(service); await command('docker', [...this.composeArgs(service), 'down']); }
-      return;
+    } else {
+      const container = await this.ownedContainer(service, true);
+      if (container) await command('docker', ['rm', '-f', container]);
     }
-    const container = await this.ownedContainer(service, true);
-    if (container) await command('docker', ['rm', '-f', container]);
+    // Delete only references in this service's exact release namespace, never image IDs or unrelated tags.
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(service.id)) throw new Error('Invalid service identifier for release reference cleanup.');
+    const repository = `harborlight-release/${service.id}`;
+    const references = (await command('docker', ['image', 'ls', '--format', '{{.Repository}}:{{.Tag}}', repository])).trim().split('\n').filter(Boolean);
+    const owned = new RegExp(`^${repository}:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$`);
+    for (const reference of new Set(references.filter(value => owned.test(value)))) {
+      try { await command('docker', ['image', 'rm', reference]); }
+      catch { throw new Error('The service container was removed, but a retained release reference is still in use. Inspect shared image use and retry deletion; no image was forcibly removed.'); }
+    }
   }
   async logs(service: Service, tail: number) {
     if (service.kind === 'compose') { await this.assertComposeOwnership(service); return command('docker', [...this.composeArgs(service), 'logs', '--no-color', '--tail', String(tail)]); }
@@ -225,15 +301,21 @@ export class DockerDriver implements RuntimeDriver {
   }
   async statuses() {
     const output = await command('docker', ['ps', '-a', '--filter', `label=${LABEL}=true`, '--format', '{{json .}}']);
-    const result: Record<string, ServiceStatus> = {};
+    const canonical: Record<string, ServiceStatus> = {}, compose: Record<string, ServiceStatus> = {};
+    const rank = { running: 0, stopped: 1, failed: 2 };
     for (const line of output.trim().split('\n').filter(Boolean)) {
-      const item = JSON.parse(line), labels = Object.fromEntries(item.Labels.split(',').map((pair: string) => pair.split('=')));
+      const item = JSON.parse(line), labels = Object.fromEntries(item.Labels.split(',').map((pair: string) => { const index = pair.indexOf('='); return [pair.slice(0, index), pair.slice(index + 1)]; }));
       const serviceId = labels[SERVICE_LABEL];
-      if (!serviceId) continue;
+      if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(serviceId || '')) continue;
       const status = item.State === 'running' ? 'running' : item.State === 'exited' || item.State === 'created' ? 'stopped' : 'failed';
-      if (!result[serviceId] || result[serviceId] === 'running') result[serviceId] = status;
+      // Restore/deploy candidates and previous containers retain ownership labels, but are not the active runtime.
+      if (item.Names === `hl-${serviceId}`) canonical[serviceId] = status;
+      else if (labels['com.docker.compose.project'] === `hl-${serviceId}` && /^[a-z][a-z0-9_-]*$/.test(labels['com.docker.compose.service'] || '') && labels['com.docker.compose.oneoff']?.toLowerCase() !== 'true') {
+        const previous = compose[serviceId] as keyof typeof rank | undefined;
+        if (!previous || rank[status] > rank[previous]) compose[serviceId] = status;
+      }
     }
-    return result;
+    return { ...compose, ...canonical };
   }
   async metrics(): Promise<Metrics> {
     const base: Metrics = { mode: 'docker', cpuPercent: null, memoryUsedBytes: totalmem() - freemem(), memoryTotalBytes: totalmem(), diskUsedBytes: null, diskTotalBytes: null, uptime: uptime(), dockerVersion: null, containersRunning: 0 };

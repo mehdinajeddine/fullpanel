@@ -338,4 +338,27 @@ test.describe.serial('Owner workflows', () => {
     await expect(page.getByText('Demo backups are illustrative. Restore is available in Docker mode.', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Restore', exact: true })).toHaveCount(0);
   });
+
+  test('GitHub and release views explain demo limits without offering live controls', async ({ page }) => {
+    const projects = await (await page.request.get('/api/projects')).json();
+    const project = projects.find((item: { name: string }) => item.name === 'acceptance-project');
+    const response = await page.request.post('/api/services', { data: { projectId: project.id, name: 'github-demo', kind: 'app', source: { type: 'git', repository: 'https://github.com/octocat/Hello-World.git', branch: 'main' } } });
+    expect(response.status()).toBe(201);
+    const service = await response.json();
+    await page.goto(`/#/services/${service.id}/source`);
+    await expect(page.getByRole('heading', { name: 'GitHub auto-deploy', exact: true })).toBeVisible();
+    await expect(page.getByText('GitHub delivery deployment is unavailable in demo mode.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Generate GitHub secret', exact: true })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Releases', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Application releases', exact: true })).toBeVisible();
+    await expect(page.getByText('Immutable application releases are unavailable in demo mode.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Roll back', exact: true })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Deployments', exact: true }).last().click();
+    await expect(page.getByRole('heading', { name: 'CI deployment trigger', exact: true })).toBeVisible();
+    await expect(page.getByLabel('Trigger endpoint')).toHaveValue(new RegExp(`/api/hooks/deploy/${service.id}$`));
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/#/services/${service.id}/releases`);
+    await expect(page.getByRole('heading', { name: 'Release rollback is unavailable', exact: true })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  });
 });

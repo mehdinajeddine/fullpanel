@@ -10,7 +10,9 @@ An independent, open-source control panel for applications and databases on your
 
 The current release includes projects and services, image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, shared project variables with service overrides and `.env` import, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, verified local restoration with safety backups, and revocable deployment triggers. It also provides accounts with project permissions, scoped API keys and a CLI, private image and HTTPS Git credentials, and proxy password protection, prefix removal, wildcard HTTP routes and HTTPS redirects. The interface supports light and dark themes, mobile layouts, and keyboard search.
 
-Native GitHub webhooks, private build base images, SSH deploy keys, offsite storage, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
+GitHub push webhooks verify the signed request and deploy its exact commit. Applications retain immutable local image/configuration releases for explicit rollback, while preserving current volume data and saved desired settings. See [GitHub setup](docs/specs/12-github-auto-deploy.md) and [application releases](docs/specs/13-application-releases.md).
+
+GitHub App/OAuth connection, private build base images, SSH deploy keys, offsite storage, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
 
 ## Run locally
 

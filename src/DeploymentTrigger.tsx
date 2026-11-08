@@ -67,8 +67,8 @@ export default function DeploymentTrigger({
   }
   return (
     <Panel
-      title="Deployment trigger"
-      description="Start a deployment from CI or another trusted automation."
+      title="CI deployment trigger"
+      description="Use a Bearer token from your own CI job or trusted automation."
       actions={
         query.data && (
           <Badge status={query.data.enabled ? "enabled" : "disabled"} />
@@ -82,6 +82,7 @@ export default function DeploymentTrigger({
             <p className="form-note trigger-description">
               Send a POST request to this endpoint with an Authorization: Bearer
               token header. This credential can deploy only this service.
+              Native GitHub webhooks use the separate signed endpoint in Source.
             </p>
             <Field label="Trigger endpoint">
               <div className="copy-field">

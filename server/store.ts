@@ -7,12 +7,14 @@ import type { BackupSchedule } from './backup-schedules.js';
 import type { ProxyAuthMap } from '../shared/proxy.js';
 import type { ServiceSourceCredentials } from './source-credentials.js';
 import type { RestoreCheckpoint, RestoreResult } from './docker.js';
+import type { GitHubWebhookRecord } from './github-webhooks.js';
+import type { ReleaseSnapshot } from './releases.js';
 
 export interface Owner { name: string; email: string; hash: string; salt: string }
 export interface UserRecord extends PublicUser { hash: string; salt: string }
 export interface ApiKeyRecord extends ApiKey { hash: string }
 export interface RestoreIntent { result: RestoreResult; checkpoint: RestoreCheckpoint; previousService: Service; preparedService: Service }
-export interface State { version: 1; owner?: Owner; users: UserRecord[]; apiKeys: ApiKeyRecord[]; sessions: { hash: string; expires: number; userId: string }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; restores: RestoreJob[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; deployTokenOwners: Record<string,string>; backupSchedules: BackupSchedule[]; proxyAuth: Record<string,ProxyAuthMap>; sourceCredentials: Record<string,ServiceSourceCredentials>; projectEnvironments: Record<string,Record<string,string>>; appliedServices: Record<string,Service>; backupProfiles: Record<string,Service>; restoreIntents: Record<string,RestoreIntent> }
+export interface State { version: 1; owner?: Owner; users: UserRecord[]; apiKeys: ApiKeyRecord[]; sessions: { hash: string; expires: number; userId: string }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; restores: RestoreJob[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; deployTokenOwners: Record<string,string>; backupSchedules: BackupSchedule[]; proxyAuth: Record<string,ProxyAuthMap>; sourceCredentials: Record<string,ServiceSourceCredentials>; projectEnvironments: Record<string,Record<string,string>>; appliedServices: Record<string,Service>; backupProfiles: Record<string,Service>; restoreIntents: Record<string,RestoreIntent>; githubWebhooks: Record<string,GitHubWebhookRecord>; releases: ReleaseSnapshot[]; activeReleaseIds: Record<string,string>; pendingReleaseIds: Record<string,string[]>; appliedProxyAuth: Record<string,ProxyAuthMap> }
 const now = () => new Date().toISOString();
 const activeDirectories = new Set<string>();
 function processIdentity(pid: number): string | undefined {
@@ -61,11 +63,11 @@ export class Store {
       decipher.setAuthTag(encrypted.subarray(12, 28));
       this.state = JSON.parse(Buffer.concat([decipher.update(encrypted.subarray(28)), decipher.final()]).toString());
       if (this.state.version !== 1) throw new Error('Unsupported state version.');
-      for (const deployment of this.state.deployments) if (['queued', 'running'].includes(deployment.status)) { deployment.status = 'failed'; deployment.finishedAt = now(); deployment.output += '\nServer restarted before completion. Inspect the runtime before redeploying.'; }
+      for (const deployment of this.state.deployments) if (['queued', 'running'].includes(deployment.status)) { deployment.status = 'failed'; deployment.finishedAt = now(); deployment.output += '\nServer restarted before completion. Inspect the runtime before redeploying.'; const service=this.state.services.find(item=>item.id===deployment.serviceId); if(service)service.runtimeUncertain=true; if(this.state.activeReleaseIds)delete this.state.activeReleaseIds[deployment.serviceId]; }
       for (const service of this.state.services) if (service.status === 'deploying') { service.status = 'failed'; service.error = 'Deployment interrupted by server restart.'; }
       for (const backup of this.state.backups) if (backup.status === 'running') { backup.status = 'failed'; backup.error = 'Backup interrupted by server restart.'; }
     } else {
-      this.state = { version: 1, sessions: [], users: [], apiKeys: [], projects: [], services: [], deployments: [], backups: [], restores: [], activity: [], deployTokens: {}, deployTokenOwners: {}, backupSchedules: [], proxyAuth: {}, sourceCredentials: {}, projectEnvironments: {}, appliedServices: {}, backupProfiles: {}, restoreIntents: {}, settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
+      this.state = { version: 1, sessions: [], users: [], apiKeys: [], projects: [], services: [], deployments: [], backups: [], restores: [], activity: [], deployTokens: {}, deployTokenOwners: {}, backupSchedules: [], proxyAuth: {}, sourceCredentials: {}, projectEnvironments: {}, appliedServices: {}, backupProfiles: {}, restoreIntents: {}, githubWebhooks: {}, releases: [], activeReleaseIds: {}, pendingReleaseIds: {}, appliedProxyAuth: {}, settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
       if (mode === 'demo') this.seed();
     }
     this.state.deployTokens ||= {};
@@ -80,6 +82,11 @@ export class Store {
     this.state.backupProfiles ||= {};
     this.state.restores ||= [];
     this.state.restoreIntents ||= {};
+    this.state.githubWebhooks ||= {};
+    this.state.releases ||= [];
+    this.state.activeReleaseIds ||= {};
+    this.state.pendingReleaseIds ||= {};
+    this.state.appliedProxyAuth ||= {};
     for (const restore of this.state.restores) if (restore.status === 'queued' || restore.status === 'running') { restore.status = 'failed'; restore.phase = 'finished'; restore.finishedAt = now(); restore.error = 'Restore interrupted by server restart. Inspect the runtime and retained volumes before retrying.'; restore.output += `\n${restore.error}\n`; }
     // Upgrade the original single-owner state and preserve its valid browser sessions.
     if (!this.state.users.length && this.state.owner) this.state.users.push({ ...this.state.owner, id: randomUUID(), role: 'owner', memberships: [], disabled: false, createdAt: now(), updatedAt: now() });
@@ -106,9 +113,19 @@ export class Store {
     renameSync(temp, this.file);
     this.committed = structuredClone(this.state);
     } catch (error) {
-      if (existsSync(temp)) unlinkSync(temp);
+      // Cleanup failure must never prevent the fail-closed persistence latch.
+      try { if (existsSync(temp)) unlinkSync(temp); } catch { /* Retain the temporary file for recovery. */ }
       if (this.committed) this.state = structuredClone(this.committed);
       this.persistenceError = error as Error;
+      // Docker may already have switched containers before this write failed.
+      // The committed snapshot is safe to retain, but cannot describe the active runtime.
+      for (const deployment of this.state.deployments) if (['queued', 'running'].includes(deployment.status)) {
+        deployment.status = 'failed'; deployment.finishedAt = now();
+        deployment.output += '\nPersistent storage failed before deployment completion was recorded. Restart Harborlight and reconcile the runtime.';
+        const service = this.state.services.find(item => item.id === deployment.serviceId);
+        if (service) { service.runtimeUncertain = true; service.status = 'failed'; service.error = 'Persistent storage failed before runtime state could be recorded.'; }
+        delete this.state.activeReleaseIds[deployment.serviceId];
+      }
       throw error;
     }
   }

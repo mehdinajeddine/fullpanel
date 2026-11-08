@@ -40,6 +40,8 @@ jobs:
       - run: npm run test:proxy
       - run: npm run test:credentials
       - run: npm run test:git
+      - run: npm run test:github
+      - run: npm run test:releases
       - run: npm run test:environment
       - run: docker pull alpine:3.21
       - run: npm run test:restore
@@ -49,6 +51,7 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:restore-ui
+      - run: npm run test:releases-ui
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

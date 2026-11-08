@@ -1,6 +1,6 @@
 /** Verify the built production image, including API-to-Docker wiring and restart. */
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { command } from '../server/docker.js';
 
 const runId = randomUUID(), containerName = `hl-package-test-${runId}`, volumeName = `${containerName}-data`;
@@ -51,6 +51,22 @@ try {
   const [workload] = JSON.parse(await command('docker', ['inspect', `hl-${serviceId}`]));
   assert.ok(workload.Config.Env.includes('PACKAGE_SHARED=inherited-in-built-image'));
   assert.ok(workload.Config.Env.includes('PACKAGE_SECRET=package-fixture-value'));
+  const releases = await api(`/services/${serviceId}/releases`);
+  assert.equal(releases.supported, true);
+  assert.equal(releases.releases.length, 1);
+  assert.equal(releases.releases[0].imageId, workload.Image);
+  assert.equal(releases.activeReleaseId, releases.releases[0].id);
+  assert(!JSON.stringify(releases).includes('package-fixture-value'));
+  await api(`/services/${serviceId}`, { source: { type: 'git', repository: 'https://github.com/nginxinc/NGINX-Demos.git', branch: 'master', context: 'nginx-hello', dockerfile: 'Dockerfile' } }, 'PATCH');
+  assert.equal((await api(`/services/${serviceId}`)).pendingChanges, true);
+  const github = await api(`/services/${serviceId}/github-webhook/rotate`, {});
+  assert.equal(github.enabled, true);
+  const pingBody = JSON.stringify({ zen: 'Production parser preserves UTF-8 — vérifié' });
+  const pingHeaders = { 'Content-Type': 'application/json', 'X-GitHub-Event': 'ping', 'X-GitHub-Delivery': randomUUID(), 'X-Hub-Signature-256': `sha256=${createHmac('sha256', github.secret).update(pingBody).digest('hex')}` };
+  const ping = await fetch(new URL(github.endpoint, endpoint), { method: 'POST', headers: pingHeaders, body: pingBody });
+  assert.equal(ping.status, 200); assert.equal((await ping.json()).status, 'pong');
+  const altered = await fetch(new URL(github.endpoint, endpoint), { method: 'POST', headers: pingHeaders, body: pingBody + ' ' });
+  assert.equal(altered.status, 401);
   assert.deepEqual(await api('/restores'), []);
   await command('docker', ['exec', containerName, 'docker', 'compose', 'version']);
   await command('docker', ['exec', containerName, 'docker', 'buildx', 'version']);
@@ -69,6 +85,11 @@ try {
   await ready();
   assert.equal((await api('/auth/session')).authenticated, true);
   assert.equal((await api(`/services/${serviceId}`)).status, 'running');
+  assert.equal((await api(`/services/${serviceId}`)).pendingChanges, true);
+  assert.equal((await api(`/services/${serviceId}/releases`)).activeReleaseId, releases.activeReleaseId);
+  assert.equal((await api(`/services/${serviceId}/github-webhook`)).enabled, true);
+  const afterRestartPing = await fetch(new URL(github.endpoint, endpoint), { method: 'POST', headers: pingHeaders, body: pingBody });
+  assert.equal(afterRestartPing.status, 200); assert.equal((await afterRestartPing.json()).status, 'pong');
   assert.equal((await api('/projects'))[0].name, 'package-check');
   assert.equal((await api(`/projects/${projectId}/environment`)).env.PACKAGE_SHARED, 'inherited-in-built-image');
   assert.equal((await api(`/services/${serviceId}/environment`)).effective.PACKAGE_SECRET, 'package-fixture-value');
@@ -76,7 +97,7 @@ try {
   assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 200);
   await api(`/api-keys/${key.id}`, undefined, 'DELETE');
   assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 401);
-  console.log('PASS: built container serves UI, accounts/scoped keys, real API deployment and inherited environment, Docker plugins, encrypted state and session/access/environment persistence across hard restart.');
+  console.log('PASS: production UI, accounts/scoped keys, real deployment/environment, immutable release identity, raw signed GitHub parsing and Docker plugins; encrypted session/access/environment/release/webhook state survive hard restart.');
 } catch (error) {
   if (started) { let output = ''; await command('docker', ['logs', '--tail', '20', containerName], { output: value => { output += value; } }).catch(() => {}); console.error(output); }
   throw error;

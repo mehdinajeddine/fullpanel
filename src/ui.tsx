@@ -553,15 +553,18 @@ export function Notice({ children }: { children: ReactNode }) {
 export function CopyButton({
   value,
   label = "Copy",
+  ariaLabel = label,
 }: {
   value: string;
   label?: string;
+  ariaLabel?: string;
 }) {
   const toast = useToast();
   return (
     <Button
       variant="ghost"
       type="button"
+      aria-label={ariaLabel}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value);

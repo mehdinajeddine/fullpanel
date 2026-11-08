@@ -15,11 +15,11 @@ export interface Service {
   id: string; projectId: string; name: string; kind: ServiceKind; status: ServiceStatus;
   source: Source; env: Record<string, string>; domains: Domain[]; mounts: Mount[]; ports: Port[];
   resources: { cpu: number; memoryMb: number }; notes: string; createdAt: string; updatedAt: string;
-  deployedAt?: string; containerId?: string; error?: string;
+  deployedAt?: string; containerId?: string; error?: string; pendingChanges?: boolean; activeReleaseId?: string; runtimeUncertain?: boolean;
   /** Runtime-only mapping held in encrypted applied configuration; never accepted as API input. */
   volumeOverrides?: Record<string, string>;
 }
-export interface Deployment { id: string; serviceId: string; projectId?: string; status: 'queued' | 'running' | 'success' | 'failed'; trigger: string; createdAt: string; finishedAt?: string; output: string; image?: string; commit?: string; forceRebuild?: boolean }
+export interface Deployment { id: string; serviceId: string; projectId?: string; status: 'queued' | 'running' | 'success' | 'failed'; trigger: string; createdAt: string; finishedAt?: string; output: string; image?: string; commit?: string; forceRebuild?: boolean; requestedCommit?: string; releaseId?: string; rollbackOf?: string }
 export interface BackupMetadata { schemaVersion: 1; kind: ServiceKind; format: 'postgres-sql' | 'mysql-sql' | 'mariadb-sql' | 'mongo-archive' | 'redis-rdb-tar' | 'volume-tar' | 'demo'; image?: string; engineVersion?: string; mounts: { name: string; mountPath: string }[] }
 export interface Backup { id: string; serviceId: string; projectId?: string; scheduleId?: string; status: 'running' | 'success' | 'failed'; createdAt: string; sizeBytes: number; filename: string; error?: string; metadata?: BackupMetadata; sha256?: string; restoreJobId?: string }
 export interface RestoreJob { id: string; sourceBackupId: string; sourceProjectId?: string; targetServiceId: string; targetProjectId: string; requestedBy: string; preRestoreBackupId?: string; status: 'queued' | 'running' | 'success' | 'failed'; phase: 'validating' | 'pre-backup' | 'restoring' | 'finished'; createdAt: string; startedAt?: string; finishedAt?: string; output: string; error?: string }
@@ -29,3 +29,7 @@ export interface Settings { serverName: string; baseDomain: string; letsEncryptE
 export interface Metrics { mode: RuntimeMode; cpuPercent: number | null; memoryUsedBytes: number; memoryTotalBytes: number; diskUsedBytes: number | null; diskTotalBytes: number | null; uptime: number; dockerVersion: string | null; containersRunning: number; error?: string; restricted?: boolean }
 export interface Session { authenticated: boolean; setupRequired: boolean; mode: RuntimeMode; user?: PublicUser }
 export interface Overview { projects: Project[]; services: Service[]; deployments: Deployment[]; activity: Activity[]; metrics: Metrics }
+
+export interface GitHubWebhookStatus { supported: boolean; configured: boolean; enabled: boolean; reason?: string; repository?: string; branch?: string; endpoint: string; events: ['push']; contentType: 'application/json'; secretVisibleOnce: true; createdAt?: string; lastDelivery?: { id: string; receivedAt: string; deploymentId: string } }
+export interface Release { id: string; serviceId: string; projectId: string; deploymentId: string; createdAt: string; image: string; imageId: string; commit?: string; sourceType: Source['type']; trigger: string; rollbackOf?: string; canRollback: boolean; rollbackReason?: string }
+export interface ReleasesResponse { supported: boolean; reason?: string; activeReleaseId?: string; releases: Release[] }

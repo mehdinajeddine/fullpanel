@@ -18,6 +18,8 @@ import { registerRestoreJobs, recoverPreparedRestores, backupFileHash, safeLocal
 import { DockerDriver, DemoDriver, type RuntimeDriver, sanitizeCompose } from './docker.js';
 import { templates } from './templates.js';
 import { registerDeploymentWebhooks } from './webhooks.js';
+import { registerGitHubWebhooks, disableChangedGitHubWebhook } from './github-webhooks.js';
+import { registerReleases, recordRelease, pendingReleaseServices } from './releases.js';
 import { registerBackupSchedules } from './backup-schedules.js';
 import { registerProxyAuth } from './proxy-auth.js';
 import { registerSourceCredentials, pruneSourceCredentials, resolveSourceCredentials, sourceCredentialSecrets } from './source-credentials.js';
@@ -42,7 +44,7 @@ export async function createApp(options: AppOptions = {}) {
   const publicUrl = options.publicUrl || process.env.PUBLIC_URL;
   const publicOrigin = publicUrl ? new URL(publicUrl).origin : undefined;
   const secureCookie = options.cookieSecure ?? (process.env.COOKIE_SECURE === 'true' || publicUrl?.startsWith('https:') || false);
-  const app = Fastify({ logger: options.logger ? { redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, bodyLimit: 1024 * 1024, trustProxy: false, requestTimeout: 30000 });
+  const app = Fastify({ logger: options.logger ? { redact: ['req.headers.authorization', 'req.headers.cookie', 'req.headers.x-hub-signature-256'] } : false, bodyLimit: 1024 * 1024, trustProxy: false, requestTimeout: 30000 });
   await app.register(cookie);
   await app.register(rateLimit, { global: false });
   const jobs = new Set<Promise<unknown>>();
@@ -69,7 +71,7 @@ export async function createApp(options: AppOptions = {}) {
   const isPublicRoute = (request: FastifyRequest) => {
     const route = request.routeOptions.url || '';
     return (request.method === 'GET' || request.method === 'HEAD') && ['/api/health', '/api/auth/session'].includes(route)
-      || request.method === 'POST' && ['/api/auth/setup', '/api/auth/login', '/api/hooks/deploy/:id'].includes(route);
+      || request.method === 'POST' && ['/api/auth/setup', '/api/auth/login', '/api/hooks/deploy/:id', '/api/hooks/github/:id'].includes(route);
   };
   app.addHook('onRequest', async (request, reply) => {
     reply.header('X-Content-Type-Options', 'nosniff').header('Referrer-Policy', 'same-origin').header('X-Frame-Options', 'DENY');
@@ -88,7 +90,7 @@ export async function createApp(options: AppOptions = {}) {
     catch { throw new HttpError(400, 'Invalid request path.'); }
     if (decodedPath.startsWith('/api/') && !route.startsWith('/api/')) throw new HttpError(404, 'API route not found.');
     if (!route.startsWith('/api/')) return;
-    if (route === '/api/hooks/deploy/:id' && request.method === 'POST') return;
+    if (['/api/hooks/deploy/:id','/api/hooks/github/:id'].includes(route) && request.method === 'POST') return;
     if (route.startsWith('/api/auth/') && request.headers.authorization) throw new HttpError(403, 'API keys cannot manage authentication.');
     const principal = access.identify(request);
     if (!isPublicRoute(request) && !principal) throw new HttpError(401, 'Sign in to continue.');
@@ -105,7 +107,7 @@ export async function createApp(options: AppOptions = {}) {
   const projectById = (projectId: string) => { const project = store.state.projects.find(item => item.id === projectId); if (!project) throw new HttpError(404, 'Project not found.'); return project; };
   const recoveryPending = (serviceId:string) => Object.values(store.state.restoreIntents).some(intent=>intent.previousService.id===serviceId);
   const requireIdle = (serviceId: string) => { if (recoveryPending(serviceId)) throw new HttpError(409,'Restore recovery is incomplete. Resolve the runtime conflict and restart Harborlight before modifying this service.'); if (busy.has(serviceId)) throw new HttpError(409, 'This service already has an operation in progress.'); };
-  const secrets = (service: Service) => [...new Set([...Object.values(service.env), ...Object.values(store.state.projectEnvironments[service.projectId] || {}), ...Object.values(store.state.appliedServices[service.id]?.env || {}), ...Object.values(store.state.services.find(item => item.id === service.id)?.env || {})].filter(secret => secret.length >= 4)), ...sourceCredentialSecrets(store.state.sourceCredentials[service.id])];
+  const secrets = (service: Service) => [...new Set([...Object.values(service.env), ...Object.values(store.state.projectEnvironments[service.projectId] || {}), ...Object.values(store.state.appliedServices[service.id]?.env || {}), ...pendingReleaseServices(store,service.id).flatMap(snapshot=>Object.values(snapshot.env)), ...Object.values(store.state.services.find(item => item.id === service.id)?.env || {})].filter(secret => secret.length >= 4)), ...sourceCredentialSecrets(store.state.sourceCredentials[service.id])];
   const redact = (service: Service, value: string) => secrets(service).reduce((text, secret) => text.split(secret).join('[REDACTED]'), value);
   const redactProgress = (service: Service, value: string) => {
     let safeEnd = value.length;
@@ -118,6 +120,7 @@ export async function createApp(options: AppOptions = {}) {
     jobs.add(job); return job;
   };
   const runtimeService = (service: Service): Service => {
+    if(service.runtimeUncertain)throw new HttpError(409,'A deployment was interrupted. Deploy the saved configuration to reconcile the runtime before data operations.');
     const applied = store.state.appliedServices[service.id];
     // Legacy state had no deployment snapshot. Refuse to guess once its configuration is dirty.
     if (!applied && service.deployedAt && service.updatedAt > service.deployedAt) throw new HttpError(409, 'Redeploy this legacy service once before backing up or restoring its runtime.');
@@ -126,18 +129,19 @@ export async function createApp(options: AppOptions = {}) {
   async function refreshStatuses() {
     try {
       const states = await driver.statuses();
-      for (const service of store.state.services) if (!busy.has(service.id) && !recoveryPending(service.id) && (states[service.id] || (mode === 'docker' && service.containerId))) service.status = states[service.id] || 'not-deployed';
+      for (const service of store.state.services) if (!busy.has(service.id) && !recoveryPending(service.id) && !service.runtimeUncertain && (states[service.id] || (mode === 'docker' && service.containerId))) service.status = states[service.id] || 'not-deployed';
     } catch { /* Keep the last known state; metrics carries the Docker connectivity error. */ }
   }
   function validateService(service: Service) {
-    if (store.state.services.some(item => item.id !== service.id && item.projectId === service.projectId && item.name === service.name)) throw new HttpError(409, 'A service with this name already exists in the project.');
+    const configurations=[...store.state.services,...Object.values(store.state.appliedServices),...pendingReleaseServices(store)];
+    if (configurations.some(item => item.id !== service.id && item.projectId === service.projectId && item.name === service.name)) throw new HttpError(409, 'A service with this name already exists in the project.');
     if (new Set(service.mounts.map(mount => mount.name)).size !== service.mounts.length || new Set(service.mounts.map(mount => mount.mountPath)).size !== service.mounts.length) throw new HttpError(400, 'Volume names and mount paths must be unique.');
     if (new Set(service.domains.map(domain => domain.hostname + domain.path)).size !== service.domains.length) throw new HttpError(400, 'Duplicate domain route.');
     if (new Set(service.domains.map(domain => domain.id)).size !== service.domains.length) throw new HttpError(400, 'Domain route identifiers must be unique.');
     if (service.domains.filter(domain => domain.primary).length > 1) throw new HttpError(400, 'Choose at most one primary domain.');
-    assertDomainOwnership(service, store.state.services, [publicUrl ? new URL(publicUrl).hostname : '', process.env.PANEL_DOMAIN || '']);
-    for (const domain of service.domains) if (store.state.services.some(item => item.id !== service.id && item.domains.some(other => other.hostname === domain.hostname && other.path === domain.path))) throw new HttpError(409, 'This domain route is already used by another service.');
-    for (const port of service.ports) if (store.state.services.some(item => item.id !== service.id && item.ports.some(other => other.published === port.published && other.protocol === port.protocol))) throw new HttpError(409, 'This published port is already used by another service.');
+    assertDomainOwnership(service, configurations, [publicUrl ? new URL(publicUrl).hostname : '', process.env.PANEL_DOMAIN || '']);
+    for (const domain of service.domains) if (configurations.some(item => item.id !== service.id && item.domains.some(other => other.hostname === domain.hostname && other.path === domain.path))) throw new HttpError(409, 'This domain route is already used by another service.');
+    for (const port of service.ports) if (configurations.some(item => item.id !== service.id && item.ports.some(other => other.published === port.published && other.protocol === port.protocol))) throw new HttpError(409, 'This published port is already used by another service.');
     if (service.kind === 'compose') {
       if (service.source.type !== 'compose') throw new HttpError(400, 'Compose services require inline Compose source.');
       try { sanitizeCompose(service); } catch (error) { throw new HttpError(400, String((error as Error).message)); }
@@ -205,7 +209,7 @@ export async function createApp(options: AppOptions = {}) {
     authorizeService: (request, serviceId) => { access.requireService(request, serviceId, 'write'); },
     setEnvironment: (projectId, env) => {
       const services = store.state.services.filter(service => service.projectId === projectId);
-      for (const service of services) requireIdle(service.id);
+      for (const service of services) { requireIdle(service.id); if(service.runtimeUncertain)throw new HttpError(409,'Reconcile interrupted deployments before changing the project environment.'); }
       const previous = store.state.projectEnvironments[projectId] || {};
       const comparable = (value: Record<string,string>) => JSON.stringify(Object.entries(value).sort(([a],[b]) => a.localeCompare(b)));
       for (const service of services) if (comparable(effectiveServiceEnvironment(service,previous)) !== comparable(effectiveServiceEnvironment(service,env))) service.updatedAt = now();
@@ -217,40 +221,46 @@ export async function createApp(options: AppOptions = {}) {
   app.get('/api/services/:id', async request => { await refreshStatuses(); return access.service(request, access.requireService(request, parameter(request))); });
   app.post('/api/services', async (request, reply) => reply.status(201).send(newService(serviceCreate.parse(request.body))));
   app.patch('/api/services/:id', async request => {
-    const current = serviceById(parameter(request)); requireIdle(current.id); const input = servicePatch.parse(request.body);
+    const current = serviceById(parameter(request)); requireIdle(current.id); if(current.runtimeUncertain)throw new HttpError(409,'A deployment was interrupted. Deploy the saved configuration before changing it.'); const input = servicePatch.parse(request.body);
     const updated: Service = { ...current, ...input, domains: input.domains?.map(domain => ({ ...domain, id: domain.id || randomUUID() })) || current.domains, mounts: input.mounts?.map(mount => ({ ...mount, id: mount.id || randomUUID() })) || current.mounts, updatedAt: now() };
-    validateService(updated); Object.assign(current, updated);
+    validateService(updated); Object.assign(current, updated); disableChangedGitHubWebhook(store,current);
     store.state.sourceCredentials[current.id] = pruneSourceCredentials(current, store.state.sourceCredentials[current.id]);
     if (store.state.proxyAuth[current.id]) store.state.proxyAuth[current.id] = Object.fromEntries(Object.entries(store.state.proxyAuth[current.id]).filter(([domainId]) => current.domains.some(domain => domain.id === domainId)));
     store.activity('Service configuration saved', current.name, 'Deploy to apply changes.', current.projectId); store.save(); return current;
   });
   app.delete('/api/services/:id', async request => {
     const service = serviceById(parameter(request)); requireIdle(service.id); busy.add(service.id);
-    try { if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
+    try { if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; delete store.state.appliedProxyAuth[service.id]; delete store.state.activeReleaseIds[service.id]; delete store.state.pendingReleaseIds[service.id]; delete store.state.githubWebhooks[service.id]; store.state.releases=store.state.releases.filter(release=>release.metadata.serviceId!==service.id); store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
     catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); }
   });
-  function queueDeployment(serviceId: string, trigger: string, options: { forceRebuild?: boolean } = {}): Deployment {
+  function queueDeployment(serviceId: string, trigger: string, options: { forceRebuild?: boolean; expectedCommit?: string; onQueued?: (deployment:Deployment)=>void } = {}): Deployment {
     const service = serviceById(id.parse(serviceId)); requireIdle(service.id); validateService(service);
-    const runtimeOptions = { ...options, proxyAuth: structuredClone(store.state.proxyAuth[service.id] || {}), sourceCredentials: resolveSourceCredentials(service, store.state.sourceCredentials[service.id]), projectEnvironment: structuredClone(store.state.projectEnvironments[service.projectId] || {}) };
+    const releaseId=mode==='docker'&&service.kind==='app'?randomUUID():undefined;
+    const runtimeOptions = { forceRebuild:options.forceRebuild,expectedCommit:options.expectedCommit,releaseId, proxyAuth: structuredClone(store.state.proxyAuth[service.id] || {}), sourceCredentials: resolveSourceCredentials(service, store.state.sourceCredentials[service.id]), projectEnvironment: structuredClone(store.state.projectEnvironments[service.projectId] || {}) };
     const snapshot = { ...structuredClone(service), env: service.kind === 'compose' ? structuredClone(service.env) : effectiveServiceEnvironment(service,runtimeOptions.projectEnvironment), volumeOverrides: structuredClone(store.state.appliedServices[service.id]?.volumeOverrides || {}) };
     if (options.forceRebuild && !['git', 'dockerfile'].includes(service.source.type)) throw new HttpError(400, 'Force rebuild is available for Git and Dockerfile sources. Images are always pulled during deployment.');
-    const deployment: Deployment = { id: randomUUID(), serviceId: service.id, projectId: service.projectId, status: 'queued', trigger, createdAt: now(), output: options.forceRebuild ? 'Build cache disabled; base images will be pulled.\n' : '', image: service.source.image, forceRebuild: !!options.forceRebuild };
-    store.state.deployments.unshift(deployment); service.status = 'deploying'; delete service.error; store.activity('Deployment queued', service.name, undefined, service.projectId); store.save();
+    const deployment: Deployment = { id: randomUUID(), serviceId: service.id, projectId: service.projectId, status: 'queued', trigger, createdAt: now(), output: options.forceRebuild ? 'Build cache disabled; base images will be pulled.\n' : '', image: service.source.image, forceRebuild: !!options.forceRebuild,requestedCommit:options.expectedCommit };
+    store.state.deployments.unshift(deployment); service.status = 'deploying'; delete service.error; store.activity('Deployment queued', service.name, undefined, service.projectId); options.onQueued?.(deployment); store.save();
     void enqueue(service.id, async () => {
       deployment.status = 'running'; store.save();
       try {
         let rawOutput = deployment.output;
         const result = await driver.deploy(snapshot, chunk => { rawOutput = (rawOutput + chunk).slice(-250000); deployment.output = redactProgress(snapshot, rawOutput).slice(-200000); }, runtimeOptions);
         deployment.output = redact(snapshot, rawOutput).slice(-200000);
-        Object.assign(service, { status: 'running', containerId: result.containerId, deployedAt: now() });
+        Object.assign(service, { status: 'running', containerId: result.containerId, deployedAt: now() }); delete service.runtimeUncertain; delete snapshot.runtimeUncertain;
         store.state.appliedServices[service.id] = { ...snapshot, env: effectiveServiceEnvironment(service,runtimeOptions.projectEnvironment), status:'running', containerId:result.containerId, deployedAt:service.deployedAt };
-        deployment.status = 'success'; deployment.image = result.image; deployment.commit = result.commit; store.activity('Deployment succeeded', service.name, undefined, service.projectId);
+        store.state.appliedProxyAuth[service.id]=structuredClone(runtimeOptions.proxyAuth);
+        deployment.status = 'success'; deployment.image = result.image; deployment.commit = result.commit;
+        delete store.state.activeReleaseIds[service.id];
+        if(releaseId)recordRelease(store,store.state.appliedServices[service.id],runtimeOptions.proxyAuth,deployment,result,releaseId); delete store.state.pendingReleaseIds[service.id]; store.activity('Deployment succeeded', service.name, undefined, service.projectId);
       } catch (error) { deployment.status = 'failed'; service.status = 'failed'; service.error = redact(snapshot, (error as Error).message); deployment.output += `\n${service.error}\n`; store.activity('Deployment failed', service.name, undefined, service.projectId); }
       finally { deployment.finishedAt = now(); store.save(); }
     });
     return deployment;
   }
   app.post('/api/services/:id/deploy', async (request, reply) => { const options = z.object({ forceRebuild: z.boolean().optional() }).strict().parse(request.body || {}); return reply.status(202).send(queueDeployment(parameter(request), 'Manual', options)); });
+  registerGitHubWebhooks(app,{store,access,mode,publicUrl,enqueueDeploy:queueDeployment});
+  registerReleases(app,{store,access,driver,mode,requireIdle,enqueue,validateService,secrets});
   registerSourceCredentials(app, {
     getService: serviceId => store.state.services.find(service => service.id === serviceId),
     getCredentials: serviceId => store.state.sourceCredentials[serviceId],

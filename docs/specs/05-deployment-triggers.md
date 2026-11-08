@@ -29,7 +29,7 @@ Use the request header `Authorization: Bearer <token>`. Unauthenticated, malform
 
 Keep the token in the CI provider's secret store and mask it in job output. Send a POST to the service's displayed endpoint with the bearer header. Follow the returned deployment ID through the authenticated panel to inspect the result; accepting the trigger is not proof that the deployment succeeded.
 
-This is a generic CI deployment trigger. It does **not** implement GitHub's native HMAC-signed webhook protocol or branch filtering. GitHub Actions can call it from a workflow using a stored secret. A native GitHub webhook integration is a separate feature and must validate the raw request signature, event type and branch before using the same queue.
+This is a generic CI deployment trigger. It does **not** implement GitHub's native HMAC-signed webhook protocol or branch filtering. GitHub Actions can call it from a workflow using a stored secret. The separate [native GitHub webhook integration](12-github-auto-deploy.md) validates the raw request signature, event type, repository and branch before using the same queue.
 
 ## Integration requirements
 
