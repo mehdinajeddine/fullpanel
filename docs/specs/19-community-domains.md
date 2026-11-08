@@ -1,8 +1,8 @@
 # Domaines communautaires FullPanel
 
-État : **planifié, non implémenté, non provisionné et non vérifié**. Feuille de route **M04**. Spécification demandée pour la communauté ; elle ne modifie pas le DOCX de référence ni les preuves actuelles de R07/R08.
+État du broker DNS : **planifié, non implémenté et non vérifié**. Une application Heroku destinée au site et à l’API a été créée ; aucun code ni dyno n’y est encore déployé. Feuille de route **M04**. Spécification demandée pour la communauté ; elle ne modifie pas le DOCX de référence ni les preuves actuelles de R07/R08.
 
-Décision utilisateur : **conserver le DNS chez GoDaddy et appeler son API uniquement depuis le backend central**. Aucune migration Route53 n'est prévue par défaut. Ce lot est en file après le jalon ports, interface et SSH sur AWS en cours ; les identifiants de l'API GoDaddy ne sont pas configurés pour le broker.
+Décision utilisateur : **conserver le DNS chez GoDaddy et appeler son API uniquement depuis le backend central**. Aucune migration Route53 n'est prévue par défaut. Le jalon ports, interface et SSH a été livré sur AWS ; les identifiants de l'API GoDaddy ne sont pas configurés pour le broker.
 
 ## Objectif et périmètre
 
@@ -25,7 +25,11 @@ L'adhésion est facultative. Les domaines personnels configurés directement res
 | DNS autoritatif | Enregistrements persistants pointant chaque sous-zone vers son IP vérifiée ; réponses indépendantes du broker. |
 | Proxy de chaque serveur | Routage exact des noms approuvés, refus des noms inconnus, TLS et protection du panel/applications. |
 
-Heroku avec API/worker et PostgreSQL est une **option d'hébergement envisagée**, pas une ressource existante ni une décision de coût. L'utilisateur a autorisé l'utilisation de la CLI ; la session a été vérifiée et aucune application FullPanel n'a été identifiée dans ce contrôle. Aucun service central FullPanel n'a été provisionné. Son système de fichiers éphémère exclut l'usage d'un fichier local comme registre durable. Cette autorisation et cette vérification ne constituent pas une livraison ; aucun nouvel appel Heroku, AWS ou GoDaddy n'est requis pour cette mise à jour documentaire. [Heroku, stockage des dynos](https://devcenter.heroku.com/articles/dynos#ephemeral-filesystem).
+Le propriétaire a autorisé une application Heroku avec **un seul dyno Basic à 7 USD/mois** pour héberger le site `fullpanel.io` et l’API. L’application `fullpanel-web-api` a été créée en région Europe, stack `heroku-24`, avec `fullpanel.io` et `www.fullpanel.io` déclarés. Aucun code, dyno, add-on, certificat validé ni DNS GoDaddy n’a encore été déployé/configuré. La formation est vide : Heroku refuse de sélectionner le type `web=basic` tant qu’un premier déploiement ne définit pas ce processus. Le plafond autorisé ne couvre pas un worker ou une base payante supplémentaire.
+
+Le système de fichiers éphémère des dynos exclut un fichier local comme registre durable. Le stockage PostgreSQL, l’identité des utilisateurs et les fonctions du broker restent à implémenter et à financer séparément si nécessaire. Cette création d’application n’est pas une livraison du service DNS. [Heroku, stockage des dynos](https://devcenter.heroku.com/articles/dynos#ephemeral-filesystem).
+
+Pour le site, la cible CNAME de `www.fullpanel.io` est `vast-nodosaurus-g93nns0pavpq2ptv1w3nh6mj.herokudns.com`. [GoDaddy ne permet pas un CNAME de nom `@`](https://www.godaddy.com/help/add-a-cname-record-19236) : la configuration envisagée conserve `www` comme URL canonique avec [redirection de l’apex](https://www.godaddy.com/help/forward-my-godaddy-domain-12123), à vérifier avec HTTPS après déploiement. Ne pas remplacer cette configuration par un A vers une IP Heroku résolue ponctuellement ; voir les [exigences de domaine Heroku](https://devcenter.heroku.com/articles/custom-domains). Ce raccordement du site ne modifie pas la délégation ni les sous-domaines communautaires de `fullpanel.dev`.
 
 ## Inscription et preuve de contrôle
 
@@ -115,7 +119,7 @@ Sa documentation actuelle distingue les API et modes d'authentification, dont PA
 
 Les secrets fournisseur restent uniquement dans la configuration sécurisée du broker, avec accès opérateur restreint, rotation et redaction. Aucun secret dans client web, installation, image Docker, source Git ou corps d'erreur. Si le fournisseur ne limite pas la clé à cette zone, reconnaître cette portée plus large et renforcer la séparation du compte, le contrôle des mutations et l'audit.
 
-Restent à décider : hébergement/coût/SLO, identité et récupération des propriétaires, quotas initiaux, baux/grâce, support IPv6/NAT, état DNS réel, versions/scopes API GoDaddy, stratégie de cookies/PSL, capacité et gouvernance ACME, processus d'abus. L'ouverture communautaire exige la recette ci-dessous ; aucune inscription PSL, émission publique, infrastructure Heroku ou mutation DNS n'est livrée par cette spécification.
+Restent à décider : stockage durable, capacité/coût au-delà du dyno Basic et SLO, identité et récupération des propriétaires, quotas initiaux, baux/grâce, support IPv6/NAT, état DNS réel, versions/scopes API GoDaddy, stratégie de cookies/PSL, capacité et gouvernance ACME, processus d'abus. L'ouverture communautaire exige la recette ci-dessous ; aucune inscription PSL, émission publique, infrastructure Heroku ou mutation DNS n'est livrée par cette spécification.
 
 ## Recette future
 
