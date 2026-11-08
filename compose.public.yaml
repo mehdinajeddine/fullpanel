@@ -1,0 +1,13 @@
+# Optional: expose the panel itself through the included HTTPS proxy, after setup.
+services:
+  panel:
+    environment:
+      PUBLIC_URL: https://${PANEL_DOMAIN:?Set PANEL_DOMAIN to the panel hostname}
+      COOKIE_SECURE: "true"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: harborlight-proxy
+      traefik.http.routers.harborlight-panel.rule: Host(`${PANEL_DOMAIN}`)
+      traefik.http.routers.harborlight-panel.entrypoints: websecure
+      traefik.http.routers.harborlight-panel.tls.certresolver: letsencrypt
+      traefik.http.services.harborlight-panel.loadbalancer.server.port: "3000"

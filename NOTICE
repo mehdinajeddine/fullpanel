@@ -1,0 +1,17 @@
+Harborlight
+Copyright 2026 Harborlight contributors
+
+Harborlight is an independent implementation of a self-hosted application
+control panel. It is not affiliated with or endorsed by Easypanel.
+
+Public Easypanel documentation and a locally inspected distribution informed
+functional specifications. No Easypanel application source, artwork, logos,
+or distribution files are included in this repository.
+
+Third-party packages retain their own licenses. See package-lock.json and
+the licenses distributed with each package.
+
+The bundled DM Sans and Manrope fonts are distributed under the SIL Open
+Font License 1.1. Their notices and complete license texts are included in
+public/licenses/ and served alongside the application. No remote font
+service is required at runtime.
