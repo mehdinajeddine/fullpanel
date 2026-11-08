@@ -2,15 +2,17 @@ import { randomBytes, randomUUID, createCipheriv, createDecipheriv } from 'node:
 import { mkdirSync, existsSync, readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, chmodSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import type { Activity, Backup, Deployment, Project, Service, Settings, RuntimeMode, PublicUser, ApiKey } from '../shared/types.js';
+import type { Activity, Backup, Deployment, Project, Service, Settings, RuntimeMode, PublicUser, ApiKey, RestoreJob } from '../shared/types.js';
 import type { BackupSchedule } from './backup-schedules.js';
 import type { ProxyAuthMap } from '../shared/proxy.js';
 import type { ServiceSourceCredentials } from './source-credentials.js';
+import type { RestoreCheckpoint, RestoreResult } from './docker.js';
 
 export interface Owner { name: string; email: string; hash: string; salt: string }
 export interface UserRecord extends PublicUser { hash: string; salt: string }
 export interface ApiKeyRecord extends ApiKey { hash: string }
-export interface State { version: 1; owner?: Owner; users: UserRecord[]; apiKeys: ApiKeyRecord[]; sessions: { hash: string; expires: number; userId: string }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; deployTokenOwners: Record<string,string>; backupSchedules: BackupSchedule[]; proxyAuth: Record<string,ProxyAuthMap>; sourceCredentials: Record<string,ServiceSourceCredentials> }
+export interface RestoreIntent { result: RestoreResult; checkpoint: RestoreCheckpoint; previousService: Service; preparedService: Service }
+export interface State { version: 1; owner?: Owner; users: UserRecord[]; apiKeys: ApiKeyRecord[]; sessions: { hash: string; expires: number; userId: string }[]; projects: Project[]; services: Service[]; deployments: Deployment[]; backups: Backup[]; restores: RestoreJob[]; activity: Activity[]; settings: Settings; deployTokens: Record<string, string>; deployTokenOwners: Record<string,string>; backupSchedules: BackupSchedule[]; proxyAuth: Record<string,ProxyAuthMap>; sourceCredentials: Record<string,ServiceSourceCredentials>; projectEnvironments: Record<string,Record<string,string>>; appliedServices: Record<string,Service>; backupProfiles: Record<string,Service>; restoreIntents: Record<string,RestoreIntent> }
 const now = () => new Date().toISOString();
 const activeDirectories = new Set<string>();
 function processIdentity(pid: number): string | undefined {
@@ -63,7 +65,7 @@ export class Store {
       for (const service of this.state.services) if (service.status === 'deploying') { service.status = 'failed'; service.error = 'Deployment interrupted by server restart.'; }
       for (const backup of this.state.backups) if (backup.status === 'running') { backup.status = 'failed'; backup.error = 'Backup interrupted by server restart.'; }
     } else {
-      this.state = { version: 1, sessions: [], users: [], apiKeys: [], projects: [], services: [], deployments: [], backups: [], activity: [], deployTokens: {}, deployTokenOwners: {}, backupSchedules: [], proxyAuth: {}, sourceCredentials: {}, settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
+      this.state = { version: 1, sessions: [], users: [], apiKeys: [], projects: [], services: [], deployments: [], backups: [], restores: [], activity: [], deployTokens: {}, deployTokenOwners: {}, backupSchedules: [], proxyAuth: {}, sourceCredentials: {}, projectEnvironments: {}, appliedServices: {}, backupProfiles: {}, restoreIntents: {}, settings: { serverName: 'My server', baseDomain: '', letsEncryptEmail: '', theme: 'light' } };
       if (mode === 'demo') this.seed();
     }
     this.state.deployTokens ||= {};
@@ -73,6 +75,12 @@ export class Store {
     this.state.deployTokenOwners ||= {};
     this.state.proxyAuth ||= {};
     this.state.sourceCredentials ||= {};
+    this.state.projectEnvironments ||= {};
+    this.state.appliedServices ||= {};
+    this.state.backupProfiles ||= {};
+    this.state.restores ||= [];
+    this.state.restoreIntents ||= {};
+    for (const restore of this.state.restores) if (restore.status === 'queued' || restore.status === 'running') { restore.status = 'failed'; restore.phase = 'finished'; restore.finishedAt = now(); restore.error = 'Restore interrupted by server restart. Inspect the runtime and retained volumes before retrying.'; restore.output += `\n${restore.error}\n`; }
     // Upgrade the original single-owner state and preserve its valid browser sessions.
     if (!this.state.users.length && this.state.owner) this.state.users.push({ ...this.state.owner, id: randomUUID(), role: 'owner', memberships: [], disabled: false, createdAt: now(), updatedAt: now() });
     const ownerId = this.state.users.find(user => user.role === 'owner')?.id;

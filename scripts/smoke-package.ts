@@ -36,6 +36,7 @@ try {
   assert.equal((await api('/projects')).length, 0);
   assert.ok((await api('/metrics')).dockerVersion);
   const project = await api('/projects', { name: 'package-check' }); projectId = project.id;
+  await api(`/projects/${projectId}/environment`, { env: { PACKAGE_SHARED: 'inherited-in-built-image', PACKAGE_SECRET: 'project-default' } }, 'PUT');
   const service = await api('/services', { projectId, name: 'web', kind: 'app', env: { PACKAGE_SECRET: 'package-fixture-value' } }); serviceId = service.id;
   const deployment = await api(`/services/${serviceId}/deploy`, {});
   let deployed = false;
@@ -47,6 +48,10 @@ try {
   }
   assert.ok(deployed, 'API-triggered Docker deployment must finish');
   assert.match(await command('docker', ['exec', `hl-${serviceId}`, 'wget', '-qO-', 'http://127.0.0.1']), /Welcome to nginx/);
+  const [workload] = JSON.parse(await command('docker', ['inspect', `hl-${serviceId}`]));
+  assert.ok(workload.Config.Env.includes('PACKAGE_SHARED=inherited-in-built-image'));
+  assert.ok(workload.Config.Env.includes('PACKAGE_SECRET=package-fixture-value'));
+  assert.deepEqual(await api('/restores'), []);
   await command('docker', ['exec', containerName, 'docker', 'compose', 'version']);
   await command('docker', ['exec', containerName, 'docker', 'buildx', 'version']);
   const reader = await api('/users', { name: 'Package Reader', email: 'reader@example.test', password, role: 'member', memberships: [{ projectId, role: 'viewer' }] });
@@ -65,11 +70,13 @@ try {
   assert.equal((await api('/auth/session')).authenticated, true);
   assert.equal((await api(`/services/${serviceId}`)).status, 'running');
   assert.equal((await api('/projects'))[0].name, 'package-check');
+  assert.equal((await api(`/projects/${projectId}/environment`)).env.PACKAGE_SHARED, 'inherited-in-built-image');
+  assert.equal((await api(`/services/${serviceId}/environment`)).effective.PACKAGE_SECRET, 'package-fixture-value');
   assert.equal((await api('/users')).find((user: { id: string }) => user.id === reader.id).memberships[0].role, 'viewer');
   assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 200);
   await api(`/api-keys/${key.id}`, undefined, 'DELETE');
   assert.equal((await fetch(`${endpoint}/api/projects`, { headers: { Authorization: `Bearer ${key.token}` } })).status, 401);
-  console.log('PASS: built container serves UI, accounts/scoped keys, real API deployment, Docker plugins, encrypted state and session/access persistence across hard restart.');
+  console.log('PASS: built container serves UI, accounts/scoped keys, real API deployment and inherited environment, Docker plugins, encrypted state and session/access/environment persistence across hard restart.');
 } catch (error) {
   if (started) { let output = ''; await command('docker', ['logs', '--tail', '20', containerName], { output: value => { output += value; } }).catch(() => {}); console.error(output); }
   throw error;

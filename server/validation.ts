@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { domainInput } from './proxy-routing.js';
 import { normalizeGitRepository } from './source-credentials.js';
+import { environmentInput } from './project-environment.js';
 const identifier = z.string().min(1).max(63).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers and single hyphens.');
 const text = z.string().max(500);
 export const id = z.string().uuid();
@@ -15,7 +16,7 @@ export const sourceInput = z.object({ type: z.enum(['image', 'git', 'dockerfile'
 const domain = domainInput;
 const mount = z.object({ id: id.optional(), name: identifier, mountPath: z.string().min(2).max(200).regex(/^\/[a-zA-Z0-9_./-]+$/).refine(value => !value.split('/').includes('..') && value !== '/var/run/docker.sock', 'Invalid mount path.') }).strict();
 const port = z.object({ published: z.number().int().min(1024).max(65535), target: z.number().int().min(1).max(65535), protocol: z.enum(['tcp', 'udp']).default('tcp') }).strict();
-export const serviceFields = z.object({ name: identifier, kind: z.enum(['app', 'postgres', 'mysql', 'mariadb', 'mongo', 'redis', 'compose']), source: sourceInput.optional(), env: z.record(z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/), z.string().max(16000).refine(value => !/[\r\n\0]/.test(value), 'Environment values must be single-line without null bytes.')).refine(value => Object.keys(value).length <= 200, 'Too many variables.').optional(), domains: z.array(domain).max(20).optional(), mounts: z.array(mount).max(20).optional(), ports: z.array(port).max(20).optional(), resources: z.object({ cpu: z.number().min(0.1).max(128), memoryMb: z.number().int().min(16).max(1048576) }).strict().optional(), notes: z.string().max(10000).optional() }).strict();
+export const serviceFields = z.object({ name: identifier, kind: z.enum(['app', 'postgres', 'mysql', 'mariadb', 'mongo', 'redis', 'compose']), source: sourceInput.optional(), env: environmentInput.optional(), domains: z.array(domain).max(20).optional(), mounts: z.array(mount).max(20).optional(), ports: z.array(port).max(20).optional(), resources: z.object({ cpu: z.number().min(0.1).max(128), memoryMb: z.number().int().min(16).max(1048576) }).strict().optional(), notes: z.string().max(10000).optional() }).strict();
 export const serviceCreate = serviceFields.extend({ projectId: id });
 export const servicePatch = serviceFields.omit({ kind: true }).partial();
 export const settingsInput = z.object({ serverName: z.string().min(1).max(80), baseDomain: z.union([z.literal(''), z.string().max(253).regex(/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i)]), letsEncryptEmail: z.union([z.literal(''), z.email()]), theme: z.enum(['light', 'dark', 'system']) }).strict().partial();

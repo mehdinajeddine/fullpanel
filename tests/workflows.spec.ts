@@ -286,4 +286,56 @@ test.describe.serial('Owner workflows', () => {
     await expect(page.getByRole('dialog')).not.toBeVisible();
     await expect(page.getByText('Credential stored for test-registry-user', { exact: true })).toHaveCount(0);
   });
+
+  test('import project variables, override one on a service and preserve the save boundary', async ({ page }) => {
+    const projects = await (await page.request.get('/api/projects')).json();
+    const project = projects.find((item: { name: string }) => item.name === 'acceptance-project');
+    const services = await (await page.request.get('/api/services')).json();
+    const service = services.find((item: { name: string }) => item.name === 'acceptance-web');
+    await page.goto(`/#/projects/${project.id}/environment`);
+    await page.getByRole('button', { name: 'Import .env', exact: true }).click();
+    const modal = page.getByRole('dialog');
+    await modal.getByLabel('Paste .env contents').fill('SHARED_COLOR=sage\nSHARED_COLOR=duplicate');
+    await modal.getByRole('button', { name: 'Preview import', exact: true }).click();
+    await expect(modal.getByRole('alert')).toContainText('Duplicate variable');
+    await expect(modal.getByRole('button', { name: 'Apply to draft', exact: true })).toBeDisabled();
+    await modal.getByLabel('Paste .env contents').fill('# shared defaults\nSHARED_COLOR="sage"\nOVERRIDE_ME=project\nLITERAL=${UNEXPANDED}');
+    await modal.getByRole('button', { name: 'Preview import', exact: true }).click();
+    await expect(modal.locator('.env-preview-list')).not.toContainText('${UNEXPANDED}');
+    await modal.getByRole('button', { name: 'Apply to draft', exact: true }).click();
+    await expect(modal).not.toBeVisible();
+    expect((await (await page.request.get(`/api/projects/${project.id}/environment`)).json()).env).toEqual({});
+    await page.getByRole('button', { name: 'Save project variables', exact: true }).click();
+    await expect.poll(async () => (await (await page.request.get(`/api/projects/${project.id}/environment`)).json()).env).toEqual({ SHARED_COLOR: 'sage', OVERRIDE_ME: 'project', LITERAL: '${UNEXPANDED}' });
+    await page.reload();
+    await expect(page.getByLabel('Variable 1 value')).toHaveValue('sage');
+    await expect(page.getByLabel('Variable 1 value')).toHaveAttribute('type', 'password');
+    await page.goto(`/#/services/${service.id}/environment`);
+    await expect(page.getByLabel('Inherited SHARED_COLOR value')).toHaveValue('sage');
+    await expect(page.getByLabel('Inherited SHARED_COLOR value')).toHaveAttribute('readonly', '');
+    await page.getByRole('button', { name: 'Override OVERRIDE_ME', exact: true }).click();
+    // The existing acceptance variable is first; the deliberate override is appended.
+    await page.getByLabel('Variable 2 value').fill('service-specific');
+    await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+    await expect.poll(async () => (await (await page.request.get(`/api/services/${service.id}/environment`)).json()).effective.OVERRIDE_ME).toBe('service-specific');
+    const dirty = await (await page.request.get(`/api/services/${service.id}`)).json();
+    expect(Date.parse(dirty.updatedAt)).toBeGreaterThan(Date.parse(dirty.deployedAt));
+    expect(dirty.env.SHARED_COLOR).toBeUndefined();
+    await page.getByRole('button', { name: 'Remove variable OVERRIDE_ME', exact: true }).click();
+    await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+    await expect.poll(async () => (await (await page.request.get(`/api/services/${service.id}/environment`)).json()).effective.OVERRIDE_ME).toBe('project');
+    await page.screenshot({ path: 'test-results/project-environment.png', fullPage: true });
+  });
+
+  test('demo backups explain their limits and do not offer real restoration', async ({ page }) => {
+    const services = await (await page.request.get('/api/services')).json();
+    const source = services.find((item: { name: string }) => item.name === 'scheduled-db');
+    await page.goto(`/#/services/${source.id}/backups`);
+    await expect(page.getByRole('heading', { name: 'Restore journal', exact: true })).toBeVisible();
+    await expect(page.getByText('Restoration needs Docker mode', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Restore', exact: true })).toHaveCount(0);
+    await page.goto('/#/backups');
+    await expect(page.getByText('Demo backups are illustrative. Restore is available in Docker mode.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Restore', exact: true })).toHaveCount(0);
+  });
 });

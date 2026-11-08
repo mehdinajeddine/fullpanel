@@ -29,7 +29,7 @@ import type {
   Service,
   Source,
 } from "../shared/types";
-import { date, navigate, patch, post, remove, useQuery } from "./api";
+import { date, navigate, newId, patch, post, remove, useQuery } from "./api";
 import {
   Badge,
   Button,
@@ -52,6 +52,8 @@ import BackupSchedules from "./BackupSchedules";
 import DomainsEditor, { DomainLink, type RoutingDomain } from "./Domains";
 import SourceCredentials from "./SourceCredentials";
 import { useAccess } from "./Access";
+import { ServiceEnvironment } from "./Environment";
+import { RestoreHistory } from "./Restores";
 const tabs = [
   ["overview", "Overview"],
   ["source", "Source"],
@@ -300,7 +302,7 @@ export default function ServicePage({
             <ServiceReadView service={service} section="source" />
           ))}
         {active === "environment" && (
-          <EnvironmentEditor service={service} updated={query.reload} />
+          <ServiceEnvironment service={service} updated={query.reload} />
         )}
         {active === "domains" &&
           (service.kind === "compose" ? (
@@ -737,123 +739,6 @@ function SourceEditor({
     </>
   );
 }
-function EnvironmentEditor({
-  service,
-  updated,
-}: {
-  service: Service;
-  updated: () => void;
-}) {
-  const [rows, setRows] = useState(() =>
-    Object.entries(service.env).map(([key, value]) => ({
-      id: crypto.randomUUID(),
-      key,
-      value,
-    })),
-  );
-  const [visible, setVisible] = useState(false);
-  const { save, busy, error, setError } = useSave(service, updated);
-  function update(id: string, key: string, value: string) {
-    setRows((rows) =>
-      rows.map((r) => (r.id === id ? { ...r, [key]: value } : r)),
-    );
-  }
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    const keys = rows.map((r) => r.key);
-    if (new Set(keys).size !== keys.length) {
-      setError("Environment variable names must be unique.");
-      return;
-    }
-    void save({ env: Object.fromEntries(rows.map((r) => [r.key, r.value])) });
-  }
-  return (
-    <EditorPanel
-      title="Environment variables"
-      description="Configuration and secrets, passed to your service at deployment."
-      busy={busy}
-      error={error}
-      onSubmit={submit}
-    >
-      {!["app", "compose"].includes(service.kind) && (
-        <Notice>
-          Database credentials initialize a new data volume. Changing them here
-          does not rotate credentials in an existing database; update the
-          database user first.
-        </Notice>
-      )}
-      <div className="editor-toolbar">
-        <span className="count-label">{rows.length} variables</span>
-        <Button
-          variant="ghost"
-          type="button"
-          onClick={() => setVisible(!visible)}
-        >
-          {visible ? <EyeOff size={16} /> : <Eye size={16} />}{" "}
-          {visible ? "Hide values" : "Show values"}
-        </Button>
-      </div>
-      {rows.length ? (
-        <div className="env-table">
-          <div className="env-table-head">
-            <span>KEY</span>
-            <span>VALUE</span>
-            <span />
-          </div>
-          {rows.map((r, index) => (
-            <div className="env-row" key={r.id}>
-              <input
-                aria-label={`Variable ${index + 1} name`}
-                value={r.key}
-                onChange={(e) => update(r.id, "key", e.target.value)}
-                className="mono"
-                placeholder="VARIABLE_NAME"
-                pattern="[a-zA-Z_][a-zA-Z0-9_]*"
-                required
-                autoComplete="off"
-              />
-              <input
-                aria-label={`Variable ${index + 1} value`}
-                type={visible ? "text" : "password"}
-                value={r.value}
-                onChange={(e) => update(r.id, "value", e.target.value)}
-                className="mono"
-                placeholder="value"
-                autoComplete="new-password"
-              />
-              <IconButton
-                label={`Remove variable ${r.key || index + 1}`}
-                onClick={() =>
-                  setRows((rows) => rows.filter((row) => row.id !== r.id))
-                }
-              >
-                <Trash2 size={16} />
-              </IconButton>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="inline-empty">
-          No environment variables yet. Add the configuration your service
-          needs.
-        </div>
-      )}
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() =>
-          setRows((rows) => [
-            ...rows,
-            { id: crypto.randomUUID(), key: "", value: "" },
-          ])
-        }
-      >
-        <Plus size={16} />
-        Add variable
-      </Button>
-    </EditorPanel>
-  );
-}
 function StorageEditor({
   service,
   updated,
@@ -931,10 +816,7 @@ function StorageEditor({
         type="button"
         variant="secondary"
         onClick={() =>
-          setMounts((old) => [
-            ...old,
-            { id: crypto.randomUUID(), name: "", mountPath: "" },
-          ])
+          setMounts((old) => [...old, { id: newId(), name: "", mountPath: "" }])
         }
       >
         <Plus size={16} />
@@ -1216,9 +1098,16 @@ function ServiceBackups({ service }: { service: Service }) {
         {q.loading ? (
           <Loading />
         ) : (
-          <BackupTable backups={q.data || []} projectId={service.projectId} />
+          <BackupTable
+            backups={q.data || []}
+            projectId={service.projectId}
+            targetServiceId={service.id}
+          />
         )}
       </Panel>
+      {canEdit && (
+        <RestoreHistory serviceId={service.id} services={[service]} />
+      )}
     </>
   );
 }

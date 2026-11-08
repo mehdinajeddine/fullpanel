@@ -13,6 +13,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   AlertCircle,
   Check,
@@ -379,7 +380,7 @@ export function Modal({
       else document.getElementById("main-content")?.focus();
     };
   }, []);
-  return (
+  return createPortal(
     <div
       className="modal-backdrop"
       onMouseDown={(e) => {
@@ -405,7 +406,8 @@ export function Modal({
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 export function ConfirmDelete({

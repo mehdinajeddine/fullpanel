@@ -8,9 +8,9 @@ An independent, open-source control panel for applications and databases on your
 
 ![Harborlight dashboard with explicitly labeled demonstration data](docs/images/dashboard.png)
 
-The current release includes projects and services, image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, environment variables, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, and revocable deployment triggers. It also provides accounts with project permissions, scoped API keys and a CLI, private image and HTTPS Git credentials, and proxy password protection, prefix removal, wildcard HTTP routes and HTTPS redirects. The interface supports light and dark themes, mobile layouts, and keyboard search.
+The current release includes projects and services, image/Git/Dockerfile deployments, a restricted Compose runtime, database configuration, domains, shared project variables with service overrides and `.env` import, named volumes, resource limits, deployment output, runtime logs, local backups, UTC backup schedules with retention, verified local restoration with safety backups, and revocable deployment triggers. It also provides accounts with project permissions, scoped API keys and a CLI, private image and HTTPS Git credentials, and proxy password protection, prefix removal, wildcard HTTP routes and HTTPS redirects. The interface supports light and dark themes, mobile layouts, and keyboard search.
 
-Native GitHub webhooks, private build base images, SSH deploy keys, offsite storage, restore workflows, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
+Native GitHub webhooks, private build base images, SSH deploy keys, offsite storage, interactive terminals, rolling deployments, and the reference product's advanced workloads remain tracked work. This release manages standalone Docker containers; it does not provide Swarm parity.
 
 ## Run locally
 
@@ -81,6 +81,14 @@ docker compose up -d --build panel
 
 Deleting a service retains its named volumes. Inspect and remove unwanted volumes explicitly after confirming recovery is unnecessary. `docker compose down` stops the panel and optional proxy; it does not stop separately deployed applications. Avoid `down --volumes` unless you intend to remove panel data and certificates.
 
+## Variables and recovery
+
+Open a project's **Environment** tab to manage shared defaults. Services inherit those values and can override individual keys, including with an empty value. **Import .env** previews changes locally before applying them to the editor; **Save** persists the draft, and **Deploy** applies it to the workload. Compose precedence is service values, child YAML values, then project defaults. Values are literal and multiline imports are unsupported.
+
+In **Backups**, select **Restore** on a recent verified backup, choose a compatible running destination and type its exact name. The panel checks integrity, creates a safety backup and imports into new volumes before switching containers. Database recovery adopts the backup's database names and credentials. Original volumes remain for recovery and consume disk space. The journal links to the safety backup and records failures; unresolved restart recovery blocks further changes to the affected service.
+
+Restore requires Docker mode and new backup metadata. Legacy/demo backups, Compose, external archive uploads and engine upgrades are unsupported. Application volume backups copy live files; stop application writes when a consistent snapshot is needed. Archives containing links or extended tar headers are currently refused. See the [restore contract](docs/specs/10-local-restoration.md) and the [verified engine scopes](docs/VERIFICATION.md).
+
 ## People and automation
 
 Use **Team & access** to create administrators or members with viewer/operator access to selected projects. Viewers see status without environment secrets, deployment output, runtime logs or backup downloads. Operators can configure and run workloads in their projects. Treat operators as trusted application administrators, not isolated tenants.
@@ -114,6 +122,12 @@ npm run test:docker
 npm run test:proxy
 npm run test:credentials
 npm run test:git
+npm run test:environment
+# Cached PostgreSQL, Redis, Nginx and alpine:3.21 images are required.
+HARBORLIGHT_RESTORE_TEST_ENGINES=postgres,redis,app npm run test:restore
+# Requires a production browser build and installed Playwright browser.
+npm run test:restore-ui
+npm run test:restore-recovery
 docker build -t harborlight:local .
 npm run test:package
 ```

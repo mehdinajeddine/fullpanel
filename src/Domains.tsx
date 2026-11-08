@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { Domain, Service } from "../shared/types";
-import { api, patch, useQuery } from "./api";
+import { api, newId, patch, useQuery } from "./api";
 import { useAccess } from "./Access";
 import {
   Badge,
@@ -466,7 +466,7 @@ export default function DomainsEditor({
                 setDomains((old) => [
                   ...old,
                   {
-                    id: crypto.randomUUID(),
+                    id: newId(),
                     hostname: "",
                     port: 80,
                     path: "/",

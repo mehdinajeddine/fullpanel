@@ -40,3 +40,36 @@ jobs:
       - run: npm run test:proxy
       - run: npm run test:credentials
       - run: npm run test:git
+      - run: npm run test:environment
+      - run: docker pull alpine:3.21
+      - run: npm run test:restore
+        env:
+          HARBORLIGHT_RESTORE_TEST_ENGINES: postgres,redis,app
+      - run: npm run test:restore-recovery
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:restore-ui
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: restore-ui-results
+          path: .local/restore-ui/
+  native-engines:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [mysql, mariadb, mongo]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:engines
+        env:
+          ENGINE_KINDS: ${{ matrix.engine }}
+      - run: npm run test:restore
+        env:
+          HARBORLIGHT_RESTORE_TEST_ENGINES: ${{ matrix.engine }}

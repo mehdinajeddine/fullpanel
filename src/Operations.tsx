@@ -52,6 +52,7 @@ import {
 import { CreateProject } from "./Projects";
 import BackupSchedules from "./BackupSchedules";
 import { useAccess } from "./Access";
+import { RestoreAction, RestoreHistory } from "./Restores";
 
 function InstallTemplate({
   template,
@@ -502,10 +503,12 @@ export function BackupTable({
   backups,
   services,
   projectId,
+  targetServiceId,
 }: {
   backups: Backup[];
   services?: Service[];
   projectId?: string;
+  targetServiceId?: string;
 }) {
   const access = useAccess();
   if (!backups.length)
@@ -525,7 +528,7 @@ export function BackupTable({
             <th>Status</th>
             <th>Created</th>
             <th>Size</th>
-            <th>Download</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -552,23 +555,35 @@ export function BackupTable({
                 {b.status === "success" ? bytes(b.sizeBytes) : "—"}
               </td>
               <td>
-                {b.status === "success" &&
-                access.canOperate(
-                  projectId ||
-                    services?.find((s) => s.id === b.serviceId)?.projectId ||
-                    b.projectId,
-                ) ? (
-                  <a
-                    className="download-link"
-                    href={`/api/backups/${encodeURIComponent(b.id)}/download`}
-                    download
-                  >
-                    <Download size={16} />
-                    <span>Download</span>
-                  </a>
-                ) : (
-                  <span className="muted">—</span>
-                )}
+                <div className="backup-row-actions">
+                  {b.status === "success" &&
+                  access.canOperate(
+                    projectId ||
+                      services?.find((s) => s.id === b.serviceId)?.projectId ||
+                      b.projectId,
+                  ) ? (
+                    <a
+                      className="download-link"
+                      href={`/api/backups/${encodeURIComponent(b.id)}/download`}
+                      download
+                    >
+                      <Download size={16} />
+                      <span>Download</span>
+                    </a>
+                  ) : (
+                    <span className="muted">—</span>
+                  )}
+                  <RestoreAction
+                    backup={b}
+                    projectId={
+                      projectId ||
+                      services?.find((service) => service.id === b.serviceId)
+                        ?.projectId ||
+                      b.projectId
+                    }
+                    preferredTargetId={targetServiceId}
+                  />
+                </div>
               </td>
             </tr>
           ))}
@@ -605,9 +620,9 @@ export function BackupsPage() {
         description="Keep a recoverable copy of your application data."
       />
       <Notice>
-        Backups are stored on this server. Download a copy to a separate
-        location for disaster recovery. Restore is performed manually using the
-        exported data.
+        {access.mode === "demo"
+          ? "Demo backups are illustrative. Restore is available in Docker mode."
+          : "Backups are stored on this server. Download a copy to a separate location for disaster recovery. Verified backups can be restored to a compatible running service."}
       </Notice>
       {(services.data || []).some((s) => access.canOperate(s.projectId)) && (
         <div className="backup-action">
@@ -667,6 +682,7 @@ export function BackupsPage() {
           <BackupTable backups={backups.data || []} services={services.data} />
         )}
       </Panel>
+      <RestoreHistory services={services.data || []} />
     </>
   );
 }

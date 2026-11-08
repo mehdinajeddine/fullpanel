@@ -16,9 +16,13 @@ export interface Service {
   source: Source; env: Record<string, string>; domains: Domain[]; mounts: Mount[]; ports: Port[];
   resources: { cpu: number; memoryMb: number }; notes: string; createdAt: string; updatedAt: string;
   deployedAt?: string; containerId?: string; error?: string;
+  /** Runtime-only mapping held in encrypted applied configuration; never accepted as API input. */
+  volumeOverrides?: Record<string, string>;
 }
 export interface Deployment { id: string; serviceId: string; projectId?: string; status: 'queued' | 'running' | 'success' | 'failed'; trigger: string; createdAt: string; finishedAt?: string; output: string; image?: string; commit?: string; forceRebuild?: boolean }
-export interface Backup { id: string; serviceId: string; projectId?: string; scheduleId?: string; status: 'running' | 'success' | 'failed'; createdAt: string; sizeBytes: number; filename: string; error?: string }
+export interface BackupMetadata { schemaVersion: 1; kind: ServiceKind; format: 'postgres-sql' | 'mysql-sql' | 'mariadb-sql' | 'mongo-archive' | 'redis-rdb-tar' | 'volume-tar' | 'demo'; image?: string; engineVersion?: string; mounts: { name: string; mountPath: string }[] }
+export interface Backup { id: string; serviceId: string; projectId?: string; scheduleId?: string; status: 'running' | 'success' | 'failed'; createdAt: string; sizeBytes: number; filename: string; error?: string; metadata?: BackupMetadata; sha256?: string; restoreJobId?: string }
+export interface RestoreJob { id: string; sourceBackupId: string; sourceProjectId?: string; targetServiceId: string; targetProjectId: string; requestedBy: string; preRestoreBackupId?: string; status: 'queued' | 'running' | 'success' | 'failed'; phase: 'validating' | 'pre-backup' | 'restoring' | 'finished'; createdAt: string; startedAt?: string; finishedAt?: string; output: string; error?: string }
 export interface Activity { id: string; action: string; resource: string; createdAt: string; detail?: string; projectId?: string }
 export interface Template { id: string; name: string; description: string; category: string; kind: ServiceKind; image: string; port: number; website: string; env?: Record<string,string>; mounts?: { name: string; mountPath: string }[] }
 export interface Settings { serverName: string; baseDomain: string; letsEncryptEmail: string; theme: 'light' | 'dark' | 'system' }

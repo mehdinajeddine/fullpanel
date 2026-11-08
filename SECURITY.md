@@ -24,6 +24,10 @@ The runtime scopes its operations to Harborlight-owned resources. It does not in
 
 Domain namespaces are reserved by project: another project cannot claim the same hostname with a different path, or an overlapping wildcard. The configured panel hostname is reserved for the control plane. Applications with public domains share the proxy Docker network; HTTP authentication protects requests arriving through Traefik, not direct connections from workloads on that network. Do not treat this shared-host topology as hostile-tenant network isolation.
 
+Project defaults and the last applied service environment are private encrypted state. Saving variables does not change a running workload; log redaction includes both saved and applied secret values. Viewers cannot read inherited or effective environment values.
+
+Restoration requires operator access to both source and destination, a verified SHA-256, compatible recovery metadata and a successful safety backup. Data is imported into new managed volumes; original volumes remain. Prepared restore intents are persisted before switching containers, then reconciled against exact container identities after a crash. Ambiguous recovery blocks further mutations for that service. Database recovery adopts the backed-up database credentials. Volume archives containing links or extended headers are refused rather than extracted.
+
 Local backups remain on the same server and are not disaster recovery. Copy verified backups off-host and rehearse recovery. Backup files contain application data and are not encrypted by the panel-state encryption mechanism. Protect backup downloads and the host data directory accordingly.
 
 ## Reporting

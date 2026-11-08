@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
-import type { ApiKey, PublicUser, ProjectRole, Service, Deployment, Backup, Activity } from '../shared/types.js';
+import type { ApiKey, PublicUser, ProjectRole, Service, Deployment, Backup, Activity, RestoreJob } from '../shared/types.js';
 import type { Store, UserRecord, ApiKeyRecord } from './store.js';
 import { normalizeGitRepository } from './source-credentials.js';
 
@@ -73,6 +73,14 @@ export class AccessControl {
   }
   recordProject(record: { serviceId: string; projectId?: string }) { return record.projectId || this.store.state.services.find(service => service.id === record.serviceId)?.projectId; }
   canReadRecord(request: FastifyRequest, record: { serviceId: string; projectId?: string }) { return this.isGlobal(request) || this.canRead(request, this.recordProject(record)); }
+  requireBackup(request: FastifyRequest, backupId: string, permission: 'read' | 'write' = 'read') {
+    const backup = this.store.state.backups.find(item => item.id === backupId);
+    if (!backup || !this.canReadRecord(request, backup)) throw accessError(404, 'Backup not found.');
+    if (!this.isGlobal(request)) this.requireProject(request, this.recordProject(backup) || '', permission);
+    return backup;
+  }
+  canReadRestore(request: FastifyRequest, job: RestoreJob) { return this.isGlobal(request) || this.level(request, job.sourceProjectId || '') === 'operator' && this.level(request, job.targetProjectId) === 'operator'; }
+  restore(request: FastifyRequest, job: RestoreJob): RestoreJob { const write = this.isGlobal(request) || this.level(request, job.sourceProjectId || '') === 'operator' && this.level(request, job.targetProjectId) === 'operator'; return write ? job : { ...job, output: '', error: job.error ? 'Restore failed. Ask an operator to inspect the job.' : undefined, requestedBy: '' }; }
   service(request: FastifyRequest, service: Service, inventory = false): Service {
     const operator = this.level(request, service.projectId) === 'operator';
     if (operator && !inventory) return service;
@@ -96,7 +104,10 @@ export class AccessControl {
     if (route.startsWith('/api/users') || route === '/api/settings' || route === '/api/metrics' || route.startsWith('/api/credentials')) { this.requireGlobal(request); return; }
     if (route.startsWith('/api/api-keys')) { this.requireCookie(request); return; }
     if (['/api/overview', '/api/activity', '/api/deployments', '/api/backups', '/api/backup-schedules', '/api/templates'].includes(route) && read) return;
+    if (route === '/api/restores' && read) return;
+    if (route === '/api/restores/:id' && read) { const job = this.store.state.restores.find(item => item.id === params.id); if (!job || !this.canReadRestore(request, job)) throw accessError(404, 'Restore job not found.'); return; }
     if (route === '/api/projects') { if (!read) this.requireGlobal(request); return; }
+    if (route === '/api/projects/:id/environment') { this.requireProject(request, params.id || '', 'write'); return; }
     if (route === '/api/projects/:id') { this.requireProject(request, params.id || '', permission); if (!read) this.requireGlobal(request); return; }
     if (route === '/api/services') {
       if (read) { const projectId = (request.query as { projectId?: string }).projectId; if (projectId) this.requireProject(request, projectId); }
@@ -105,7 +116,7 @@ export class AccessControl {
     }
     if (route.startsWith('/api/services/:id')) {
       if (route.includes('/trigger')) this.requireCookie(request);
-      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.endsWith('/auth');
+      const sensitiveRead = route.endsWith('/logs') || route.includes('/trigger') || route.endsWith('/auth') || route.endsWith('/environment');
       this.requireService(request, params.id || '', sensitiveRead ? 'write' : permission); return;
     }
     if (route === '/api/deployments/:id') {

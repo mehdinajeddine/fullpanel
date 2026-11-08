@@ -1,19 +1,23 @@
 import { spawn } from 'node:child_process';
-import { createWriteStream } from 'node:fs';
-import { mkdir, writeFile, rm, statfs, realpath } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { mkdir, writeFile, rm, statfs, realpath, mkdtemp } from 'node:fs/promises';
 import { join, resolve, sep } from 'node:path';
 import { cpus, freemem, totalmem, uptime } from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { parse, stringify } from 'yaml';
-import type { Service, Metrics, ServiceStatus } from '../shared/types.js';
+import type { Service, Metrics, ServiceStatus, Backup, BackupMetadata } from '../shared/types.js';
 import type { ProxyAuthMap } from '../shared/proxy.js';
 import { proxyLabels } from './proxy-routing.js';
 import { resolveSourceCredentials, withGitSourceCredentials, withDockerSourceCredentials, normalizeGitRepository, type DeploymentSourceCredentials } from './source-credentials.js';
+import { assertEngineCompatible, backupFormats, NativeDatabaseTools, restoredEnvironment, validateRestoreFile } from './database-restore.js';
 
 const LABEL = 'io.harborlight.managed';
 const SERVICE_LABEL = 'io.harborlight.service';
 export type Output = (chunk: string) => void;
-export interface DeployOptions { forceRebuild?: boolean; sourceCredentials?: DeploymentSourceCredentials; proxyAuth?: ProxyAuthMap }
+export interface DeployOptions { forceRebuild?: boolean; sourceCredentials?: DeploymentSourceCredentials; proxyAuth?: ProxyAuthMap; projectEnvironment?: Record<string, string> }
+export interface RestoreCheckpoint { restoreId: string; previousContainerId: string; candidateContainerId: string; previousWasRunning: boolean }
+export interface RestoreOptions { sourceService?: Service; onPrepared?: (result: RestoreResult, checkpoint: RestoreCheckpoint) => Promise<void> }
+export interface RestoreResult { containerId: string; volumeOverrides: Record<string, string>; environment?: Record<string, string> }
 export interface RuntimeDriver {
   deploy(service: Service, output: Output, options?: DeployOptions): Promise<{ containerId?: string; image?: string; commit?: string }>;
   action(service: Service, action: 'start' | 'stop' | 'restart'): Promise<void>;
@@ -21,19 +25,25 @@ export interface RuntimeDriver {
   logs(service: Service, tail: number): Promise<string>;
   metrics(): Promise<Metrics>;
   statuses(): Promise<Record<string, ServiceStatus>>;
-  backup(service: Service, filename: string): Promise<void>;
+  backup(service: Service, filename: string): Promise<BackupMetadata | void>;
+  validateRestore?(service: Service, backup: Backup, filename: string, options?: RestoreOptions): Promise<void>;
+  restore?(service: Service, backup: Backup, filename: string, output: Output, options?: RestoreOptions): Promise<RestoreResult>;
+  recoverRestore?(previous: Service, prepared: Service, checkpoint: RestoreCheckpoint): Promise<'activated' | 'rolled-back'>;
 }
 
 // Commands are always argument arrays, never interpolated shell commands.
-export function command(binary: string, args: string[], options: { cwd?: string; output?: Output; timeout?: number; destination?: string; env?: NodeJS.ProcessEnv; input?: string } = {}): Promise<string> {
+export function command(binary: string, args: string[], options: { cwd?: string; output?: Output; timeout?: number; destination?: string; env?: NodeJS.ProcessEnv; input?: string; inputFile?: string } = {}): Promise<string> {
+  if (options.input !== undefined && options.inputFile !== undefined) return Promise.reject(new Error('Choose one command input source.'));
   return new Promise((resolveCommand, reject) => {
-    const child = spawn(binary, args, { cwd: options.cwd, env: options.env ?? process.env, shell: false, stdio: [options.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'] });
+    const child = spawn(binary, args, { cwd: options.cwd, env: options.env ?? process.env, shell: false, stdio: [options.input === undefined && options.inputFile === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'] });
     let output = '', stderr = '', settled = false, timedOut = false;
-    const sink = options.destination ? createWriteStream(options.destination, { flags: 'wx', mode: 0o600 }) : undefined;
-    const finish = (error?: Error) => { if (settled) return; settled = true; clearTimeout(timer); error ? reject(error) : resolveCommand(output); };
+    const sink = options.destination ? createWriteStream(options.destination, { flags: 'wx', mode: 0o600, flush: true }) : undefined;
+    let source: ReturnType<typeof createReadStream> | undefined;
+    const finish = (error?: Error) => { if (settled) return; settled = true; source?.destroy(); clearTimeout(timer); error ? reject(error) : resolveCommand(output); };
     const timer = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, options.timeout ?? 30000);
     child.stdin?.on('error', error => { if ((error as NodeJS.ErrnoException).code !== 'EPIPE') finish(error); });
     if (options.input !== undefined) child.stdin?.end(options.input);
+    if (options.inputFile !== undefined) { source = createReadStream(options.inputFile); source.on('error', error => { child.kill('SIGKILL'); finish(error); }); source.pipe(child.stdin!); }
     sink?.on('error', error => { child.kill('SIGKILL'); finish(error); });
     if (sink) child.stdout!.pipe(sink);
     else child.stdout!.on('data', chunk => { const text = chunk.toString(); output = (output + text).slice(-2_000_000); options.output?.(text); });
@@ -41,7 +51,7 @@ export function command(binary: string, args: string[], options: { cwd?: string;
     child.on('error', finish);
     child.on('close', code => {
       if (code !== 0) { sink?.destroy(); finish(new Error(timedOut ? `${binary} operation timed out.` : `${binary} failed (${code}): ${stderr.trim().slice(-4000) || 'No error details.'}`)); }
-      else if (sink && !sink.writableFinished) sink.once('finish', () => finish());
+      else if (sink && !sink.closed) sink.once('close', () => finish());
       else finish();
     });
   });
@@ -51,7 +61,7 @@ export class DockerDriver implements RuntimeDriver {
   constructor(readonly dataDir: string) {}
   private name(service: Service) { return `hl-${service.id}`; }
   private projectNetwork(service: Service) { return `hl-project-${service.projectId}`; }
-  private volume(service: Service, name: string) { return `hl-${service.id}-${name}`; }
+  private volume(service: Service, name: string) { return service.volumeOverrides?.[name] || `hl-${service.id}-${name}`; }
   private async ownedContainer(service: Service, optional = false): Promise<string | null> {
     try {
       const parsed = JSON.parse(await command('docker', ['container', 'inspect', this.name(service)]))[0];
@@ -82,12 +92,22 @@ export class DockerDriver implements RuntimeDriver {
       await command('docker', ['volume', 'create', '--label', `${LABEL}=true`, '--label', `${SERVICE_LABEL}=${service.id}`, volume]);
     }
   }
+  private async assertRuntimeVolumes(service: Service, inspected: { Mounts?: { Type: string; Name?: string; Destination: string }[] }) {
+    for (const mount of service.mounts) {
+      const name = this.volume(service, mount.name);
+      if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]+$/.test(name)) throw new Error('Invalid managed volume mapping.');
+      const actual = inspected.Mounts?.find(item => item.Destination === mount.mountPath);
+      if (!actual || actual.Type !== 'volume' || actual.Name !== name) throw new Error('Applied volume mapping does not match the current container.');
+      const [volume] = JSON.parse(await command('docker', ['volume', 'inspect', name]));
+      if (volume.Labels?.[LABEL] !== 'true' || volume.Labels?.[SERVICE_LABEL] !== service.id) throw new Error('Refusing to back up or restore an unmanaged volume.');
+    }
+  }
   async deploy(service: Service, output: Output, options: DeployOptions = {}) {
     const credentials = resolveSourceCredentials(service, options.sourceCredentials);
     for (const value of Object.values(service.env)) if (/[\r\n\0]/.test(value)) throw new Error('Docker environment values must be single-line. Encode multiline secrets before use.');
     if (service.domains.length) await command('docker', ['network', 'inspect', 'harborlight-proxy']);
     await this.network(service);
-    if (service.kind === 'compose') return this.deployCompose(service, output);
+    if (service.kind === 'compose') return this.deployCompose(service, output, options.projectEnvironment);
     const work = join(this.dataDir, 'work', `${service.id}-${randomUUID()}`);
     await mkdir(work, { recursive: true, mode: 0o700 });
     let image = service.source.image;
@@ -166,8 +186,8 @@ export class DockerDriver implements RuntimeDriver {
   }
   private composePath(service: Service) { return join(this.dataDir, 'compose', service.id, 'compose.yaml'); }
   private composeArgs(service: Service) { return ['compose', '-p', `hl-${service.id}`, '-f', this.composePath(service)]; }
-  private async deployCompose(service: Service, output: Output) {
-    const config = sanitizeCompose(service);
+  private async deployCompose(service: Service, output: Output, projectEnvironment: Record<string, string> = {}) {
+    const config = sanitizeCompose(service, projectEnvironment);
     const ids = (await command('docker', ['ps', '-aq', '--filter', `label=com.docker.compose.project=hl-${service.id}`])).trim();
     if (ids) await this.assertComposeOwnership(service);
     for (const name of Object.keys((config.volumes || {}) as object)) await this.ensureVolume(service, name);
@@ -227,30 +247,208 @@ export class DockerDriver implements RuntimeDriver {
     } catch (error) { base.error = String(error instanceof Error ? error.message : error).slice(0, 1000); }
     return base;
   }
-  async backup(service: Service, destination: string) {
+  async backup(service: Service, destination: string): Promise<BackupMetadata> {
     if (service.kind === 'compose') throw new Error('Compose backup is not supported. Back up each database using its native tools.');
     const container = await this.ownedContainer(service);
-    let args: string[];
-    if (service.kind === 'postgres') args = ['exec', container!, 'pg_dumpall', '-U', service.env.POSTGRES_USER || 'harborlight'];
-    else if (service.kind === 'mysql') args = ['exec', container!, 'sh', '-c', 'exec mysqldump --all-databases --single-transaction -u root -p"$MYSQL_ROOT_PASSWORD"'];
-    else if (service.kind === 'mariadb') args = ['exec', container!, 'sh', '-c', 'exec mariadb-dump --all-databases --single-transaction -u root -p"$MARIADB_ROOT_PASSWORD"'];
-    else if (service.kind === 'mongo') args = ['exec', container!, 'sh', '-c', 'exec mongodump --archive --gzip --username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin'];
-    else if (service.kind === 'redis') {
-      // SAVE atomically replaces dump.rdb. Archive only that immutable snapshot, not a live AOF.
-      await command('docker', ['exec', container!, 'sh', '-c', 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli SAVE']);
-      args = ['exec', container!, 'tar', '-czf', '-', '-C', '/data', 'dump.rdb'];
-    } else {
-      if (!service.mounts.length) throw new Error('This service has no persistent volumes to back up.');
-      args = ['run', '--rm', '--name', `hl-backup-${randomUUID()}`, '--network', 'none', '--label', `${LABEL}=true`, '--label', 'io.harborlight.role=backup'];
-      for (const mount of service.mounts) args.push('--mount', `type=volume,src=${this.volume(service, mount.name)},dst=/volumes/${mount.name},readonly`);
-      args.push('alpine:3.21', 'tar', '-czf', '-', '-C', '/volumes', '.');
+    const [runtime] = JSON.parse(await command('docker', ['container', 'inspect', container!]));
+    await this.assertRuntimeVolumes(service, runtime);
+    await mkdir(join(this.dataDir, 'work'), { recursive: true, mode: 0o700 });
+    const work = await mkdtemp(join(this.dataDir, 'work', 'backup-'));
+    try {
+      const native = new NativeDatabaseTools(command, work);
+      const metadata: BackupMetadata = { schemaVersion: 1, kind: service.kind, format: backupFormats[service.kind], image: runtime.Image, mounts: service.mounts.map(({ name, mountPath }) => ({ name, mountPath })) };
+      if (service.kind !== 'app') { metadata.engineVersion = await native.version(container!, service.kind); await native.backup(container!, service, destination); }
+      else {
+        if (!service.mounts.length) throw new Error('This service has no persistent volumes to back up.');
+        await this.ensureArchiveHelper();
+        const name = `hl-backup-${randomUUID()}`;
+        const args = ['run', '--rm', '--name', name, '--network', 'none', '--read-only', '--label', `${LABEL}=true`, '--label', 'io.harborlight.role=backup'];
+        for (const mount of service.mounts) args.push('--mount', `type=volume,src=${this.volume(service, mount.name)},dst=/volumes/${mount.name},readonly`);
+        args.push('alpine:3.21', 'tar', '-czf', '-', '-C', '/volumes', '.');
+        try { await command('docker', args, { destination, timeout: 1800000 }); }
+        finally { await command('docker', ['rm', '-f', name]).catch(() => {}); }
+      }
+      return metadata;
+    } finally { await rm(work, { recursive: true, force: true }); }
+  }
+  private async ensureArchiveHelper() {
+    try { await command('docker', ['image', 'inspect', 'alpine:3.21']); }
+    catch { await withDockerSourceCredentials('alpine:3.21', undefined, command, env => command('docker', ['pull', 'alpine:3.21'], { env, timeout: 300000 })); }
+  }
+  async validateRestore(service: Service, backup: Backup, filename: string, options: RestoreOptions = {}) {
+    await validateRestoreFile(service, backup, filename, options.sourceService);
+    const container = await this.ownedContainer(service);
+    const [runtime] = JSON.parse(await command('docker', ['container', 'inspect', container!]));
+    if (!runtime.State.Running) throw new Error('Start the target service before restoring so its safety backup can be created.');
+    await this.assertRuntimeVolumes(service, runtime);
+    if (service.kind !== 'app') assertEngineCompatible(service.kind, backup.metadata!.engineVersion!, await new NativeDatabaseTools(command, this.dataDir).version(container!, service.kind));
+  }
+  async restore(service: Service, backup: Backup, filename: string, output: Output, options: RestoreOptions = {}): Promise<RestoreResult> {
+    await this.validateRestore(service, backup, filename, options);
+    const previous = (await this.ownedContainer(service))!;
+    const [old] = JSON.parse(await command('docker', ['container', 'inspect', previous]));
+    await mkdir(join(this.dataDir, 'work'), { recursive: true, mode: 0o700 });
+    const work = await mkdtemp(join(this.dataDir, 'work', 'restore-'));
+    const restoreId = randomUUID(), initName = `hl-restore-init-${restoreId}`, finalName = `hl-restore-final-${restoreId}`, previousName = `hl-restore-previous-${restoreId}`;
+    const volumeOverrides = Object.fromEntries(service.mounts.map(mount => [mount.name, `hl-${service.id}-restore-${restoreId}-${mount.name}`]));
+    const environment = service.kind === 'app' ? undefined : restoredEnvironment(options.sourceService!);
+    const restored: Service = { ...service, env: { ...service.env, ...environment }, volumeOverrides };
+    const native = new NativeDatabaseTools(command, work);
+    let init: string | undefined, candidate: string | undefined, renamedPrevious = false, stoppedPrevious = false, activated = false;
+    const createdVolumes: string[] = [];
+    const waitReady = async (container: string, configuration: Service, maximum = 240000) => {
+      const until = Date.now() + maximum; let last: unknown;
+      while (Date.now() < until) {
+        const [state] = JSON.parse(await command('docker', ['container', 'inspect', container]));
+        if (!state.State.Running) throw new Error('Restore candidate stopped before verification.');
+        try {
+          if (configuration.kind !== 'app') await native.ready(container, configuration);
+          else if (state.State.Health && state.State.Health.Status !== 'healthy') throw new Error('Application health check is not healthy.');
+          return;
+        } catch (error) { last = error; }
+        await new Promise(resolveDelay => setTimeout(resolveDelay, 750));
+      }
+      throw new Error(`Restore candidate failed authenticated readiness verification: ${last instanceof Error ? last.message : 'timeout'}`);
+    };
+    const createCandidate = async (name: string, configuration: Service, isolated: boolean, redisRdb = false) => {
+      const envFile = join(work, `${name}.env`);
+      for (const value of Object.values(configuration.env)) if (/[\r\n\0]/.test(value)) throw new Error('Database environment must be single-line.');
+      await writeFile(envFile, Object.entries(configuration.env).map(([key, value]) => `${key}=${value}`).join('\n'), { mode: 0o600, flag: 'wx' });
+      const args = ['create', '--name', name, '--restart', isolated ? 'no' : 'unless-stopped', '--network', isolated ? 'none' : this.projectNetwork(service), '--cpus', String(service.resources.cpu), '--memory', `${service.resources.memoryMb}m`, '--env-file', envFile];
+      const labels = isolated ? { [LABEL]: 'true', [SERVICE_LABEL]: service.id, 'io.harborlight.restore': restoreId, 'io.harborlight.role': 'restore-candidate', 'traefik.enable': 'false' } : { ...old.Config.Labels, 'io.harborlight.restore': restoreId };
+      for (const [key, value] of Object.entries(labels)) args.push('--label', `${key}=${value}`);
+      if (!isolated) {
+        args.push('--network-alias', service.name);
+        for (const port of service.ports) args.push('-p', `${port.published}:${port.target}/${port.protocol}`);
+      }
+      for (const mount of service.mounts) args.push('--mount', `type=volume,src=${volumeOverrides[mount.name]},dst=${mount.mountPath}`);
+      args.push(old.Image);
+      if (redisRdb) args.push('sh', '-c', 'exec redis-server --appendonly no --requirepass "$REDIS_PASSWORD"');
+      else if (Array.isArray(old.Config.Cmd)) args.push(...old.Config.Cmd);
+      return (await command('docker', args)).trim();
+    };
+    const extract = async () => {
+      await this.ensureArchiveHelper();
+      const helper = `hl-restore-extract-${restoreId}`;
+      const args = ['run', '--rm', '-i', '--name', helper, '--network', 'none', '--read-only', '--security-opt', 'no-new-privileges', '--cap-drop', 'ALL', '--cap-add', 'CHOWN', '--cap-add', 'FOWNER', '--cap-add', 'DAC_OVERRIDE', '--label', `${LABEL}=true`, '--label', `io.harborlight.restore=${restoreId}`, '--label', 'io.harborlight.role=restore-extractor'];
+      for (const mount of service.mounts) args.push('--mount', `type=volume,src=${volumeOverrides[mount.name]},dst=${service.kind === 'redis' ? '/volumes' : `/volumes/${mount.name}`}`);
+      args.push('alpine:3.21', 'tar', '-xzpf', '-', '-C', '/volumes');
+      try { await command('docker', args, { inputFile: filename, timeout: 1800000 }); }
+      finally { await command('docker', ['rm', '-f', helper]).catch(() => {}); }
+    };
+    try {
+      output('Preparing new managed volumes. The current service remains running.\n');
+      for (const name of Object.values(volumeOverrides)) {
+        await command('docker', ['volume', 'create', '--label', `${LABEL}=true`, '--label', `${SERVICE_LABEL}=${service.id}`, '--label', `io.harborlight.restore=${restoreId}`, name]); createdVolumes.push(name);
+      }
+      if (service.kind === 'app' || service.kind === 'redis') { output('Extracting validated archive into empty candidate volumes.\n'); await extract(); }
+      const bootstrap: Service = service.kind === 'postgres' ? { ...restored, env: { ...restored.env, POSTGRES_USER: `hl_restore_${restoreId.replaceAll('-', '')}`, POSTGRES_PASSWORD: randomUUID(), POSTGRES_DB: 'postgres' } } : restored;
+      init = await createCandidate(initName, bootstrap, true, service.kind === 'redis');
+      await command('docker', ['start', init]);
+      await waitReady(init, bootstrap);
+      if (!['app', 'redis'].includes(service.kind)) {
+        output('Importing the native database dump into the isolated candidate.\n');
+        await native.restore(init, bootstrap, filename);
+        if (service.kind === 'mysql' || service.kind === 'mariadb') await native.execute(init, restored, [service.kind === 'mysql' ? 'mysql' : 'mariadb', '-u', 'root', '-e', 'FLUSH PRIVILEGES']);
+        await waitReady(init, restored, 30000);
+        // PostgreSQL requires its bootstrap role (OID 10) to remain a superuser.
+        // Disable every login and remove its password; the imported source owner manages the cluster.
+        if (service.kind === 'postgres') await native.execute(init, restored, ['psql', '-X', '-h', '127.0.0.1', '-U', restored.env.POSTGRES_USER || 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', `ALTER ROLE "${bootstrap.env.POSTGRES_USER}" NOLOGIN PASSWORD NULL`]);
+      }
+      if (service.kind === 'redis') {
+        output('Verified RDB loading; generating durable AOF before the final restart.\n');
+        await native.execute(init, restored, ['redis-cli', '-e', 'CONFIG', 'SET', 'appendonly', 'yes']);
+        const until = Date.now() + 120000; let ready = false;
+        while (Date.now() < until) {
+          const info = await native.execute(init, restored, ['redis-cli', '-e', '--raw', 'INFO', 'persistence']);
+          if (/aof_enabled:1\r?\n/.test(info) && /aof_rewrite_in_progress:0\r?\n/.test(info) && /aof_last_bgrewrite_status:ok\r?\n/.test(info)) { ready = true; break; }
+          await new Promise(resolveDelay => setTimeout(resolveDelay, 500));
+        }
+        if (!ready) throw new Error('Redis did not finish durable AOF creation.');
+      }
+      await command('docker', ['stop', '-t', '60', init], { timeout: 90000 });
+      await command('docker', ['rm', '-v', init]); init = undefined;
+      if (await this.ownedContainer(service) !== previous) throw new Error('The target runtime changed while restoration was preparing.');
+      candidate = await createCandidate(finalName, restored, false);
+      if (service.domains.length) await command('docker', ['network', 'connect', 'harborlight-proxy', candidate]);
+      await options.onPrepared?.({ containerId: candidate, volumeOverrides, ...(environment ? { environment } : {}) }, { restoreId, previousContainerId: previous, candidateContainerId: candidate, previousWasRunning: !!old.State.Running });
+      output('Candidate verified. Switching runtime; previous volumes will be retained.\n');
+      await command('docker', ['stop', '-t', '60', previous], { timeout: 90000 }); stoppedPrevious = true;
+      await command('docker', ['rename', previous, previousName]); renamedPrevious = true;
+      await command('docker', ['rename', candidate, this.name(service)]);
+      await command('docker', ['start', candidate]);
+      await waitReady(candidate, restored, 120000);
+      activated = true;
+      await command('docker', ['rm', previous]).catch(() => output('The previous stopped container was retained because its cleanup failed.\n'));
+      output('Restored runtime verified. Original volumes and the safety backup remain available.\n');
+      return { containerId: candidate, volumeOverrides, ...(environment ? { environment } : {}) };
+    } catch (error) {
+      if (candidate && !activated) { await command('docker', ['rm', '-f', '-v', candidate]).catch(() => {}); candidate = undefined; }
+      if (renamedPrevious) await command('docker', ['rename', previous, this.name(service)]);
+      if (stoppedPrevious && old.State.Running) await command('docker', ['start', previous]);
+      output('Restore failed. Previous runtime and original volumes were preserved.\n');
+      throw error;
+    } finally {
+      if (init) await command('docker', ['rm', '-f', '-v', init]).catch(() => {});
+      if (candidate && !activated) await command('docker', ['rm', '-f', '-v', candidate]).catch(() => {});
+      if (!activated) for (const name of createdVolumes) {
+        const [volume] = JSON.parse(await command('docker', ['volume', 'inspect', name]).catch(() => '[]'));
+        if (volume?.Labels?.['io.harborlight.restore'] === restoreId && volume.Labels[SERVICE_LABEL] === service.id) await command('docker', ['volume', 'rm', name]).catch(() => {});
+      }
+      await rm(work, { recursive: true, force: true });
     }
-    try { await command('docker', args, { destination, timeout: 1800000 }); }
-    finally { if (args[0] === 'run') await command('docker', ['rm', '-f', args[args.indexOf('--name') + 1]]).catch(() => {}); }
+  }
+  async recoverRestore(previous: Service, prepared: Service, checkpoint: RestoreCheckpoint): Promise<'activated' | 'rolled-back'> {
+    if (previous.id !== prepared.id || !/^[a-f0-9-]{36}$/.test(checkpoint.restoreId) || ![checkpoint.previousContainerId, checkpoint.candidateContainerId].every(id => /^[a-f0-9]{64}$/.test(id))) throw new Error('Invalid restore recovery checkpoint.');
+    const inspect = async (id: string) => {
+      try { return JSON.parse(await command('docker', ['container', 'inspect', id]))[0]; }
+      catch (error) { if (/No such (container|object)/i.test(String(error))) return undefined; throw error; }
+    };
+    const owned = (container: any) => container?.Config?.Labels?.[LABEL] === 'true' && container.Config.Labels[SERVICE_LABEL] === previous.id;
+    const canonical = await inspect(this.name(previous));
+    const old = await inspect(checkpoint.previousContainerId), candidate = await inspect(checkpoint.candidateContainerId);
+    if (canonical && ![checkpoint.previousContainerId, checkpoint.candidateContainerId].includes(canonical.Id)) throw new Error('Restore recovery found a different active container. Manual inspection is required.');
+    if (old && !owned(old) || candidate && (!owned(candidate) || candidate.Config.Labels['io.harborlight.restore'] !== checkpoint.restoreId)) throw new Error('Restore recovery found a container with unexpected ownership labels.');
+    for (const mount of prepared.mounts) if (prepared.volumeOverrides?.[mount.name] !== `hl-${previous.id}-restore-${checkpoint.restoreId}-${mount.name}`) throw new Error('Restore recovery volume mapping is invalid.');
+    await mkdir(join(this.dataDir, 'work'), { recursive: true, mode: 0o700 });
+    const work = await mkdtemp(join(this.dataDir, 'work', 'recovery-'));
+    try {
+      if (canonical?.Id === checkpoint.candidateContainerId && candidate?.State.Running) {
+        try {
+          await this.assertRuntimeVolumes(prepared, candidate);
+          const until = Date.now() + 30000; let verified = false;
+          while (Date.now() < until) {
+            try {
+              if (prepared.kind === 'app') {
+                const state = await inspect(candidate.Id);
+                if (!state?.State.Running || state.State.Health && state.State.Health.Status !== 'healthy') throw new Error('Candidate application is not healthy.');
+              } else await new NativeDatabaseTools(command, work).ready(candidate.Id, prepared);
+              verified = true; break;
+            } catch { await new Promise(resolveDelay => setTimeout(resolveDelay, 750)); }
+          }
+          if (!verified) throw new Error('Candidate could not be verified after restart.');
+          if (old) await command('docker', ['rm', '-f', old.Id]);
+          return 'activated';
+        } catch (error) {
+          if (!old) throw new Error(`Active restore candidate could not be verified and its previous container is missing: ${error instanceof Error ? error.message : 'unknown error'}`);
+          // Roll back only to the exact checkpoint container; original volumes are never deleted.
+        }
+      }
+      if (!old) throw new Error('The previous restore container is missing. Manual recovery is required.');
+      if (candidate) await command('docker', ['rm', '-f', '-v', candidate.Id]);
+      if (old.Name !== `/${this.name(previous)}`) await command('docker', ['rename', old.Id, this.name(previous)]);
+      if (checkpoint.previousWasRunning && !old.State.Running) await command('docker', ['start', old.Id]);
+      await this.assertRuntimeVolumes(previous, old);
+      for (const name of Object.values(prepared.volumeOverrides || {})) {
+        const [volume] = JSON.parse(await command('docker', ['volume', 'inspect', name]).catch(() => '[]'));
+        if (volume?.Labels?.[LABEL] === 'true' && volume.Labels[SERVICE_LABEL] === previous.id && volume.Labels['io.harborlight.restore'] === checkpoint.restoreId) await command('docker', ['volume', 'rm', name]).catch(() => {});
+      }
+      return 'rolled-back';
+    } finally { await rm(work, { recursive: true, force: true }); }
   }
 }
 
-export function sanitizeCompose(service: Service): Record<string, unknown> {
+export function sanitizeCompose(service: Service, projectEnvironment: Record<string, string> = {}): Record<string, unknown> {
   if (service.domains.length) throw new Error('Compose domain routing is not supported yet. Use explicit published ports.');
   const parsed = parse(service.source.compose || '', { maxAliasCount: 25 });
   if (!parsed || typeof parsed !== 'object' || !parsed.services || typeof parsed.services !== 'object' || Array.isArray(parsed.services)) throw new Error('Compose requires a services mapping.');
@@ -277,7 +475,7 @@ export function sanitizeCompose(service: Service): Record<string, unknown> {
     let environment: Record<string, string> = {};
     if (Array.isArray(item.environment)) for (const pair of item.environment) { if (typeof pair !== 'string' || !pair.includes('=')) throw new Error('Compose environment entries require explicit values.'); const index = pair.indexOf('='); environment[pair.slice(0, index)] = pair.slice(index + 1); }
     else if (item.environment && typeof item.environment === 'object') environment = Object.fromEntries(Object.entries(item.environment).map(([key, value]) => [key, String(value)]));
-    const combined = { ...environment, ...service.env };
+    const combined = { ...projectEnvironment, ...environment, ...service.env };
     // Escape Compose substitutions to avoid leaking ambient server environment into workloads.
     const escaped = JSON.parse(JSON.stringify(item).replace(/\$/g, '$$$$'));
     services[name] = { ...escaped, environment: Object.fromEntries(Object.entries(combined).map(([key, value]) => [key, value.replace(/\$/g, '$$$$')])), labels: { [LABEL]: 'true', [SERVICE_LABEL]: service.id }, networks: ['project'], cpus: service.resources.cpu, mem_limit: `${service.resources.memoryMb}m` };
@@ -293,5 +491,8 @@ export class DemoDriver implements RuntimeDriver {
   async logs(service: Service) { return `DEMO — illustrative log output; no container is running.\n${service.createdAt} [info] ${service.name}: configuration loaded\n${service.updatedAt} [info] Ready to receive requests\n`; }
   async statuses() { return { ...this.states }; }
   async metrics(): Promise<Metrics> { return { mode: 'demo', cpuPercent: 12.8, memoryUsedBytes: 3.2 * 1024 ** 3, memoryTotalBytes: 8 * 1024 ** 3, diskUsedBytes: 21.4 * 1024 ** 3, diskTotalBytes: 80 * 1024 ** 3, uptime: 259200, dockerVersion: 'Demo', containersRunning: 3 }; }
-  async backup(_service: Service, destination: string) { await writeFile(destination, 'DEMO BACKUP — sample text, not restorable data.\n', { mode: 0o600, flag: 'wx' }); }
+  async backup(service: Service, destination: string): Promise<BackupMetadata | void> {
+    await writeFile(destination, 'DEMO BACKUP — sample text, not restorable data.\n', { mode: 0o600, flag: 'wx' });
+    return { schemaVersion: 1, kind: service.kind, format: 'demo', image: 'demo', mounts: service.mounts.map(({ name, mountPath }) => ({ name, mountPath })) };
+  }
 }

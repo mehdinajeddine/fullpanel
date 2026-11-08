@@ -11,6 +11,7 @@ import {
 import type { Project, Service, ServiceKind } from "../shared/types";
 import { navigate, post, patch, remove, slug, useQuery } from "./api";
 import { useAccess } from "./Access";
+import { ProjectEnvironment } from "./Environment";
 import {
   Button,
   ConfirmDelete,
@@ -258,7 +259,13 @@ export function CreateService({
     </Modal>
   );
 }
-export function ProjectsPage({ projectId }: { projectId?: string }) {
+export function ProjectsPage({
+  projectId,
+  section = "services",
+}: {
+  projectId?: string;
+  section?: string;
+}) {
   const access = useAccess();
   const projects = useQuery<Project[]>("/projects");
   const services = useQuery<Service[]>(
@@ -297,6 +304,10 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
         }
       />
     );
+  const activeSection =
+    project && section === "environment" && access.canOperate(project.id)
+      ? "environment"
+      : "services";
   const list = (services.data || []).filter(
     (s) => !projectId || s.projectId === projectId,
   );
@@ -342,123 +353,154 @@ export function ProjectsPage({ projectId }: { projectId?: string }) {
           </>
         }
       />
-      <div className="toolbar">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder={project ? "Find a service…" : "Find a project…"}
-          label={project ? "Search services" : "Search projects"}
-        />
-        <span className="count-label">
-          {project
-            ? `${list.length} services`
-            : `${projects.data?.length || 0} projects`}
-        </span>
-      </div>
-      {project ? (
-        <Panel>
-          {list
-            .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
-            .map((s) => (
-              <ServiceRow key={s.id} service={s} />
-            ))}
-          {!list.length && (
-            <Empty
-              icon={<Box size={27} />}
-              title="A fresh space for your next idea"
-              description={
-                access.canOperate(project.id)
-                  ? "Add your first service to start building this project."
-                  : "Services will appear here when an operator adds them."
-              }
-              action={
-                access.canOperate(project.id) && (
-                  <Button onClick={() => setAddService(true)}>
-                    <Plus size={16} />
-                    Add service
-                  </Button>
-                )
-              }
-            />
-          )}{" "}
-          {!!list.length &&
-            !list.some((s) =>
-              s.name.toLowerCase().includes(search.toLowerCase()),
-            ) && (
-              <Empty
-                title="No matching services"
-                description="Try a different service name."
-              />
-            )}
-        </Panel>
+      {project && access.canOperate(project.id) && (
+        <nav
+          className="service-tabs project-tabs"
+          aria-label="Project sections"
+        >
+          <a
+            href={`#/projects/${project.id}`}
+            className={activeSection === "services" ? "active" : ""}
+            aria-current={activeSection === "services" ? "page" : undefined}
+          >
+            Services
+          </a>
+          <a
+            href={`#/projects/${project.id}/environment`}
+            className={activeSection === "environment" ? "active" : ""}
+            aria-current={activeSection === "environment" ? "page" : undefined}
+          >
+            Environment
+          </a>
+        </nav>
+      )}
+      {activeSection === "environment" && project ? (
+        <ProjectEnvironment key={project.id} project={project} />
       ) : (
-        <div className="project-grid">
-          {projects.data
-            ?.filter((p) =>
-              `${p.name} ${p.description}`
-                .toLowerCase()
-                .includes(search.toLowerCase()),
-            )
-            .map((p) => {
-              const items = list.filter((s) => s.projectId === p.id);
-              const running = items.filter(
-                (s) => s.status === "running",
-              ).length;
-              return (
-                <button
-                  className="project-card"
-                  key={p.id}
-                  onClick={() => navigate(`/projects/${p.id}`)}
-                >
-                  <div className="project-card-top">
-                    <span
-                      className="project-symbol"
-                      style={{
-                        color: p.color,
-                        backgroundColor: `${p.color}15`,
-                      }}
+        <>
+          <div className="toolbar">
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder={project ? "Find a service…" : "Find a project…"}
+              label={project ? "Search services" : "Search projects"}
+            />
+            <span className="count-label">
+              {project
+                ? `${list.length} services`
+                : `${projects.data?.length || 0} projects`}
+            </span>
+          </div>
+          {project ? (
+            <Panel>
+              {list
+                .filter((s) =>
+                  s.name.toLowerCase().includes(search.toLowerCase()),
+                )
+                .map((s) => (
+                  <ServiceRow key={s.id} service={s} />
+                ))}
+              {!list.length && (
+                <Empty
+                  icon={<Box size={27} />}
+                  title="A fresh space for your next idea"
+                  description={
+                    access.canOperate(project.id)
+                      ? "Add your first service to start building this project."
+                      : "Services will appear here when an operator adds them."
+                  }
+                  action={
+                    access.canOperate(project.id) && (
+                      <Button onClick={() => setAddService(true)}>
+                        <Plus size={16} />
+                        Add service
+                      </Button>
+                    )
+                  }
+                />
+              )}{" "}
+              {!!list.length &&
+                !list.some((s) =>
+                  s.name.toLowerCase().includes(search.toLowerCase()),
+                ) && (
+                  <Empty
+                    title="No matching services"
+                    description="Try a different service name."
+                  />
+                )}
+            </Panel>
+          ) : (
+            <div className="project-grid">
+              {projects.data
+                ?.filter((p) =>
+                  `${p.name} ${p.description}`
+                    .toLowerCase()
+                    .includes(search.toLowerCase()),
+                )
+                .map((p) => {
+                  const items = list.filter((s) => s.projectId === p.id);
+                  const running = items.filter(
+                    (s) => s.status === "running",
+                  ).length;
+                  return (
+                    <button
+                      className="project-card"
+                      key={p.id}
+                      onClick={() => navigate(`/projects/${p.id}`)}
                     >
-                      <Folder size={23} />
-                    </span>
-                    <ArrowUpRight size={19} />
-                  </div>
-                  <h3>{p.name}</h3>
-                  <p>{p.description || "Your next great thing starts here."}</p>
-                  <div className="project-services">
-                    {items.slice(0, 5).map((s) => (
-                      <ServiceIcon key={s.id} kind={s.kind} size={16} />
-                    ))}
-                    {!items.length && (
-                      <span className="muted">No services yet</span>
-                    )}
-                    {items.length > 5 && <span>+{items.length - 5}</span>}
-                  </div>
-                  <div className="project-card-footer">
-                    <span>
-                      {items.length}{" "}
-                      {items.length === 1 ? "service" : "services"}
-                    </span>
-                    <span className={running ? "online-label" : "muted"}>
-                      {running > 0 && <i />}
-                      {running} running
-                    </span>
-                  </div>
+                      <div className="project-card-top">
+                        <span
+                          className="project-symbol"
+                          style={{
+                            color: p.color,
+                            backgroundColor: `${p.color}15`,
+                          }}
+                        >
+                          <Folder size={23} />
+                        </span>
+                        <ArrowUpRight size={19} />
+                      </div>
+                      <h3>{p.name}</h3>
+                      <p>
+                        {p.description || "Your next great thing starts here."}
+                      </p>
+                      <div className="project-services">
+                        {items.slice(0, 5).map((s) => (
+                          <ServiceIcon key={s.id} kind={s.kind} size={16} />
+                        ))}
+                        {!items.length && (
+                          <span className="muted">No services yet</span>
+                        )}
+                        {items.length > 5 && <span>+{items.length - 5}</span>}
+                      </div>
+                      <div className="project-card-footer">
+                        <span>
+                          {items.length}{" "}
+                          {items.length === 1 ? "service" : "services"}
+                        </span>
+                        <span className={running ? "online-label" : "muted"}>
+                          {running > 0 && <i />}
+                          {running} running
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              {access.isAdmin && (
+                <button
+                  className="project-card new-project-card"
+                  onClick={() => setCreate(true)}
+                >
+                  <span>
+                    <Plus size={24} />
+                  </span>
+                  <h3>Create a project</h3>
+                  <p>A new home for your applications.</p>
                 </button>
-              );
-            })}
-          {access.isAdmin && (
-            <button
-              className="project-card new-project-card"
-              onClick={() => setCreate(true)}
-            >
-              <span>
-                <Plus size={24} />
-              </span>
-              <h3>Create a project</h3>
-              <p>A new home for your applications.</p>
-            </button>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
       {create && access.isAdmin && (
         <CreateProject

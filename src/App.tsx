@@ -363,7 +363,7 @@ function Workspace({
   session: Session;
   onLogout: () => void;
 }) {
-  const access = accessFor(session.user);
+  const access = accessFor(session.user, session.mode);
   const route = useRoute();
   const [mobile, setMobile] = useState(false);
   const [command, setCommand] = useState(false);
@@ -421,7 +421,7 @@ function Workspace({
   let content: ReactNode;
   if (page === "overview") content = <Dashboard name={session.user?.name} />;
   else if (page === "projects")
-    content = <ProjectsPage projectId={segments[1]} />;
+    content = <ProjectsPage projectId={segments[1]} section={segments[2]} />;
   else if (page === "services" && segments[1])
     content = <ServicePage id={segments[1]} tab={segments[2]} />;
   else if (page === "templates") content = <TemplatesPage />;
@@ -449,7 +449,7 @@ function Workspace({
       />
     );
   return (
-    <AccessProvider user={session.user}>
+    <AccessProvider user={session.user} mode={session.mode}>
       <div className="app-shell">
         <a
           className="skip-link"

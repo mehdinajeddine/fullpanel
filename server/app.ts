@@ -5,13 +5,16 @@ import staticFiles from '@fastify/static';
 import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual, createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import { resolve, join } from 'node:path';
-import { existsSync, createReadStream } from 'node:fs';
-import { mkdir, stat, rm } from 'node:fs/promises';
+import { existsSync, constants as fsConstants } from 'node:fs';
+import { mkdir, stat, rm, open as openFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { Store, type UserRecord } from './store.js';
 import { AccessControl, publicUser } from './access.js';
 import { registerAccounts } from './accounts.js';
 import { assertDomainOwnership } from './domain-ownership.js';
+import { registerProjectEnvironment } from './project-environment.js';
+import { effectiveServiceEnvironment } from '../shared/environment.js';
+import { registerRestoreJobs, recoverPreparedRestores, backupFileHash, safeLocalBackupPath } from './restore-jobs.js';
 import { DockerDriver, DemoDriver, type RuntimeDriver, sanitizeCompose } from './docker.js';
 import { templates } from './templates.js';
 import { registerDeploymentWebhooks } from './webhooks.js';
@@ -35,6 +38,7 @@ export async function createApp(options: AppOptions = {}) {
   const store = new Store(dataDir, mode);
   const access = new AccessControl(store);
   const driver: RuntimeDriver = options.driver || (mode === 'demo' ? new DemoDriver() : new DockerDriver(dataDir));
+  try { await recoverPreparedRestores(store,driver); } catch(error) { store.close(); throw error; }
   const publicUrl = options.publicUrl || process.env.PUBLIC_URL;
   const publicOrigin = publicUrl ? new URL(publicUrl).origin : undefined;
   const secureCookie = options.cookieSecure ?? (process.env.COOKIE_SECURE === 'true' || publicUrl?.startsWith('https:') || false);
@@ -99,8 +103,9 @@ export async function createApp(options: AppOptions = {}) {
   const parameter = (request: FastifyRequest) => id.parse((request.params as { id: string }).id);
   const serviceById = (serviceId: string) => { const service = store.state.services.find(item => item.id === serviceId); if (!service) throw new HttpError(404, 'Service not found.'); return service; };
   const projectById = (projectId: string) => { const project = store.state.projects.find(item => item.id === projectId); if (!project) throw new HttpError(404, 'Project not found.'); return project; };
-  const requireIdle = (serviceId: string) => { if (busy.has(serviceId)) throw new HttpError(409, 'This service already has an operation in progress.'); };
-  const secrets = (service: Service) => [...Object.values(service.env).filter(secret => secret.length >= 4), ...sourceCredentialSecrets(store.state.sourceCredentials[service.id])];
+  const recoveryPending = (serviceId:string) => Object.values(store.state.restoreIntents).some(intent=>intent.previousService.id===serviceId);
+  const requireIdle = (serviceId: string) => { if (recoveryPending(serviceId)) throw new HttpError(409,'Restore recovery is incomplete. Resolve the runtime conflict and restart Harborlight before modifying this service.'); if (busy.has(serviceId)) throw new HttpError(409, 'This service already has an operation in progress.'); };
+  const secrets = (service: Service) => [...new Set([...Object.values(service.env), ...Object.values(store.state.projectEnvironments[service.projectId] || {}), ...Object.values(store.state.appliedServices[service.id]?.env || {}), ...Object.values(store.state.services.find(item => item.id === service.id)?.env || {})].filter(secret => secret.length >= 4)), ...sourceCredentialSecrets(store.state.sourceCredentials[service.id])];
   const redact = (service: Service, value: string) => secrets(service).reduce((text, secret) => text.split(secret).join('[REDACTED]'), value);
   const redactProgress = (service: Service, value: string) => {
     let safeEnd = value.length;
@@ -112,10 +117,16 @@ export async function createApp(options: AppOptions = {}) {
     const job = Promise.resolve().then(action).catch(error => { app.log.error(error); }).finally(() => { busy.delete(serviceId); jobs.delete(job); cachedMetrics = undefined; });
     jobs.add(job); return job;
   };
+  const runtimeService = (service: Service): Service => {
+    const applied = store.state.appliedServices[service.id];
+    // Legacy state had no deployment snapshot. Refuse to guess once its configuration is dirty.
+    if (!applied && service.deployedAt && service.updatedAt > service.deployedAt) throw new HttpError(409, 'Redeploy this legacy service once before backing up or restoring its runtime.');
+    return { ...structuredClone(applied || service), status: service.status, containerId: service.containerId || applied?.containerId };
+  };
   async function refreshStatuses() {
     try {
       const states = await driver.statuses();
-      for (const service of store.state.services) if (!busy.has(service.id) && (states[service.id] || (mode === 'docker' && service.containerId))) service.status = states[service.id] || 'not-deployed';
+      for (const service of store.state.services) if (!busy.has(service.id) && !recoveryPending(service.id) && (states[service.id] || (mode === 'docker' && service.containerId))) service.status = states[service.id] || 'not-deployed';
     } catch { /* Keep the last known state; metrics carries the Docker connectivity error. */ }
   }
   function validateService(service: Service) {
@@ -185,7 +196,23 @@ export async function createApp(options: AppOptions = {}) {
   app.get('/api/projects', async request => store.state.projects.filter(project => access.canRead(request, project.id)));
   app.post('/api/projects', async (request, reply) => { const input = projectInput.parse(request.body); if (store.state.projects.some(project => project.name === input.name)) throw new HttpError(409, 'A project with this name already exists.'); const project = { ...input, id: randomUUID(), createdAt: now() }; store.state.projects.push(project); store.activity('Project created', project.name, undefined, project.id); store.save(); return reply.status(201).send(project); });
   app.patch('/api/projects/:id', async request => { const project = projectById(parameter(request)), input = projectPatch.parse(request.body); if (input.name && store.state.projects.some(item => item.id !== project.id && item.name === input.name)) throw new HttpError(409, 'A project with this name already exists.'); Object.assign(project, input); store.activity('Project updated', project.name, undefined, project.id); store.save(); return project; });
-  app.delete('/api/projects/:id', async request => { const project = projectById(parameter(request)); if (store.state.services.some(service => service.projectId === project.id)) throw new HttpError(409, 'Remove the project services first. Persistent volumes are retained.'); store.state.projects = store.state.projects.filter(item => item.id !== project.id); for (const user of store.state.users) user.memberships = user.memberships.filter(item => item.projectId !== project.id); store.activity('Project deleted', project.name, undefined, project.id); store.save(); return { ok: true }; });
+  app.delete('/api/projects/:id', async request => { const project = projectById(parameter(request)); if (store.state.services.some(service => service.projectId === project.id)) throw new HttpError(409, 'Remove the project services first. Persistent volumes are retained.'); store.state.projects = store.state.projects.filter(item => item.id !== project.id); delete store.state.projectEnvironments[project.id]; for (const user of store.state.users) user.memberships = user.memberships.filter(item => item.projectId !== project.id); store.activity('Project deleted', project.name, undefined, project.id); store.save(); return { ok: true }; });
+  registerProjectEnvironment(app, {
+    getProject: projectId => store.state.projects.find(project => project.id === projectId),
+    getService: serviceId => store.state.services.find(service => service.id === serviceId),
+    getEnvironment: projectId => store.state.projectEnvironments[projectId],
+    authorizeProject: (request, projectId) => { access.requireProject(request, projectId, 'write'); },
+    authorizeService: (request, serviceId) => { access.requireService(request, serviceId, 'write'); },
+    setEnvironment: (projectId, env) => {
+      const services = store.state.services.filter(service => service.projectId === projectId);
+      for (const service of services) requireIdle(service.id);
+      const previous = store.state.projectEnvironments[projectId] || {};
+      const comparable = (value: Record<string,string>) => JSON.stringify(Object.entries(value).sort(([a],[b]) => a.localeCompare(b)));
+      for (const service of services) if (comparable(effectiveServiceEnvironment(service,previous)) !== comparable(effectiveServiceEnvironment(service,env))) service.updatedAt = now();
+      store.state.projectEnvironments[projectId] = env;
+      store.activity('Project environment updated', projectById(projectId).name, 'Deploy affected services to apply inherited values.', projectId); store.save();
+    }
+  });
   app.get('/api/services', async request => { const projectId = (request.query as { projectId?: string }).projectId; if (projectId) id.parse(projectId); await refreshStatuses(); return store.state.services.filter(service => (!projectId || service.projectId === projectId) && access.canRead(request, service.projectId)).map(service => access.service(request, service, true)); });
   app.get('/api/services/:id', async request => { await refreshStatuses(); return access.service(request, access.requireService(request, parameter(request))); });
   app.post('/api/services', async (request, reply) => reply.status(201).send(newService(serviceCreate.parse(request.body))));
@@ -199,23 +226,25 @@ export async function createApp(options: AppOptions = {}) {
   });
   app.delete('/api/services/:id', async request => {
     const service = serviceById(parameter(request)); requireIdle(service.id); busy.add(service.id);
-    try { if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
+    try { if (service.deployedAt || service.containerId || service.status === 'failed') await driver.remove(service); store.state.services = store.state.services.filter(item => item.id !== service.id); store.state.backupSchedules = store.state.backupSchedules.filter(item => item.serviceId !== service.id); delete store.state.deployTokens[service.id]; delete store.state.deployTokenOwners[service.id]; delete store.state.proxyAuth[service.id]; delete store.state.sourceCredentials[service.id]; delete store.state.appliedServices[service.id]; store.activity('Service deleted', service.name, 'Persistent volumes and backups retained.', service.projectId); store.save(); return { ok: true }; }
     catch (error) { throw new HttpError(502, redact(service, (error as Error).message)); } finally { busy.delete(service.id); }
   });
   function queueDeployment(serviceId: string, trigger: string, options: { forceRebuild?: boolean } = {}): Deployment {
     const service = serviceById(id.parse(serviceId)); requireIdle(service.id); validateService(service);
-    const runtimeOptions = { ...options, proxyAuth: structuredClone(store.state.proxyAuth[service.id] || {}), sourceCredentials: resolveSourceCredentials(service, store.state.sourceCredentials[service.id]) };
+    const runtimeOptions = { ...options, proxyAuth: structuredClone(store.state.proxyAuth[service.id] || {}), sourceCredentials: resolveSourceCredentials(service, store.state.sourceCredentials[service.id]), projectEnvironment: structuredClone(store.state.projectEnvironments[service.projectId] || {}) };
+    const snapshot = { ...structuredClone(service), env: service.kind === 'compose' ? structuredClone(service.env) : effectiveServiceEnvironment(service,runtimeOptions.projectEnvironment), volumeOverrides: structuredClone(store.state.appliedServices[service.id]?.volumeOverrides || {}) };
     if (options.forceRebuild && !['git', 'dockerfile'].includes(service.source.type)) throw new HttpError(400, 'Force rebuild is available for Git and Dockerfile sources. Images are always pulled during deployment.');
     const deployment: Deployment = { id: randomUUID(), serviceId: service.id, projectId: service.projectId, status: 'queued', trigger, createdAt: now(), output: options.forceRebuild ? 'Build cache disabled; base images will be pulled.\n' : '', image: service.source.image, forceRebuild: !!options.forceRebuild };
     store.state.deployments.unshift(deployment); service.status = 'deploying'; delete service.error; store.activity('Deployment queued', service.name, undefined, service.projectId); store.save();
     void enqueue(service.id, async () => {
       deployment.status = 'running'; store.save();
-      const snapshot = structuredClone(service);
       try {
         let rawOutput = deployment.output;
         const result = await driver.deploy(snapshot, chunk => { rawOutput = (rawOutput + chunk).slice(-250000); deployment.output = redactProgress(snapshot, rawOutput).slice(-200000); }, runtimeOptions);
         deployment.output = redact(snapshot, rawOutput).slice(-200000);
-        Object.assign(service, { status: 'running', containerId: result.containerId, deployedAt: now() }); deployment.status = 'success'; deployment.image = result.image; deployment.commit = result.commit; store.activity('Deployment succeeded', service.name, undefined, service.projectId);
+        Object.assign(service, { status: 'running', containerId: result.containerId, deployedAt: now() });
+        store.state.appliedServices[service.id] = { ...snapshot, env: effectiveServiceEnvironment(service,runtimeOptions.projectEnvironment), status:'running', containerId:result.containerId, deployedAt:service.deployedAt };
+        deployment.status = 'success'; deployment.image = result.image; deployment.commit = result.commit; store.activity('Deployment succeeded', service.name, undefined, service.projectId);
       } catch (error) { deployment.status = 'failed'; service.status = 'failed'; service.error = redact(snapshot, (error as Error).message); deployment.output += `\n${service.error}\n`; store.activity('Deployment failed', service.name, undefined, service.projectId); }
       finally { deployment.finishedAt = now(); store.save(); }
     });
@@ -253,19 +282,31 @@ export async function createApp(options: AppOptions = {}) {
   app.get('/api/deployments/:id', async request => { const deployment = store.state.deployments.find(item => item.id === parameter(request)); if (!deployment || !access.canReadRecord(request, deployment)) throw new HttpError(404, 'Deployment not found.'); return access.deployment(request, deployment); });
   app.get('/api/backups', async request => store.state.backups.filter(item => access.canReadRecord(request, item)).map(item => access.backup(request, item)));
   app.get('/api/services/:id/backups', async request => { const service = access.requireService(request, parameter(request)); return store.state.backups.filter(item => item.serviceId === service.id).map(item => access.backup(request, item)); });
-  function queueBackup(serviceId: string, scheduleId?: string): Backup & { scheduleId?: string } {
-    store.assertWritable();
-    const service = serviceById(id.parse(serviceId)); requireIdle(service.id); if (service.status !== 'running') throw new HttpError(409, 'Start the service before creating a backup.');
-    if (service.kind === 'compose' || service.kind === 'app' && !service.mounts.length) throw new HttpError(400, 'Backups require a database service or application volumes.');
+  function createBackup(service: Service, options: {scheduleId?:string;restoreJobId?:string} = {}): Backup {
     const backupId = randomUUID(), extension = mode === 'demo' ? 'demo.txt' : ['postgres', 'mysql', 'mariadb'].includes(service.kind) ? 'sql' : service.kind === 'mongo' ? 'archive.gz' : 'tar.gz';
-    const backup: Backup & { scheduleId?: string } = { id: backupId, serviceId: service.id, projectId: service.projectId, status: 'running', createdAt: now(), sizeBytes: 0, filename: `${service.name}-${backupId}.${extension}`, ...(scheduleId ? { scheduleId } : {}) };
+    const backup: Backup = { id: backupId, serviceId: service.id, projectId: service.projectId, status: 'running', createdAt: now(), sizeBytes: 0, filename: `${service.name}-${backupId}.${extension}`, ...options };
     store.state.backups.unshift(backup); store.save();
-    void enqueue(service.id, async () => {
-      const directory = join(dataDir, 'backups'), path = join(directory, backup.filename);
-      try { await mkdir(directory, { recursive: true, mode: 0o700 }); await driver.backup(structuredClone(service), path); backup.sizeBytes = (await stat(path)).size; if (!backup.sizeBytes) throw new Error('Backup output is empty.'); backup.status = 'success'; store.activity('Backup completed', service.name, undefined, service.projectId); }
-      catch (error) { backup.status = 'failed'; backup.error = redact(service, (error as Error).message); await rm(path, { force: true }); store.activity('Backup failed', service.name, undefined, service.projectId); }
-      finally { store.save(); }
-    });
+    return backup;
+  }
+  async function performBackup(service: Service, backup: Backup) {
+    const directory = join(dataDir,'backups'), path = join(directory,backup.filename);
+    try {
+      await mkdir(directory,{recursive:true,mode:0o700});
+      const metadata = await driver.backup(structuredClone(service),path);
+      backup.sizeBytes = (await stat(path)).size; if (!backup.sizeBytes) throw new Error('Backup output is empty.');
+      if (metadata) backup.metadata=metadata;
+      backup.sha256=await backupFileHash(path); store.state.backupProfiles[backup.id]=structuredClone(service); backup.status='success';
+      store.activity('Backup completed',service.name,undefined,service.projectId);
+    } catch (error) { backup.status='failed'; backup.error=redact(service,(error as Error).message); delete store.state.backupProfiles[backup.id]; await rm(path,{force:true}); store.activity('Backup failed',service.name,undefined,service.projectId); throw error; }
+    finally { store.save(); }
+  }
+  function queueBackup(serviceId: string, scheduleId?: string): Backup {
+    store.assertWritable();
+    const current=serviceById(id.parse(serviceId)); requireIdle(current.id); if(current.status!=='running') throw new HttpError(409,'Start the service before creating a backup.');
+    const service=runtimeService(current);
+    if(service.kind==='compose'||service.kind==='app'&&!service.mounts.length) throw new HttpError(400,'Backups require a database service or application volumes.');
+    const backup=createBackup(service,{...(scheduleId?{scheduleId}:{})});
+    void enqueue(service.id,async()=>{try{await performBackup(service,backup);}catch{/* performBackup records and redacts the failure. */}});
     return backup;
   }
   app.post('/api/services/:id/backups', async (request, reply) => reply.status(202).send(queueBackup(parameter(request))));
@@ -276,10 +317,11 @@ export async function createApp(options: AppOptions = {}) {
     getBackups: () => store.state.backups,
     filterSchedules: (request, schedules) => schedules.filter(schedule => { const service = store.state.services.find(item => item.id === schedule.serviceId); return !!service && access.canRead(request, service.projectId); }),
     queueBackup,
-    forgetBackup: backupId => { store.state.backups = store.state.backups.filter(backup => backup.id !== backupId); store.save(); },
+    forgetBackup: backupId => { store.state.backups = store.state.backups.filter(backup => backup.id !== backupId); delete store.state.backupProfiles[backupId]; store.save(); },
     backupDirectory: join(dataDir, 'backups')
   });
-  app.get('/api/backups/:id/download', async (request, reply) => { const backup = store.state.backups.find(item => item.id === parameter(request)); if (!backup || backup.status !== 'success') throw new HttpError(404, 'Completed backup not found.'); const path = join(dataDir, 'backups', backup.filename); if (!existsSync(path)) throw new HttpError(404, 'Backup file is missing.'); return reply.header('Content-Type', 'application/octet-stream').header('Content-Disposition', `attachment; filename="${backup.filename}"`).send(createReadStream(path)); });
+  registerRestoreJobs(app,{store,access,driver,dataDir,mode,requireIdle,enqueue,runtimeService,createBackup,performBackup,secrets});
+  app.get('/api/backups/:id/download', async (request, reply) => { const backup = store.state.backups.find(item => item.id === parameter(request)); if (!backup || backup.status !== 'success') throw new HttpError(404, 'Completed backup not found.'); let handle; try{const path=await safeLocalBackupPath(dataDir,backup);handle=await openFile(path,fsConstants.O_RDONLY|fsConstants.O_NOFOLLOW);}catch{throw new HttpError(404,'Backup file is missing or unsafe.');} return reply.header('Content-Type', 'application/octet-stream').header('Content-Disposition', `attachment; filename="${backup.filename}"`).send(handle.createReadStream()); });
   app.get('/api/templates', async () => templates);
   app.post('/api/templates/:id/install', async (request, reply) => { const template = templates.find(item => item.id === (request.params as { id: string }).id); if (!template) throw new HttpError(404, 'Template not found.'); const input = z.object({ projectId: id, name: z.string() }).strict().parse(request.body); return reply.status(201).send(newService(serviceCreate.parse({ ...input, kind: template.kind, source: { type: 'image', image: template.image }, env: template.env, mounts: template.mounts }), template.port)); });
   app.get('/api/activity', async request => store.state.activity.filter(item => access.activity(request, item)));
