@@ -1,6 +1,6 @@
 # Hébergement initial du site et de l’API communautaire
 
-État au 2026-11-08 : **lot en cours, déploiement non établi par cette spécification**. Ce document décrit le premier hébergement de `community/`. Les preuves de livraison seront consignées séparément dans [VERIFICATION.md](../VERIFICATION.md). Il ne déclare pas livré le broker DNS de [M04](19-community-domains.md).
+État au 2026-11-08 : **premier site et API d’information déployés et vérifiés sur l’URL Heroku**, release v4 issue du commit `9ecf22a`. Le domaine personnalisé reste à valider. Ce document décrit le premier hébergement de `community/`. Les preuves de livraison sont consignées séparément dans [VERIFICATION.md](../VERIFICATION.md). Il ne déclare pas livré le broker DNS de [M04](19-community-domains.md).
 
 ## Périmètre du premier lot
 
@@ -12,7 +12,7 @@ Les actions du site doivent ouvrir une destination existante ou indiquer explici
 
 ## Processus Heroku et coût prévu
 
-Le format initial est **un seul processus `web` sur un dyno Basic**, servant le site et l’API depuis le même déploiement. Le tarif public consulté est de **7 USD par mois pour Basic**, hors autres services, taxes et évolution tarifaire. PostgreSQL, worker séparé, add-ons payants ou dynos supplémentaires ne sont pas inclus dans ce lot. Ce montant n’est pas une preuve d’une ressource créée ou facturée. [Tarifs Heroku](https://www.heroku.com/pricing/).
+Le format initial est **un seul processus `web` sur un dyno Basic**, servant le site et l’API depuis le même déploiement. Le tarif public consulté est de **7 USD par mois pour Basic**, hors autres services, taxes et évolution tarifaire. Le premier contrôle de formation a confirmé un unique `web.1` Basic et aucun add-on. Le propriétaire a ensuite autorisé et provisionné PostgreSQL Essential-0 à 5 USD/mois pour le prochain lot de registre, soit 12 USD/mois au total ; le site et les endpoints actuels ne l’utilisent pas encore. Aucun worker séparé ou dyno supplémentaire n’est prévu. [Tarifs Heroku](https://www.heroku.com/pricing/).
 
 Le processus écoute sur le port fourni par l’environnement Heroku et accepte les connexions sur l’interface attendue par la plateforme. Il s’arrête proprement lors d’un redémarrage ou d’une nouvelle release. Les ressources statiques du site sont assemblées et versionnées dans le paquet déployé, puis servies depuis ce résultat immuable ; aucun bundler n’est requis, et aucune compilation ni installation de dépendances n’est déclenchée par une requête visiteur.
 

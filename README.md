@@ -4,6 +4,8 @@
 
 Deploy your applications, manage your databases and follow your services from one dashboard on your own server. FullPanel is an open-source control panel for Docker workloads.
 
+[Explore the FullPanel website](https://fullpanel-web-api-4e0abb9d60c3.herokuapp.com/).
+
 **Early development.** Check the [supported workflows and current limitations](docs/VERIFICATION.md) before relying on FullPanel for production workloads.
 
 ![FullPanel dashboard with service status and next actions](docs/images/readability-dashboard-desktop.png)
